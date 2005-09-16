@@ -1,0 +1,48 @@
+mice.impute.passive           package:mice           R Documentation
+
+_E_l_e_m_e_n_t_a_r_y _I_m_p_u_t_a_t_i_o_n _M_e_t_h_o_d: _P_a_s_s_i_v_e _I_m_p_u_t_a_t_i_o_n
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Derive a new variable based on the mice.imputed data
+
+_U_s_a_g_e:
+
+     mice.impute.passive(data, func)
+
+_A_r_g_u_m_e_n_t_s:
+
+    data: A data frame
+
+    func: A formula specifying the transformations on data
+
+_D_e_t_a_i_l_s:
+
+     This is a special imputation function for so-called passive
+     imputation. Using this function, the user can specify, at any
+     point in the mice  Gibbs sampling algorithm, a function on the
+     (mice.imputed) data.  This is useful, for example, to compute a
+     cubic version of a variable, a transformation like $Q=W/H^2$ based
+     on two variables,  or a mean variable like $(x1+x2+x3)/3$. The so
+     derived variables might be used in other places in the imputation
+     model. The function allows to dynamically derive virtually any
+     function  of the mice.imputed data at virtually any time.
+
+_V_a_l_u_e:
+
+       t: The tranformed data.
+
+_A_u_t_h_o_r(_s):
+
+     Stef van Buuren, Karin Oudshoorn, 2000
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation
+     by Chained Equations:  MICE V1.0 User's manual. Report
+     PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+
+_S_e_e _A_l_s_o:
+
+     'mice'
+

@@ -1,0 +1,137 @@
+Entry: complete
+Aliases: complete
+Keywords: misc
+Description: Produces Imputed Flat Files from Multiply Imputed Data Set (mids)
+URL: ../../../library/mice/html/complete.html
+
+Entry: glm.mids
+Aliases: glm.mids
+Keywords: misc
+Description: Generelized Linear Regression on Multiply Imputed Data
+URL: ../../../library/mice/html/glm.mids.html
+
+Entry: lm.mids
+Aliases: lm.mids
+Keywords: misc
+Description: Linear Regression on Multiply Imputed Data
+URL: ../../../library/mice/html/lm.mids.html
+
+Entry: md.pattern
+Aliases: md.pattern
+Keywords: misc
+Description: Missing Data Pattern
+URL: ../../../library/mice/html/md.pattern.html
+
+Entry: mice.internal
+Aliases: check.imputationMethod check.predictorMatrix check.visitSequence data.frame.to.matrix is.mids is.mipo is.mira is.passive logitreg mipo .norm.draw padModel .pmm.match sampler
+Keywords: misc
+Description: internal mice functions
+URL: ../../../library/mice/html/mice-internal.html
+
+Entry: mice
+Aliases: mice
+Keywords: misc
+Description: Multivariate Imputation by Chained Equations
+URL: ../../../library/mice/html/mice.html
+
+Entry: mice.impute.lda
+Aliases: mice.impute.lda
+Keywords: misc
+Description: Elementary Imputation Method: Linear Discriminant Analysis
+URL: ../../../library/mice/html/mice.impute.lda.html
+
+Entry: mice.impute.logreg
+Aliases: mice.impute.logreg
+Keywords: misc
+Description: Elementary Imputation Method: Logistic Regression
+URL: ../../../library/mice/html/mice.impute.logreg.html
+
+Entry: mice.impute.logreg2
+Aliases: mice.impute.logreg2
+Keywords: misc
+Description: Elementary Imputation Method: Logistic Regression
+URL: ../../../library/mice/html/mice.impute.logreg2.html
+
+Entry: mice.impute.mean
+Aliases: mice.impute.mean
+Keywords: misc
+Description: Elementary Imputation Method: Simple Mean Imputation
+URL: ../../../library/mice/html/mice.impute.mean.html
+
+Entry: mice.impute.norm
+Aliases: mice.impute.norm
+Keywords: misc
+Description: Elementary Imputation Method: Linear Regression Analysis
+URL: ../../../library/mice/html/mice.impute.norm.html
+
+Entry: mice.impute.norm.improper
+Aliases: mice.impute.norm.improper
+Keywords: misc
+Description: Elementary Imputation Method: Linear Regression Analysis (improper)
+URL: ../../../library/mice/html/mice.impute.norm.improper.html
+
+Entry: mice.impute.passive
+Aliases: mice.impute.passive
+Keywords: misc
+Description: Elementary Imputation Method: Passive Imputation
+URL: ../../../library/mice/html/mice.impute.passive.html
+
+Entry: mice.impute.pmm
+Aliases: mice.impute.pmm
+Keywords: misc
+Description: Elementary Imputation Method: Linear Regression Analysis
+URL: ../../../library/mice/html/mice.impute.pmm.html
+
+Entry: mice.impute.polyreg
+Aliases: mice.impute.polyreg
+Keywords: misc
+Description: Elementary Imputation Method: Polytomous Regression
+URL: ../../../library/mice/html/mice.impute.polyreg.html
+
+Entry: mice.impute.sample
+Aliases: mice.impute.sample
+Keywords: misc
+Description: Elementary Imputation Method: Simple Random Sample
+URL: ../../../library/mice/html/mice.impute.sample.html
+
+Entry: mice.mids
+Aliases: mice.mids
+Keywords: misc
+Description: Multivariate Imputation by Chained Equations (Iteration Step)
+URL: ../../../library/mice/html/mice.mids.html
+
+Entry: mids
+Aliases: mids mids print.mids summary.mids plot.mids
+Keywords: misc
+Description: Multiply Imputed Data Set
+URL: ../../../library/mice/html/mids.html
+
+Entry: mipo
+Aliases: print.mipo summary.mipo
+Keywords: misc
+Description: Multiply Imputed Pooled Analysis
+URL: ../../../library/mice/html/mipo.html
+
+Entry: mira
+Aliases: mira print.mira summary.mira
+Keywords: misc
+Description: Multiply Imputed Repeated Analysis
+URL: ../../../library/mice/html/mira.html
+
+Entry: nhanes
+Aliases: nhanes
+Keywords: datasets
+Description: nhanes data set
+URL: ../../../library/mice/html/nhanes.html
+
+Entry: nhanes2
+Aliases: nhanes2
+Keywords: datasets
+Description: nhanes2 data set
+URL: ../../../library/mice/html/nhanes2.html
+
+Entry: pool
+Aliases: pool
+Keywords: misc
+Description: Multiple Imputation Pooling
+URL: ../../../library/mice/html/pool.html

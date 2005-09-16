@@ -2,8 +2,7 @@
 \alias{lm.mids}
 \title{Linear Regression on Multiply Imputed Data}
 \usage{
-lm.mids(formula, data, weights, subset, na.action, method="qr", model=FALSE, 
-        x=FALSE, y=FALSE, contrasts=NULL, ...)
+lm.mids(formula, data, ...)
 }
 \description{Performs repeated linear regression on multiply imputed data set
 }
@@ -15,16 +14,9 @@ lm.mids(formula, data, weights, subset, na.action, method="qr", model=FALSE,
     An object of type 'mids', which stands for 'multiply imputed data set', typically
     created by function \code{mice()}.}
 
-\item{weights}{     see \code{\link{lm}} }
-\item{subset}{      see \code{\link{lm}} }
-\item{na.action}{           see \code{\link{lm}} }
-\item{method}{      see \code{\link{lm}} }
-\item{model}{       see \code{\link{lm}} }
-\item{x}{       see \code{\link{lm}} }
-\item{y}{       see \code{\link{lm}} }
-\item{contrasts}{   see \code{\link{lm}} }
-\item{...}{not used}
+\item{...}{	Additional parameters passed to \code{\link{lm}}}
 }
+
 \value{
     An objects of class 'mira', which stands for 'multiply imputed repeated analysis'.
     This object contains m lm.objects, plus some descriptive information.

@@ -6,9 +6,7 @@
   Performs repeated glm on a multiply imputed data set
 }
 \usage{
-    glm.mids(formula=formula(data), family=gaussian, data=sys.parent(), weights, 
-    subset, na.action, start=eta, control=glm.control(...), method="glm.fit",
-    model=FALSE,x=FALSE, y=TRUE, contrasts=NULL, ...)
+    glm.mids(formula, data, ...)
 }
 
 \arguments{
@@ -19,18 +17,7 @@
   \item{data}{  An object of type \code{mids}, which stands for 'multiply imputed data set', typically
     created by function \code{mice()}.}
   
-  \item{family}{        see \code{\link{glm}} }
-  \item{weights} {see \code{\link{glm}}}
-  \item{subset}{see \code{\link{glm}}}
-  \item{na.action}{see \code{\link{glm}}}
-  \item{start     }{see \code{\link{glm}}}
-  \item{control  }{see \code{\link{glm}}}
-  \item{method    }{see \code{\link{glm}}}
-  \item{model     }{see \code{\link{glm}}}
-  \item{x     }{see \code{\link{glm}}}
-  \item{y     }{see \code{\link{glm}}}
-  \item{contrasts}{see \code{\link{glm}}}
-  \item{...}{not used.}
+  \item{...}{ Additional parameters passed to \code{\link{glm}}.}
 }
 \value{
   An objects of class \code{mira}, which stands for 'multiply imputed repeated analysis'.

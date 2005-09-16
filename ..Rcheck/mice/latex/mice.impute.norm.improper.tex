@@ -1,0 +1,49 @@
+\HeaderA{mice.impute.norm.improper}{Elementary Imputation Method: Linear Regression Analysis (improper)}{mice.impute.norm.improper}
+\keyword{misc}{mice.impute.norm.improper}
+\begin{Description}\relax
+Imputes univariate missing data using linear regression analysis (improper version)
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+    mice.impute.norm.improper(y, ry, x)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{y}] Incomplete data vector of length n
+\item[\code{ry}] Vector of missing data pattern (FALSE=missing, TRUE=observed)
+\item[\code{x}] Matrix (n x p) of complete covariates.
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+This creates imputation using the spread around the fitted 
+linear regression line of y given x, as fitted on the observed data.
+\end{Details}
+\begin{Value}
+A vector of length nmis with imputations.
+\end{Value}
+\begin{Section}{Warning}
+The function does not incorporate the variability of the regression
+weights, so it is not 'proper' in the sense of Rubin. For small samples, 
+variability of the mice.imputed data is therefore somewhat underestimated.
+\end{Section}
+\begin{Note}\relax
+This function is provided mainly to allow comparison between proper
+and improper norm methods.
+\end{Note}
+\begin{Author}\relax
+Stef van Buuren, Karin Oudshoorn, 2000
+\end{Author}
+\begin{References}\relax
+Van Buuren, S. \& Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+
+Brand, J.P.L. (1999). Development, Implementation and Evaluation of
+Multiple Imputation Strategies for the Statistical Analysis of
+Incomplete Data Sets. Ph.D. Thesis, TNO Prevention
+and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1.
+\end{References}
+\begin{SeeAlso}\relax
+\code{\LinkA{mice}{mice}},  \code{\LinkA{mice.impute.norm}{mice.impute.norm}}
+\end{SeeAlso}
+

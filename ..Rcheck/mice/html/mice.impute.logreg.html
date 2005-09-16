@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Elementary Imputation Method: Logistic Regression</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for mice.impute.logreg {mice}"><tr><td>mice.impute.logreg {mice}</td><td align="right">R Documentation</td></tr></table>
+<h2>Elementary Imputation Method: Logistic Regression</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Imputes univariate missing data using logistic regression.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+    mice.impute.logreg(y, ry, x)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+Incomplete data vector of length n</td></tr>
+<tr valign="top"><td><code>ry</code></td>
+<td>
+Vector of missing data pattern of length n (FALSE=missing,
+TRUE=observed) </td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+Matrix (n x p) of complete covariates.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+Imputation for binary response variables by the Bayesian 
+logistic regression model. See Rubin (1987, p. 169-170) for
+a description of the method.
+The method consists of the following steps:
+<ol>
+<li>Fit a logit, and find (bhat, V(bhat))
+<li>Draw BETA from N(bhat, V(bhat))
+<li>Compute predicted scores for m.d., i.e. logit-1(X BETA)
+<li>Compare the score to a random (0,1) deviate, and mice.impute.</ol>
+<p>
+The method relies on the standard glm.fit function.
+</p>
+
+
+<h3>Value</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>imp</code></td>
+<td>
+A vector of length nmis with imputations (0 or 1).</td></tr>
+</table>
+
+<h3>Note</h3>
+
+<p>
+An alternative is mice.impute.logreg2.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Stef van Buuren, Karin Oudshoorn, 2000
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Van Buuren, S. &amp; Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+</p>
+<p>
+Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple Imputation Strategies for 
+the Statistical Analysis of Incomplete Data Sets. Ph.D. Thesis, 
+TNO Prevention and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="mice.html">mice</a></code>, <code><a href="../../stats/html/glm.html">glm</a></code>, <code><a href="../../stats/html/glm.html">glm.fit</a></code>,
+<code><a href="mice.impute.logreg2.html">mice.impute.logreg2</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>mice</em> version 1.15 <a href="00Index.html">Index]</a></div>
+
+</body></html>

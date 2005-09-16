@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Elementary Imputation Method: Simple Random Sample</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for mice.impute.sample {mice}"><tr><td>mice.impute.sample {mice}</td><td align="right">R Documentation</td></tr></table>
+<h2>Elementary Imputation Method: Simple Random Sample</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Imputes a random sample from the observed y data
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mice.impute.sample(y, ry, x=NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+Incomplete data vector of length n</td></tr>
+<tr valign="top"><td><code>ry</code></td>
+<td>
+Vector of missing data pattern (FALSE=missing, TRUE=observed)</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+Matrix (n x p) of complete covariates.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+This function takes a simple random sample from the observed values in
+y, and returns these as imputations.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A vector of length nmis with imputations.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Stef van Buuren, Karin Oudshoorn, 2000
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Van Buuren, S. &amp; Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+</p>
+
+
+
+<hr><div align="center">[Package <em>mice</em> version 1.15 <a href="00Index.html">Index]</a></div>
+
+</body></html>

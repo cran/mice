@@ -1,0 +1,67 @@
+\HeaderA{mice.mids}{Multivariate Imputation by Chained Equations (Iteration Step)}{mice.mids}
+\keyword{misc}{mice.mids}
+\begin{Description}\relax
+Takes a "mids"-object, and produces an new object of class "mids".
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+mice.mids(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{obj}] An object of class "mids", typically produces by a previous call
+to \code{mice()} or \code{mice.mids()} 
+\item[\code{maxit}] The number of additional Gibbs sampling iterations. 
+\item[\code{diagnostics}] A Boolean flag. If TRUE, diagnostic information will be appended to 
+the value of the function. If FALSE, only the imputed data are saved. 
+The default is TRUE.
+\item[\code{printFlag}] A Boolean flag. If TRUE, diagnostic information during the Gibbs sampling
+iterations will be written to the command window.  The default is TRUE.
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+This function enables the user to split up the computations of the 
+Gibbs sampler into smaller parts. This is useful for the following
+reasons:
+\begin{itemize}
+\item RAM memory may become easily exhausted if the number of iterations is 
+large. Returning to prompt/session level may alleviate these problems.
+\item The user can compute customized convergence statistics at specific
+points, e.g. after each iteration, for monitoring convergence.
+- For computing a 'few extra iterations'.
+\end{itemize}
+Note: The imputation model itself is specified in the mice() function
+and cannot be changed with mice.mids.
+The state of the random generator is saved with the mids-object.
+\end{Details}
+\begin{Author}\relax
+Stef van Buuren, Karin Oudshoorn, 2000
+\end{Author}
+\begin{References}\relax
+Van Buuren, S. \& Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+\end{References}
+\begin{SeeAlso}\relax
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+data(nhanes)
+imp1 <- mice(nhanes,maxit=1)
+imp2 <- mice.mids(imp1)
+
+# yields the same result as
+imp <- mice(nhanes,maxit=2)
+
+# for example:
+# 
+# > imp$imp$bmi[1,]
+#      1    2    3    4    5 
+# 1 30.1 35.3 33.2 35.3 27.5
+# > imp2$imp$bmi[1,]
+#      1    2    3    4    5 
+# 1 30.1 35.3 33.2 35.3 27.5
+# 
+\end{ExampleCode}
+\end{Examples}
+

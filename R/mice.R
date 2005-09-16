@@ -53,27 +53,6 @@
 
 # Define settings
 
-.R.          <- length(version$language) && (version$language=='R')
-.SV4.        <- !.R. && (version$major > 4)
-
-##For compatibility with pre-version 5.x:
-# Still need to source in definitions if S-Plus pre V6
-# as may be compiling dist on another machine with S+2000 Rel 3
-w <- (!.R.) && (!.SV4.)
-if(w || !exists('oldUnclass'))  oldUnclass  <- unclass
-if(w || !exists('oldClass'))    oldClass    <- class
-if(w || !exists('oldClass<-'))
-  'oldClass<-' <- function(x, value) {
-    oldClass(x) <- value
-    x
-  }
-if(w || !exists('logb'))        logb        <- log
-
-if(w || !exists('existsFunction')) existsFunction <- function(...)
-  exists(..., mode='function')
-rm(w)
-
-
 #---------------------- MICE ------------------------------------------------
 
 mice<-function(data, 
@@ -82,7 +61,7 @@ mice<-function(data,
     predictorMatrix = (1 - diag(1, ncol(data))),
     visitSequence = (1:ncol(data))[apply(is.na(data),2,any)], 
     defaultImputationMethod=c("pmm","logreg","polyreg"),
-    maxit = 5,																											
+    maxit = 5,
     diagnostics = TRUE, 
     printFlag = TRUE,
     seed = NA)
@@ -151,7 +130,7 @@ mice<-function(data,
             for(i in 1:m) {
                 if (nmis[j]<nrow(data)-1) {
                     # if (is.passive(imputationMethod[j])) p$data[ry,j] <- data[ry,j] <- model.frame(imputationMethod[j],data[ry,])
-                    imp[[j]][,i] <- impute.sample(y, ry)
+                    imp[[j]][,i] <- mice.impute.sample(y, ry)
                 }
                 else imp[[j]][,i] <- rnorm(nrow(data))
             }
@@ -311,7 +290,7 @@ check.imputationMethod<-function(imputationMethod, defaultImputationMethod, visi
 #   check whether the elementary imputation methods are actually available on the search path
 #
     active <- !is.passive(imputationMethod) & nmis > 0
-    fullNames <- paste("impute", imputationMethod[active], sep=".")
+    fullNames <- paste("mice.impute", imputationMethod[active], sep=".")
     notFound <- !sapply(fullNames,exists,mode="function") ## SVB 6 Feb 2004
     # notFound <- !sapply(fullNames, existsFunction)  ## FEH
     if (any(notFound)) stop(paste("The following functions were not found:",paste(fullNames[notFound],collapse=", ")))
@@ -350,11 +329,9 @@ padModel <- function(data,  imputationMethod, predictorMatrix, visitSequence, nm
             data<-(cbind(data,matrix(0,ncol=n.dummy,nrow=nrow(data))))
             data[is.na(data[,j]),(ncol(predictorMatrix)-n.dummy+1):ncol(predictorMatrix)]<-NA
             ## PM
-            if(.R.) cat.column <- data[!is.na(data[, j]), j] else
-              assign("cat.column",data[!is.na(data[,j]),j],where=1)
+            cat.column <- data[!is.na(data[, j]), j] 
             data[!is.na(data[,j]),(ncol(predictorMatrix)-n.dummy+1):ncol(predictorMatrix)]<-model.matrix(~cat.column-1)[,-1]
             names(data)[(ncol(predictorMatrix)-n.dummy+1):ncol(predictorMatrix)]<-paste(attr(data,"names")[j],"d",(1:n.dummy),sep=".")
-            if(!.R.) rm(cat.column) ## FEH
             imputationMethod <- c(imputationMethod, rep("dummy", n.dummy))
             categories<-rbind(categories,data.frame(yes.no.categorical=rep(FALSE,n.dummy),
                number.of.dummies=rep(0,n.dummy),yes.no.dummy=rep(TRUE,n.dummy),corresponding.column.dummy=rep(j,n.dummy)))
@@ -397,10 +374,8 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 
             # augment the data with the actual dummy variables
             for (j in setdiff(p$visitSequence,visitSequence)){
-              if(.R.) cat.columns <- p$data[, p$categories[j, 4]] else
-               assign("cat.columns",p$data[,p$categories[j,4]],where=1)
-                p$data[,(j:(j+p$categories[p$categories[j,4],2]-1))] <- matrix((model.matrix(~cat.columns-1)[,-1]),ncol=p$categories[p$categories[j,4],2],nrow=nrow(p$data))
-                if(!.R.) remove("cat.columns")  ## FEH
+               cat.columns <- p$data[, p$categories[j, 4]]
+                p$data[,(j:(j+p$categories[p$categories[j,4],2]-1))] <- matrix((model.matrix(~cat.columns-1)[,-1]),ncol=p$categories[p$categories[j,4],2],nrow=nrow(p$data)) 
             }
             #
             # iterate once over the variables of the augmented model
@@ -410,12 +385,12 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                 theMethod <- p$imputationMethod[j]
                 if((!is.passive(theMethod)) & theMethod!="dummy"){  # for a true imputation method
                     if (substring(theMethod, 1, 3) != "ml.") {			# RJ: for an non-multilevel imputation method 
-                    	imp[[j]][,i] <- do.call(paste("impute",theMethod,sep="."), 
+                    	imp[[j]][,i] <- do.call(paste("mice.impute",theMethod,sep="."), 
                         	args = list(p$data[,j], r[,j], p$data[,p$predictorMatrix[j,]==1,drop=FALSE]))
                     }
                     else { # for a multilevel imputation method
                     	predictors = p$predictorMatrix[j,] > 0
-                    	imp[[j]][,i] <- do.call(paste("impute",theMethod,sep="."), 
+                    	imp[[j]][,i] <- do.call(paste("mice.impute",theMethod,sep="."), 
                         	args = list(p$data[,j], r[,j], p$data[,predictors,drop=FALSE], p$predictorMatrix[j,predictors]))
                     }	    	
                     p$data[!r[,j],j] <- imp[[j]][,i]
@@ -426,8 +401,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                 }
                 else if (theMethod== "dummy") {
                   ## FEH
-                  if(.R.) cat.columns <- p$data[,p$categories[j,4]] else
-                    assign("cat.columns",p$data[,p$categories[j,4]],where=1)
+                    cat.columns <- p$data[,p$categories[j,4]] 
                     p$data[,(j:(j+p$categories[p$categories[j,4],2]-1))]<-
                              matrix((model.matrix(~cat.columns-1)[,-1]),ncol=p$categories[p$categories[j,4],2],nrow=nrow(p$data))
                     remove("cat.columns")
@@ -436,13 +410,8 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
         }   # end i loop
         for(j in 1:length(visitSequence)) {
             if (!is.factor(data[,visitSequence[j]])){
-              if(.R.) {  ## PM
                 chainVar[j, k, ] <- apply(imp[[visitSequence[j]]],2,var) 
                 chainMean[j, k, ] <- colMeans(as.matrix(imp[[visitSequence[j]]])) ##pm 04/02
-              } else {
-                chainVar[j, k,] <- colVars(imp[[visitSequence[j]]])             
-                chainMean[j, k,] <- colMeans(as.matrix(imp[[visitSequence[j]]]))
-              }
               }
         }
     } # end iteration loop
@@ -455,14 +424,14 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 
 
 #
-# impute.ssc
+# mice.impute.ssc
 #
 # Standard collection of elementary imputation functions.
 # Part of Oudshoorn & Van Buuren MICE library V1.12
 #
 #----------------------------------IMPUTE.NORM----------------------------------
 
-impute.norm<-function(y, ry, x)
+mice.impute.norm<-function(y, ry, x)
 {
 # Bayesian normal imputation of y given x according to Rubin p. 167
 # x is complete.
@@ -500,9 +469,9 @@ impute.norm<-function(y, ry, x)
 }
 
 #----------------------------------IMPUTE.NORM.IMPROPER-------------------------
-impute.norm.improper<-function(y, ry, x)
+mice.impute.norm.improper<-function(y, ry, x)
 {
-# impute.norm.improper
+# mice.impute.norm.improper
 # Regression imputation of y given x, with a fixed regression
 # line, and with random draws of the residuals around the line.
 # x is complete.
@@ -513,14 +482,14 @@ impute.norm.improper<-function(y, ry, x)
 #    x <- cbind(1, as.matrix(x))
 #    parm <- .norm.fix(y, ry, x)
 #    return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
-	stop("impute.norm.improper is disabled this release")
+	stop("mice.impute.norm.improper is disabled this release")
 }
 
 
 
 #-----------------------------IMPUTE.PMM-----------------------------------------------
 
-impute.pmm<-function(y, ry, x)
+mice.impute.pmm<-function(y, ry, x)
 {
 # Imputation of y by predictive mean matching, based on
 # Rubin (p. 168, formulas a and b).
@@ -544,7 +513,7 @@ impute.pmm<-function(y, ry, x)
 #-------------------------.PMM.MATCH---------------------------------
 .pmm.match<-function(z, yhat=yhat, y=y)
 {
-# Auxilary function for impute.pmm.
+# Auxilary function for mice.impute.pmm.
 # z    = target predictive value (scalar)
 # yobs = array of yhat, to be matched against z
 # y    = array of donor data values, same length as yobs.
@@ -559,9 +528,9 @@ impute.pmm<-function(y, ry, x)
 
 #-------------------------IMPUTE.LOGREG------------------------------
 
-impute.logreg<-function(y, ry, x)
+mice.impute.logreg<-function(y, ry, x)
 {
-# impute.logreg 
+# mice.impute.logreg 
 #
 # Imputation for binary response variables by the Bayesian 
 # logistic regression model. See Rubin (1987, p. 169-170) for
@@ -571,19 +540,16 @@ impute.logreg<-function(y, ry, x)
 # 1. Fit a logit, and find (bhat, V(bhat))
 # 2. Draw BETA from N(bhat, V(bhat))
 # 3. Compute predicted scores for m.d., i.e. logit-1(X BETA)
-# 4. Compare the score to a random (0,1) deviate, and impute.
+# 4. Compare the score to a random (0,1) deviate, and mice.impute.
 #
 # Authors: Stef van Buuren, Karin Oudshoorn, 1998
 #
 #
     x <- cbind(1, as.matrix(x))
     ## PM
-    fit <- if(.R.)
-      glm.fit(x[ry, ], y[ry], family = binomial(link = logit),
+    fit <- glm.fit(x[ry, ], y[ry], family = binomial(link = logit),
               control=glm.control(maxit = 10, trace = FALSE, epsilon =
-                0.1)) else
-    glm.fit(x[ry, ], y[ry], family = binomial(link = logit),
-            maxit = 10, epsilon = 0.1, trace = FALSE)
+                0.1))
     fit.sum <- summary.glm(fit)
     beta <- coef(fit)
     rv <- t(chol(fit.sum$cov.unscaled))
@@ -598,9 +564,9 @@ impute.logreg<-function(y, ry, x)
 
 #-------------------------IMPUTE.LOGREG2------------------------------
 
-impute.logreg2 <- function(y, ry, x)
+mice.impute.logreg2 <- function(y, ry, x)
 {
-# impute.logreg2 
+# mice.impute.logreg2 
 #
 # Imputation for binary response variables by the Bayesian 
 # logistic regression model. See Rubin (1987, p. 169-170) for
@@ -612,7 +578,7 @@ impute.logreg2 <- function(y, ry, x)
 # 1. Fit a logit, and find (bhat, V(bhat))
 # 2. Draw BETA from N(bhat, V(bhat))
 # 3. Compute predicted scores for m.d., i.e. logit-1(X BETA)
-# 4. Compare the score to a random (0,1) deviate, and impute.
+# 4. Compare the score to a random (0,1) deviate, and mice.impute.
 #
 # Authors: Stef van Buuren, Karin Oudshoorn, 1998
 #
@@ -636,7 +602,7 @@ impute.logreg2 <- function(y, ry, x)
 #        vec <- factor(vec, c(0, 1), levels(y))
 #    }
 #    return(vec)
-	stop("impute.logreg2 is disabled this release")
+	stop("mice.impute.logreg2 is disabled this release")
 }
 
 logitreg <- function(x, y, wt = rep(1, length(y)), intercept = TRUE, start, trace = TRUE, ...)
@@ -671,9 +637,9 @@ logitreg <- function(x, y, wt = rep(1, length(y)), intercept = TRUE, start, trac
 
 #-------------------------IMPUTE.POLYREG-----------------------------   
     
-impute.polyreg<-function(y, ry, x)
+mice.impute.polyreg<-function(y, ry, x)
 {   
-# impute.polyreg
+# mice.impute.polyreg
 #
 # Imputation for categorical response variables by the Bayesian 
 # polytomous regression model. See J.P.L. Brand (1999), Chapter 4,
@@ -704,9 +670,9 @@ impute.polyreg<-function(y, ry, x)
     
 #-------------------------IMPUTE.LDA-----------------------------   
 
-impute.lda <- function(y, ry, x)
+mice.impute.lda <- function(y, ry, x)
 {
-# impute.lda
+# mice.impute.lda
 #
 # Imputation of categorical response variables by linear discriminant
 # analysis. This function uses the Venables/Ripley functions
@@ -728,8 +694,8 @@ impute.lda <- function(y, ry, x)
     
 #--------------------------------------IMPUTE.MEAN------------------------------
 
-impute.mean<-function(y, ry, x=NULL)
-# impute.mean
+mice.impute.mean<-function(y, ry, x=NULL)
+# mice.impute.mean
 #
 # Unconditional mean imputation 
 #
@@ -739,8 +705,8 @@ impute.mean<-function(y, ry, x=NULL)
 
 #--------------------------------------IMPUTE.SAMPLE------------------------------
 
-impute.sample<-function(y, ry, x=NULL)
-# impute.sample
+mice.impute.sample<-function(y, ry, x=NULL)
+# mice.impute.sample
 #
 # Generates random sample from the observed y's
 #
@@ -749,7 +715,7 @@ impute.sample<-function(y, ry, x=NULL)
 }
 #------------------------------IMPUTE.PASSIVE------------------------------------
 
-impute.passive <- function(data, func)
+mice.impute.passive <- function(data, func)
 #
 # Special elementary imputation method for transformed data.
 {
@@ -893,7 +859,7 @@ pool <- function(object, method="smallsample")
     }
     names(r) <- names(df) <- names(f) <- names
     fit <- list(call=call,call1=object$call,call2=object$call1,nmis=object$nmis,m=m,qhat=qhat,u=u,qbar=qbar,ubar=ubar,b=b,t=t,r=r,df=df,f=f)
-    oldClass(fit) <- if(.SV4.)'mipo' else c("mipo",oldClass(object)) ## FEH
+    oldClass(fit) <- c("mipo",oldClass(object)) ## FEH
     return(fit)
 }
 
@@ -995,7 +961,7 @@ function(x)
         for(j in 1:p) {
             xj <- X[[j]]
             if(length(levels(xj))) {
-                X[[j]] <- as.vector(codes(xj))
+                X[[j]] <- as.integer(xj)
             }
             else X[[j]] <- format(xj)
         }
@@ -1003,7 +969,7 @@ function(x)
     if(length(unique(sapply(X, function(Xi)
     if(is.matrix(Xi)) nrow(Xi) else length(Xi)))) != 1)
         stop("Illegal data frame: lengths of columns differ")
-    X <- unlist(X, recursive = FALSE, use.names = FALSE)
+   	X <- unlist(X, recursive = FALSE, use.names = FALSE)
     X <- as.numeric(X)
     dim(X) <- c(n, length(X)/n)
     dimnames(X) <- list(dn[[1]], unlist(collabs, use.names = FALSE))
@@ -1171,8 +1137,7 @@ title(names[m])
 
 #-------------------------------LM.MIDS---------------------------------
 
-"lm.mids" <- function(formula, data, weights, subset, na.action, method = "qr", model = FALSE, x
-     = FALSE, y = FALSE, contrasts = NULL, ...) 
+"lm.mids" <- function(formula, data, ...)
 {
 #  adapted 28/1/00
 #  repeated complete data regression (lm) on a mids data set
@@ -1191,15 +1156,13 @@ title(names[m])
 # return the complete data analyses as a list of length nimp
 #
     object <- list(call = call, call1 = data$call, nmis = data$nmis, analyses = analyses)
-    oldClass(object) <- if(.SV4.)'mira' else c("mira", "lm")  ## FEH
+    oldClass(object) <- c("mira", "lm")  ## FEH
     return(object)
 }
 
 #-------------------------------GLM.MIDS---------------------------------
 
-"glm.mids" <- function(formula = formula(data), family = gaussian, data = sys.parent(), weights, 
-    subset, na.action, start = eta, control = glm.control(...), method = "glm.fit", 
-    model = FALSE, x = FALSE, y = TRUE, contrasts = NULL, ...)
+"glm.mids" <- function(formula, data, ...)
 {
 #  adapted 04/02/00
 #  repeated complete data regression (glm) on a mids data set
@@ -1218,7 +1181,7 @@ title(names[m])
 # return the complete data analyses as a list of length nimp
 #
     object <- list(call = call, call1 = data$call, nmis = data$nmis, analyses = analyses)
-    oldClass(object) <- if(.SV4.) 'mira' else c("mira", "glm","lm") ## FEH
+    oldClass(object) <- c("mira", "glm","lm") ## FEH
     return(object)
 }
 
@@ -1228,20 +1191,11 @@ title(names[m])
 
 #------------------------------.First.lib-------------------------------
 .First.lib <- function(library,section){
-    cat("MICE V1.14 library            Copyright (2004) TNO Prevention and Health, Leiden\n")
+    cat("MICE V1.15 library            Copyright (2004) TNO Prevention and Health, Leiden\n")
     cat("This library is distributed under the GNU General Public License (version 2)\n")
-    if(.R.) {
-      require(Hmisc)      ##PM 04/02
-      require(MASS)
-      require(nnet)
-      require(nlme)				#RJ
-    } else {
-    library(Hmisc)
-    library(MASS)
-    library(nnet)
-    library(nlme)				#RJ
-    }
-    invisible()
+    require(Hmisc)      ##PM 04/02
+    require(MASS)
+    require(nnet)
 }
 
 

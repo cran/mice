@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Generelized Linear Regression on Multiply Imputed Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for glm.mids {mice}"><tr><td>glm.mids {mice}</td><td align="right">R Documentation</td></tr></table>
+<h2>Generelized Linear Regression on Multiply Imputed Data</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Performs repeated glm on a multiply imputed data set
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+    glm.mids(formula, data, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+a formula expression as for other regression models, of the form 
+response ~ predictors. See the documentation
+of <code><a href="../../stats/html/lm.html">lm</a></code> and <code><a href="../../stats/html/formula.html">formula</a></code> for details.</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+An object of type <code>mids</code>, which stands for 'multiply imputed data set', typically
+created by function <code>mice()</code>.</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+Additional parameters passed to <code><a href="../../stats/html/glm.html">glm</a></code>.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+see <code><a href="../../stats/html/glm.html">glm</a></code>
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+An objects of class <code>mira</code>, which stands for 'multiply imputed repeated analysis'.
+This object contains m <code>glm.objects</code>, plus some descriptive information.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Stef van Buuren, Karin Oudshoorn, 2000
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Van Buuren, S. &amp; Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="../../stats/html/glm.html">glm</a></code>,  <code><a href="mids.html">mids</a></code>, <code><a href="mira.html">mira</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(nhanes)
+imp &lt;- mice(nhanes)     # do default multiple imputation on a numeric matrix
+glm.mids((hyp==2)~bmi+chl,data=imp)
+    # fit
+    # $call:
+    # glm.mids(formula = (hyp == 2) ~ bmi + chl, data = imp)
+    # 
+    # $call1:
+    # mice(data = nhanes)
+    # 
+    # $nmis:
+    #  age bmi hyp chl 
+    #    0   9   8  10
+    # 
+    # $analyses:
+    # $analyses[[1]]:
+    # Call:
+    # glm(formula = formula, data = data.i)
+    # 
+    # Coefficients:
+    #  (Intercept)         bmi         chl 
+    #   -0.4746337 -0.01565534 0.005417846
+    # 
+    # Degrees of Freedom: 25 Total; 22 Residual
+    # Residual Deviance: 2.323886 
+    # 
+    # $analyses[[2]]:
+    # Call:
+    # glm(formula = formula, data = data.i)
+    # 
+    # Coefficients:
+    #  (Intercept)         bmi         chl 
+    #   -0.1184695 -0.02885779 0.006090282
+    # 
+    # Degrees of Freedom: 25 Total; 22 Residual
+    # Residual Deviance: 3.647927 
+    # 
+    # $analyses[[3]]:
+    # Call:
+    # glm(formula = formula, data = data.i)
+    # 
+    # Coefficients:
+    #  (Intercept)          bmi         chl 
+    #   -0.1503616 -0.003002851 0.002130091
+    # 
+    # Degrees of Freedom: 25 Total; 22 Residual
+    # Residual Deviance: 3.799126 
+    # 
+    # $analyses[[4]]:
+    # Call:
+    # glm(formula = formula, data = data.i)
+    # 
+    # Coefficients:
+    #  (Intercept)        bmi         chl 
+    #  0.009442083 -0.0237619 0.004631881
+    # 
+    # Degrees of Freedom: 25 Total; 22 Residual
+    # Residual Deviance: 3.874522 
+    # 
+    # $analyses[[5]]:
+    # Call:
+    # glm(formula = formula, data = data.i)
+    # 
+    # Coefficients:
+    #  (Intercept)         bmi         chl 
+    #   0.09932161 -0.02168292 0.003857599
+    # 
+    # Degrees of Freedom: 25 Total; 22 Residual
+    # Residual Deviance: 4.025066 
+    # 
+    # 
+    # &gt; 
+    # 
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>mice</em> version 1.15 <a href="00Index.html">Index]</a></div>
+
+</body></html>

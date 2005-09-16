@@ -1,0 +1,24 @@
+nhanes2                 package:mice                 R Documentation
+
+_n_h_a_n_e_s_2 _d_a_t_a _s_e_t
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+_U_s_a_g_e:
+
+     data(nhanes2)
+
+_F_o_r_m_a_t:
+
+     A data frame with 25 observations on the following 4 variables.
+
+     _a_g_e a factor with levels '1' '2' '3'
+
+     _b_m_i a numeric vector
+
+     _h_y_p a factor with levels '1' '2'
+
+     _c_h_l a numeric vector
+
+_S_o_u_r_c_e:
+

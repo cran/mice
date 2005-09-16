@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Multivariate Imputation by Chained Equations (Iteration Step)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for mice.mids {mice}"><tr><td>mice.mids {mice}</td><td align="right">R Documentation</td></tr></table>
+<h2>Multivariate Imputation by Chained Equations (Iteration Step)</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Takes a "mids"-object, and produces an new object of class "mids".
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mice.mids(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+An object of class "mids", typically produces by a previous call
+to <code>mice()</code> or <code>mice.mids()</code> </td></tr>
+<tr valign="top"><td><code>maxit</code></td>
+<td>
+The number of additional Gibbs sampling iterations. </td></tr>
+<tr valign="top"><td><code>diagnostics</code></td>
+<td>
+A Boolean flag. If TRUE, diagnostic information will be appended to 
+the value of the function. If FALSE, only the imputed data are saved. 
+The default is TRUE.</td></tr>
+<tr valign="top"><td><code>printFlag</code></td>
+<td>
+A Boolean flag. If TRUE, diagnostic information during the Gibbs sampling
+iterations will be written to the command window.  The default is TRUE.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+This function enables the user to split up the computations of the 
+Gibbs sampler into smaller parts. This is useful for the following
+reasons:
+begin{itemize}
+<li>RAM memory may become easily exhausted if the number of iterations is 
+large. Returning to prompt/session level may alleviate these problems.
+<li>The user can compute customized convergence statistics at specific
+points, e.g. after each iteration, for monitoring convergence.
+- For computing a 'few extra iterations'.
+end{itemize}
+Note: The imputation model itself is specified in the mice() function
+and cannot be changed with mice.mids.
+The state of the random generator is saved with the mids-object.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Stef van Buuren, Karin Oudshoorn, 2000
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Van Buuren, S. &amp; Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+</p>
+
+
+<h3>See Also</h3>
+
+
+
+
+<h3>Examples</h3>
+
+<pre>
+data(nhanes)
+imp1 &lt;- mice(nhanes,maxit=1)
+imp2 &lt;- mice.mids(imp1)
+
+# yields the same result as
+imp &lt;- mice(nhanes,maxit=2)
+
+# for example:
+# 
+# &gt; imp$imp$bmi[1,]
+#      1    2    3    4    5 
+# 1 30.1 35.3 33.2 35.3 27.5
+# &gt; imp2$imp$bmi[1,]
+#      1    2    3    4    5 
+# 1 30.1 35.3 33.2 35.3 27.5
+# 
+</pre>
+
+
+
+<hr><div align="center">[Package <em>mice</em> version 1.15 <a href="00Index.html">Index]</a></div>
+
+</body></html>

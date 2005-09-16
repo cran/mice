@@ -1,0 +1,38 @@
+check.imputationMethod
+                        internal mice functions
+complete                Produces Imputed Flat Files from Multiply
+                        Imputed Data Set (mids)
+glm.mids                Generelized Linear Regression on Multiply
+                        Imputed Data
+lm.mids                 Linear Regression on Multiply Imputed Data
+md.pattern              Missing Data Pattern
+mice                    Multivariate Imputation by Chained Equations
+mice.impute.lda         Elementary Imputation Method: Linear
+                        Discriminant Analysis
+mice.impute.logreg      Elementary Imputation Method: Logistic
+                        Regression
+mice.impute.logreg2     Elementary Imputation Method: Logistic
+                        Regression
+mice.impute.mean        Elementary Imputation Method: Simple Mean
+                        Imputation
+mice.impute.norm        Elementary Imputation Method: Linear Regression
+                        Analysis
+mice.impute.norm.improper
+                        Elementary Imputation Method: Linear Regression
+                        Analysis (improper)
+mice.impute.passive     Elementary Imputation Method: Passive
+                        Imputation
+mice.impute.pmm         Elementary Imputation Method: Linear Regression
+                        Analysis
+mice.impute.polyreg     Elementary Imputation Method: Polytomous
+                        Regression
+mice.impute.sample      Elementary Imputation Method: Simple Random
+                        Sample
+mice.mids               Multivariate Imputation by Chained Equations
+                        (Iteration Step)
+mids                    Multiply Imputed Data Set
+mira                    Multiply Imputed Repeated Analysis
+nhanes                  nhanes data set
+nhanes2                 nhanes2 data set
+pool                    Multiple Imputation Pooling
+print.mipo              Multiply Imputed Pooled Analysis

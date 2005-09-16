@@ -1,0 +1,60 @@
+mice.impute.polyreg           package:mice           R Documentation
+
+_E_l_e_m_e_n_t_a_r_y _I_m_p_u_t_a_t_i_o_n _M_e_t_h_o_d: _P_o_l_y_t_o_m_o_u_s _R_e_g_r_e_s_s_i_o_n
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Imputes missing data in a categorical variable using polytomous
+     regression
+
+_U_s_a_g_e:
+
+     mice.impute.polyreg(y, ry, x)
+
+_A_r_g_u_m_e_n_t_s:
+
+       y: Incomplete data vector of length n
+
+      ry: Vector of missing data pattern (FALSE=missing, TRUE=observed)
+
+       x: Matrix (n x p) of complete covariates.
+
+_D_e_t_a_i_l_s:
+
+     Imputation for categorical response variables by the Bayesian 
+     polytomous regression model. See J.P.L. Brand (1999), Chapter 4,
+     Appendix B.
+
+     The method consists of the following steps: \begin{enumerate}
+
+     *  Fit categorical response as a multinomial model 
+
+     *  Compute predicted categories
+
+     *  Add appropriate noise to predictions. \end{enumerate} This
+        algorithm uses the function multinom from the libraries nnet
+        and MASS (Venables and Ripley).
+
+_V_a_l_u_e:
+
+     A vector of length nmis with imputations.
+
+_A_u_t_h_o_r(_s):
+
+     Stef van Buuren, Karin Oudshoorn, 2000
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation
+     by Chained Equations:  MICE V1.0 User's manual. Report
+     PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+
+     Brand, J.P.L. (1999). Development, Implementation and Evaluation
+     of Multiple Imputation Strategies for the Statistical Analysis of
+     Incomplete Data Sets. Ph.D. Thesis, TNO Prevention and
+     Health/Erasmus University Rotterdam. ISBN 90-74479-08-1.
+
+_S_e_e _A_l_s_o:
+
+     'mice', 'multinom'
+

@@ -11,7 +11,6 @@
 \alias{logitreg}
 \alias{mipo}
 \alias{.norm.draw}
-\alias{oldUnclass}
 \alias{padModel}
 \alias{.pmm.match}
 \alias{sampler}
@@ -27,7 +26,6 @@ check.imputationMethod(imputationMethod, defaultImputationMethod, visitSequence,
 check.predictorMatrix(predictorMatrix, nmis, nvar)
 check.visitSequence(visitSequence, nmis, nvar)
 data.frame.to.matrix(x)
-oldUnclass(x)
 is.mids(data)
 is.mipo(data)
 is.mira(data)

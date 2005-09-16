@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Produces Imputed Flat Files
+from Multiply Imputed Data Set (mids)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for complete {mice}"><tr><td>complete {mice}</td><td align="right">R Documentation</td></tr></table>
+<h2>Produces Imputed Flat Files
+from Multiply Imputed Data Set (mids)</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Takes an object of type mids, fills in the missing data, and
+returns the completed data in a specified format.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+    complete(x, action=1)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+An object of class <code>'mids'</code>
+(created by the function <code>mice()</code>).</td></tr>
+<tr valign="top"><td><code>action</code></td>
+<td>
+If action is a scalar between 1 and <code>x$m</code>,
+the function returns the data with the action's
+imputation filled in. Thus, <code>action=1</code> returns
+the first
+completed data set. 
+The can also be one of the following
+strings: <code>"long"</code>, <code>"broad"</code>, <code>"repeated"</code>.
+This has the following meaning:
+begin{description}
+item[<code>action="long"</code>] produces a long matrix with n*m
+rows,containing all imputed data plus two additional
+variables <code>"_ID_"</code> (containing the row.names)
+and <code>"_IMP_"</code> (containing the imputation number).
+item[<code>action="broad"</code>] produces a broad matrix with m times
+the number of columns in the original data.
+The first ncol(<code>x$data</code>) columns contain the first
+imputed data matrix. Column names are changed to
+reflect the imputation number.
+item[<code>action="repeated"</code>] produces a broad matrix with m times
+<code>ncol(x$data)</code> columns. The first m columns
+give the filled-in first variable. Column names are
+changed to reflect the imputation number.
+end{description}
+</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+A data frame with the imputed values filled in.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Stef van Buuren, Karin Oudshoorn, 2000
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Van Buuren, S. &amp; Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
+MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="mice.html">mice</a></code>, <code><a href="mids.html">mids</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(nhanes)
+imp &lt;- mice(nhanes)     # do default multiple imputation on a numeric matrix
+mat &lt;- complete(imp)    # fills in the first imputation
+mat &lt;- complete(imp, 3) # fills in the third imputation
+mat &lt;- complete(imp, "long") # produces a long matrix with stacked complete data
+mat &lt;- complete(imp, "b") # a broad matrix
+cor(mat)                # for numeric mat, produces a blocked correlation matrix, where
+            # each m*m block contains of the same variable pair over different
+            # multiple imputations.
+</pre>
+
+
+
+<hr><div align="center">[Package <em>mice</em> version 1.15 <a href="00Index.html">Index]</a></div>
+
+</body></html>
