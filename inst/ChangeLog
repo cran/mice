@@ -19,3 +19,8 @@ Release Notes & known issues:
 * Work is underway to completely rewrite the library, including imputation functions for multilevel models
 
 FIXED: In the lm.mids and glm.mids functions, parameters were not passed through to glm and lm.
+
+v1.16 - 6/25/2007
+
+FIXED: The impution function impute.logreg used convergence criteria that were too optimistic when fitting a GLM with glm.fit. Thanks to Ulrike Gromping (groemping@tfh-berlin.de).
+ 

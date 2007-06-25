@@ -546,10 +546,7 @@ mice.impute.logreg<-function(y, ry, x)
 #
 #
     x <- cbind(1, as.matrix(x))
-    ## PM
-    fit <- glm.fit(x[ry, ], y[ry], family = binomial(link = logit),
-              control=glm.control(maxit = 10, trace = FALSE, epsilon =
-                0.1))
+    fit <- glm.fit(x[ry, ], y[ry], family = binomial(link = logit))
     fit.sum <- summary.glm(fit)
     beta <- coef(fit)
     rv <- t(chol(fit.sum$cov.unscaled))
@@ -885,7 +882,7 @@ md.pattern <- function(x)
     if(is.data.frame(x)) x <- data.frame.to.matrix(x)
     n <- nrow(x)
     p <- ncol(x)
-    storage.mode(x) <- "single" # find missingness patterns
+    mode(x) <- "single" # find missingness patterns
     r <- 1 * is.na(x)
     nmis <- as.integer(apply(r, 2, sum))
     names(nmis) <- dimnames(x)[[2]] # index the missing data patterns
@@ -1191,9 +1188,9 @@ title(names[m])
 
 #------------------------------.First.lib-------------------------------
 .First.lib <- function(library,section){
-    cat("MICE V1.15 library            Copyright (2004) TNO Prevention and Health, Leiden\n")
+    cat("MICE V1.16 library            Copyright (2004) TNO Prevention and Health, Leiden\n")
     cat("This library is distributed under the GNU General Public License (version 2)\n")
-    require(Hmisc)      ##PM 04/02
+    # require(Hmisc)
     require(MASS)
     require(nnet)
 }
