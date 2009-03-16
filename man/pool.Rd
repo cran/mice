@@ -3,14 +3,15 @@
 \title{Multiple Imputation Pooling}
 
 \description{
-  Pools the results of m repeated complete data analysis
+  Pools the results of $m$ repeated complete data analysis
 }
 \usage{
 pool(object, method="smallsample")
 }
 
 \arguments{
-  \item{object}{An object of class 'mira', produced by functions like lm.mids or glm.mids.}
+  \item{object}{An object of class 'mira', produced by functions like \code{lm.mids} 
+  or \code{glm.mids}.}
   \item{method}{ A string describing the method to compute the degrees of freedom. 
     The default value is "smallsample", which specifies the is 
     Barnard-Rubin adjusted degrees of freedom (Barnard& Rubin, 1999) 
@@ -30,9 +31,8 @@ pool(object, method="smallsample")
     \item the estimates of the model, typically present as 'coefficients' in 
     the fit object
     \item an appropriate estimate of the variance-covariance matrix of the 
-    estimates per analyses.
+    estimates per analyses (estimated by \code{\link{vcov}}.
   }
-  R-Specific: The original use of Varcov has been removed to vcov (VR MASS).
 }   
 
 \references{
@@ -41,10 +41,7 @@ pool(object, method="smallsample")
   
   Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. 
   New York: John Wiley and Sons.
-  
-  Alzola, C.F. and Harrell, F.E. (1999). An introduction to S-Plus and the Hmisc 
-  and Design Libraries. http://hesweb1.med.virginia.edu/biostat/s/index.html. 
-}
+  }
 \seealso{
   \code{\link{lm.mids}}, \code{\link{glm.mids}}, \code{\link{vcov}},
   \code{\link{print.mira}}, \code{\link{summary.mira}}
@@ -77,6 +74,6 @@ pool(fit)
 
 
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
 \keyword{misc}  

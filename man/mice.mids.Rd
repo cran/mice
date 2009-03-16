@@ -2,12 +2,12 @@
 \alias{mice.mids}
 \title{Multivariate Imputation by Chained Equations (Iteration Step)}
 \usage{
-mice.mids(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
+\method{mice}{mids}(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
 }
-\description{Takes a "mids"-object, and produces an new object of class "mids".
+\description{Takes a \code{mids} object, and produces a new object of class \code{mids}.
 }
 \arguments{
-  \item{obj}{   An object of class "mids", typically produces by a previous call
+  \item{obj}{   An object of class \code{mids}, typically produces by a previous call
     to \code{mice()} or \code{mice.mids()} }
   \item{maxit}{ The number of additional Gibbs sampling iterations. }
   \item{diagnostics}{A Boolean flag. If TRUE, diagnostic information will be appended to 
@@ -20,25 +20,28 @@ mice.mids(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
   This function enables the user to split up the computations of the 
   Gibbs sampler into smaller parts. This is useful for the following
   reasons:
-  \begin{itemize}
+  \itemize{
   \item RAM memory may become easily exhausted if the number of iterations is 
   large. Returning to prompt/session level may alleviate these problems.
   \item The user can compute customized convergence statistics at specific
   points, e.g. after each iteration, for monitoring convergence.
   - For computing a 'few extra iterations'.
-  \end{itemize}
-  Note: The imputation model itself is specified in the mice() function
-  and cannot be changed with mice.mids.
-  The state of the random generator is saved with the mids-object.
+  }
+  Note: The imputation model itself is specified in the \code{mice()} function
+  and cannot be changed with \code{mice.mids}.
+  The state of the random generator is saved with the \code{mids} object.
   
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
-  
+ Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
+\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
+Leiden: TNO Quality of Life.
+\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+ 
 }
-\seealso{
-}
+
+\seealso{\code{\link{complete}}, \code{\link{mice}}, \code{\link{set.seed}}}
+
 \examples{
 data(nhanes)
 imp1 <- mice(nhanes,maxit=1)
@@ -57,8 +60,7 @@ imp <- mice(nhanes,maxit=2)
 # 1 30.1 35.3 33.2 35.3 27.5
 # 
 }
-\keyword{}  
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000}     
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}     
 
 \keyword{misc} 

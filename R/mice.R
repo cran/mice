@@ -1,7 +1,7 @@
-#	R package MICE: Multivariate Imputation by Chained Equations
-#    Copyright (c) 2001, 2004, 2005 TNO Prevention and Health, Leiden
+#	 R package MICE: Multivariate Imputation by Chained Equations
+#    Copyright (c) 1999-2008 TNO Quality of Life, Leiden
 #	
-#	This file is part of the R package MICE.
+#	 This file is part of the R package MICE.
 #
 #    MICE is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,19 +19,19 @@
 
 # NOTE: FROM v1.14 all changes are logged in file /ChangeLog 
 # 
-# file last modified 26 April 05 by J. Fox
-#  o  to insure generic/method consistency
-#  o  to replace F with FALSE, T with TRUE
+# file last modified 15 March 09 by S. van Buuren V1.21
 # 
 # MICE: Multivariate Imputation by Chained Equations
-#   in S-Plus 6.1 and R 1.8
+#   in S-Plus 6.1 and R 1.8 (and up)
 #   
-#   Authors:    K. Oudshoorn and S. van Buuren 
-#           TNO Prevention and Health, Leiden
+#   Authors:    
+#           S. van Buuren, C.G.M. Oudshoorn 
+#           TNO Quality of Life, Leiden
 #           The Netherlands
+#   with contributions of John Fox, Frank E. Harrell, Roel de Jong, Martijn Heijmans, Peter Malewski
 #
-#   See S. van Buuren & K. Oudshoorn (2000) MICE User's Guide V1.0,     
-#   Leiden: TNO Prevention and Health. 
+#   See S. van Buuren & C.G.M. Oudshoorn (2008) MICE User's Guide V1.2,     
+#   Leiden: TNO Quality of Life. 
 #
 #
 #   Revision history: 
@@ -40,14 +40,13 @@
 #   V1.12   Maintainance, S-Plus 6.1 and R 1.8 unicode, January 2004
 #   V1.13   Changed function checkImputationMethod, Feb 6, 2004
 #
-#   Last change: January 13, 2004 SvB
+#   Last change: Nov 30 2008, SvB
 #   ## SVB: changes by Stef van Buuren
 #   ## FEH: changes by Frank E. Harrell 
 #   ## PM:  changes by Peter Malewski
 #   ## RJ:  changes by Roel de Jong
 # 
-#   Please report any bugs to dejongroel@gmail.com
-#   See www.multiple-imputation.com for any updates.
+#   Please report any bugs to stef.vanbuuren@tno.nl
 #
 
 
@@ -55,7 +54,7 @@
 
 #---------------------- MICE ------------------------------------------------
 
-mice<-function(data, 
+mice <- function(data, 
     m = 5,
     imputationMethod = vector("character",length=ncol(data)), 
     predictorMatrix = (1 - diag(1, ncol(data))),
@@ -67,7 +66,7 @@ mice<-function(data,
     seed = NA)
 
 {
-#   MICE - Multivariate Imputation by Chained Equations V1.12
+#   MICE - Multivariate Imputation by Chained Equations V1.2
 #
 #   Main algorithm for imputing datasets.
 #   Authors:    K. Oudshoorn and S. van Buuren 
@@ -83,10 +82,84 @@ mice<-function(data,
 #   ## FEH: changes by Frank E. Harrell 
 #   ## PM:  changes by Peter Malewski
 #
-#  Start with some preliminary calculations and error checks
+    #------------------------------CHECK.VISITSEQUENCE-------------------------------
+    check.visitSequence<-function(visitSequence, nmis, nvar)
+    {
+    #   checks the visitSequence array
+    #  stops the program if an error is found
+    #
+        # if (length(unique(visitSequence))!=length(visitSequence)) stop("Indices in visitSequence are not unique")
+        if(all(nmis[visitSequence] == 0)) stop(paste("No missing values present in ", expression(data)))
+        flags <- nmis==0 & is.element(1:nvar,visitSequence)
+        if (any(flags)) stop(paste("Columns ",paste((1:nvar)[flags],collapse=1,sep=",")," requested to be imputed, but contain no missing values."))
+    }
+    
+    #------------------------------CHECK.predictorMatrix-------------------------------
+    check.predictorMatrix<-function(predictorMatrix, nmis, nvar)
+    {
+    #   checks the predictorMatrix
+    #  it can change the predictormatrix
+    #  stops the program if an error is found
+    #
+        if(!is.matrix(predictorMatrix)) stop("Argument predictorMatrix should be a square matrix.")
+        if(nvar != nrow(predictorMatrix) | nvar != ncol(predictorMatrix)) stop("Argument predictorMatrix has improper dimensions.")
+        if(sum(diag(predictorMatrix) != 0)) stop("The diagonal of predictorMatrix may contain only zeroes.")
+        for(j in 1:nvar) {
+            if(!any(predictorMatrix[j,]==1) & any(predictorMatrix[,j]==1) & nmis[j]>0) 
+                stop(paste("Column ", j, " is used, has missing values, but is not imputed"))   ## SvB 14/12/08
+            if(nmis[j]==0 & any(predictorMatrix[j,]==1)) {
+                # warning(paste("Row ",j," of predictorMatrix is set to zero"))
+                predictorMatrix[j,] <- rep(0, nvar)
+            }
+        }
+        return(predictorMatrix)
+    }
+    
+    #------------------------------CHECK.imputationMethod-------------------------------
+    
+    check.imputationMethod<-function(imputationMethod, defaultImputationMethod, visitSequence, data, nmis, nvar)
+    {
+    #
+    #   check imputationMethod, set defaults if appropriate
+    #  stops the program if an error is found
+    #
+        if(all(imputationMethod == "")) { # the default argument
+            for(j in visitSequence) {
+                if(length(unique(data[,j])) == 2) stop(paste("Column ",j," is constant")) # NA is also a unique level
+                else if(is.numeric(data[,j])) imputationMethod[j] <- defaultImputationMethod[1]
+                else if(length(levels(data[,j])) == 2)  imputationMethod[j] <- defaultImputationMethod[2]
+                else if(length(levels(data[,j])) > 2) imputationMethod[j] <- defaultImputationMethod[3]
+            }
+        }
+    #
+    #   expand user's imputation method to all visited columns
+    #
+        if(length(imputationMethod) == 1) {# single string supplied by user
+            if(is.passive(imputationMethod)) stop("Cannot have a passive imputationMethod for every column.")
+            imputationMethod <- rep(imputationMethod, nvar)
+        }
+    #
+    #  if user specifies multiple methods, check the length of the argument
+    #
+        if(length(imputationMethod)!=nvar) stop(paste("The number of elements in imputationMethod (",length(imputationMethod),") does not match the number of columns (",nvar,")."))
+    #
+    #   check whether the elementary imputation methods are actually available on the search path
+    #
+        active <- !is.passive(imputationMethod) & nmis > 0
+        fullNames <- paste("mice.impute", imputationMethod[active], sep=".")
+        # notFound <- !sapply(fullNames,exists,mode="function") ## SVB 6 Feb 2004
+        # notFound <- !sapply(fullNames, existsFunction)  ## FEH
+        notFound <- vector( mode="logical",length=length(fullNames))
+        for (i in 1:length(notFound)) notFound[i] <- !existsFunction(fullNames[i])
+        if (any(notFound)) stop(paste("The following functions were not found:",paste(fullNames[notFound],collapse=", ")))
+    #
+        return(imputationMethod)
+    }   
+
+    #   Start with some preliminary calculations and error checks
     call <- match.call()
     if(!is.na(seed)) set.seed(seed)  ## FEH 1apr02
-    if(!(is.matrix(data) | is.data.frame(data))) stop("Data should be a matrix or dataframe")
+    if(!(is.matrix(data) | is.data.frame(data))) stop("Data should be a matrix or data frame")
     if ((nvar <- ncol(data)) < 2) stop ("Data should contain at least two columns")
     data <- as.data.frame(data)  
     nmis <- apply(is.na(data),2,sum)
@@ -101,6 +174,7 @@ mice<-function(data,
     #
     #   Perform various validity checks on the specified arguments
     #
+
     check.visitSequence(visitSequence, nmis, nvar)
     predictorMatrix <- check.predictorMatrix(predictorMatrix, nmis, nvar) 
     imputationMethod <- check.imputationMethod(imputationMethod, defaultImputationMethod, visitSequence, data, nmis, nvar)
@@ -166,7 +240,7 @@ mice<-function(data,
 
 #---------------------- MICE.MIDS -------------------------------------------
 
-mice.mids<-function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE)
+mice.mids <- function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE)
 {
 # MICE.MIDS - 
 # MICE algorithm that takes mids object as input, iterates maxit 
@@ -227,78 +301,6 @@ mice.mids<-function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE)
     return(midsobj)
 } # END OF MICE.MIDS FUNCTION
 
-#------------------------------CHECK.VISITSEQUENCE-------------------------------
-check.visitSequence<-function(visitSequence, nmis, nvar)
-{
-#   checks the visitSequence array
-#  stops the program if an error is found
-#
-    # if (length(unique(visitSequence))!=length(visitSequence)) stop("Indices in visitSequence are not unique")
-    if(all(nmis[visitSequence] == 0)) stop(paste("No missing values present in ", expression(data)))
-    flags <- nmis==0 & is.element(1:nvar,visitSequence)
-    if (any(flags)) stop(paste("Columns ",paste((1:nvar)[flags],collapse=1,sep=",")," requested to be imputed, but contain no missing values."))
-}
-
-#------------------------------CHECK.predictorMatrix-------------------------------
-check.predictorMatrix<-function(predictorMatrix, nmis, nvar)
-{
-#   checks the predictorMatrix
-#  it can change the predictormatrix
-#  stops the program if an error is found
-#
-    if(!is.matrix(predictorMatrix)) stop("Argument predictorMatrix should be a square matrix.")
-    if(nvar != nrow(predictorMatrix) | nvar != ncol(predictorMatrix)) stop("Argument predictorMatrix has improper dimensions.")
-    if(sum(diag(predictorMatrix) != 0)) stop("The diagonal of predictorMatrix may contain only zeroes.")
-    for(j in 1:nvar) {
-        if(!any(predictorMatrix[j,]) & any(predictorMatrix[,j]) & nmis[j]>0) stop(paste("Column ", j, " is used, has missing values, but is not imputed")) 
-        if(nmis[j]==0 & any(predictorMatrix[j,])) {
-            # warning(paste("Row ",j," of predictorMatrix is set to zero"))
-            predictorMatrix[j,] <- rep(0, nvar)
-        }
-    }
-    return(predictorMatrix)
-}
-
-#------------------------------CHECK.imputationMethod-------------------------------
-
-check.imputationMethod<-function(imputationMethod, defaultImputationMethod, visitSequence, data, nmis, nvar)
-{
-#
-#   check imputationMethod, set defaults if appropriate
-#  stops the program if an error is found
-#
-    if(all(imputationMethod == "")) { # the default argument
-        for(j in visitSequence) {
-            if(length(unique(data[,j])) == 2) stop(paste("Column ",j," is constant")) # NA is also a unique level
-            else if(is.numeric(data[,j])) imputationMethod[j] <- defaultImputationMethod[1]
-            else if(length(levels(data[,j])) == 2)  imputationMethod[j] <- defaultImputationMethod[2]
-            else if(length(levels(data[,j])) > 2) imputationMethod[j] <- defaultImputationMethod[3]
-        }
-    }
-#
-#   expand user's imputation method to all visited columns
-#
-    if(length(imputationMethod) == 1) {# single string supplied by user
-        if(is.passive(imputationMethod)) stop("Cannot have a passive imputationMethod for every column.")
-        imputationMethod <- rep(imputationMethod, nvar)
-    }
-#
-#  if user specifies multiple methods, check the length of the argument
-#
-    if(length(imputationMethod)!=nvar) stop(paste("The number of elements in imputationMethod (",length(imputationMethod),") does not match the number of columns (",nvar,")."))
-#
-#   check whether the elementary imputation methods are actually available on the search path
-#
-    active <- !is.passive(imputationMethod) & nmis > 0
-    fullNames <- paste("mice.impute", imputationMethod[active], sep=".")
-    notFound <- !sapply(fullNames,exists,mode="function") ## SVB 6 Feb 2004
-    # notFound <- !sapply(fullNames, existsFunction)  ## FEH
-    if (any(notFound)) stop(paste("The following functions were not found:",paste(fullNames[notFound],collapse=", ")))
-#
-#
-    return(imputationMethod)
-}
-
 
 #------------------------------PadModel-------------------------------
 
@@ -306,22 +308,25 @@ padModel <- function(data,  imputationMethod, predictorMatrix, visitSequence, nm
 {
 #   Called by mice().
 #   Augments the imputation model by including dummy variables. Adapts data, predictorMatrix,
-#  imputationMethod and visitSequence.
-#  Returns a list whose components make up the padded model.
+#   imputationMethod and visitSequence.
+#   Returns a list whose components make up the padded model.
 #   
-    categories<-data.frame(yes.no.categorical=factor(rep(FALSE,nvar),levels=c("TRUE","FALSE")),number.of.dummies=rep(0,nvar),yes.no.dummy=factor(rep(FALSE,nvar),levels=c("TRUE","FALSE")),corresponding.column.dummy=rep(0,nvar))
+    categories<-data.frame(
+            yes.no.categorical=factor(rep(FALSE,nvar),levels=c("TRUE","FALSE")),number.of.dummies=rep(0,nvar),
+            yes.no.dummy=factor(rep(FALSE,nvar),levels=c("TRUE","FALSE")),corresponding.column.dummy=rep(0,nvar))
 
     # zero is default in corresponding.column.dummy for no dummy variable
     for(j in 1:nvar) {
-        if(is.factor(data[,j]) && any(predictorMatrix[,j])) {
+        if(is.factor(data[,j]) && any(predictorMatrix[,j]==1)) {
             categories[j,1]<-TRUE
-            data[,j]<-C(data[,j],treatment) #assign contrast-attribute, choice treatment, to factor
+            # data[,j]<-C(data[,j],treatment) #assign contrast-attribute, choice treatment, to factor
+            data[,j]<-C(data[,j],contr.treatment) #assign contrast-attribute, choice treatment, to factor   SvB 14/12/08
             n.dummy <- length(levels(data[,j])) - 1
             categories[j,2]<-n.dummy
             predictorMatrix <- rbind(predictorMatrix, matrix(0, ncol = ncol(predictorMatrix), nrow = n.dummy))
             predictorMatrix <- cbind(predictorMatrix, matrix(rep(predictorMatrix[,j],times=n.dummy), ncol = n.dummy))   
             predictorMatrix[1:nvar,j] <- rep(0, times = nvar)
-            if (any(predictorMatrix[j,])){
+            if (any(predictorMatrix[j,]==1)){
                 predictorMatrix[(ncol(predictorMatrix)-n.dummy+1):ncol(predictorMatrix),j]<-rep(1,times=n.dummy)
                 #in predictorMatrix only FALSE/TRUE is allowed due to other part program.
                 visitSequence<-append(visitSequence,ncol(predictorMatrix)-n.dummy+1,(1:length(visitSequence))[visitSequence==j])
@@ -354,7 +359,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 #   This function is called by mice and mice.mids
 #
 #   Authors: S van Buuren, K Oudshoorn
-#   Copyright (c) 2000 TNO Prevention and Health
+#   Copyright (c) 1999-2008 TNO Quality of Life
 {
     # set up array for convergence checking
     if (maxit>0) chainVar <- chainMean <- array(0, dim=c(length(visitSequence),maxit,m),dimnames=list(dimnames(data)[[2]][visitSequence],1:maxit,paste("Chain",1:m)))
@@ -422,16 +427,15 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 
 
 
-
 #
 # mice.impute.ssc
 #
 # Standard collection of elementary imputation functions.
 # Part of Oudshoorn & Van Buuren MICE library V1.12
 #
-#----------------------------------IMPUTE.NORM----------------------------------
+#--------------------MICE.IMPUTE.NORM----------------------------------
 
-mice.impute.norm<-function(y, ry, x)
+mice.impute.norm <- function(y, ry, x)
 {
 # Bayesian normal imputation of y given x according to Rubin p. 167
 # x is complete.
@@ -444,8 +448,8 @@ mice.impute.norm<-function(y, ry, x)
     return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
 }
 
-#----------------------------------------.NORM.DRAW-----------------------------
-.norm.draw<-function(y, ry, x)
+#--------------------------------.NORM.DRAW-----------------------------
+.norm.draw <- function(y, ry, x)
 {
 # .norm.draw
 # Draws values of beta and sigma for Bayesian linear regrssion imputation 
@@ -468,28 +472,25 @@ mice.impute.norm<-function(y, ry, x)
     return(parm)
 }
 
-#----------------------------------IMPUTE.NORM.IMPROPER-------------------------
-mice.impute.norm.improper<-function(y, ry, x)
+#------------------------MICE.IMPUTE.NORM.IMPROPER---------------------
+mice.impute.norm.improper <- function(y, ry, x)
 {
 # mice.impute.norm.improper
 # Regression imputation of y given x, with a fixed regression
 # line, and with random draws of the residuals around the line.
 # x is complete.
 #
-# TNO Prevention and Health
-# authors: S. van Buuren and K. Oudshoorn
-#
 #    x <- cbind(1, as.matrix(x))
 #    parm <- .norm.fix(y, ry, x)
 #    return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
-	stop("mice.impute.norm.improper is disabled this release")
+ 	stop("mice.impute.norm.improper is disabled this release")
 }
 
 
 
-#-----------------------------IMPUTE.PMM-----------------------------------------------
+#-----------------------------MICE.IMPUTE.PMM-------------------------
 
-mice.impute.pmm<-function(y, ry, x)
+mice.impute.pmm <- function(y, ry, x)
 {
 # Imputation of y by predictive mean matching, based on
 # Rubin (p. 168, formulas a and b).
@@ -511,7 +512,7 @@ mice.impute.pmm<-function(y, ry, x)
 }
 
 #-------------------------.PMM.MATCH---------------------------------
-.pmm.match<-function(z, yhat=yhat, y=y)
+.pmm.match <- function(z, yhat=yhat, y=y)
 {
 # Auxilary function for mice.impute.pmm.
 # z    = target predictive value (scalar)
@@ -526,9 +527,9 @@ mice.impute.pmm<-function(y, ry, x)
 }
 
 
-#-------------------------IMPUTE.LOGREG------------------------------
+#-------------------------MICE.IMPUTE.LOGREG-------------------------
 
-mice.impute.logreg<-function(y, ry, x)
+mice.impute.logreg <- function(y, ry, x)
 {
 # mice.impute.logreg 
 #
@@ -559,7 +560,7 @@ mice.impute.logreg<-function(y, ry, x)
     return(vec)
 }
 
-#-------------------------IMPUTE.LOGREG2------------------------------
+#-------------------------MICE.IMPUTE.LOGREG2--------------------------
 
 mice.impute.logreg2 <- function(y, ry, x)
 {
@@ -632,7 +633,7 @@ logitreg <- function(x, y, wt = rep(1, length(y)), intercept = TRUE, start, trac
 
 
 
-#-------------------------IMPUTE.POLYREG-----------------------------   
+#--------------------MICE.IMPUTE.POLYREG-----------------------------   
     
 mice.impute.polyreg<-function(y, ry, x)
 {   
@@ -664,8 +665,9 @@ mice.impute.polyreg<-function(y, ry, x)
     return(levels(fy)[idx])
 }
 
+
     
-#-------------------------IMPUTE.LDA-----------------------------   
+#--------------------MICE.IMPUTE.LDA-----------------------------   
 
 mice.impute.lda <- function(y, ry, x)
 {
@@ -689,7 +691,7 @@ mice.impute.lda <- function(y, ry, x)
 }
     
     
-#--------------------------------------IMPUTE.MEAN------------------------------
+#-------------------MICE.IMPUTE.MEAN------------------------------
 
 mice.impute.mean<-function(y, ry, x=NULL)
 # mice.impute.mean
@@ -700,7 +702,7 @@ mice.impute.mean<-function(y, ry, x=NULL)
     return(rep(mean(y[ry]), times = sum(!ry)))
 }
 
-#--------------------------------------IMPUTE.SAMPLE------------------------------
+#-------------------MICE.IMPUTE.SAMPLE----------------------------
 
 mice.impute.sample<-function(y, ry, x=NULL)
 # mice.impute.sample
@@ -710,7 +712,7 @@ mice.impute.sample<-function(y, ry, x=NULL)
 {   
     return(sample(y[ry], size=sum(!ry), replace=TRUE))
 }
-#------------------------------IMPUTE.PASSIVE------------------------------------
+#-------------------MICE.IMPUTE.PASSIVE----------------------------
 
 mice.impute.passive <- function(data, func)
 #
@@ -1184,12 +1186,11 @@ title(names[m])
 
 
 #
-# System functions for the MICE library V1.14
+# System functions for the MICE library V1.2
 
 #------------------------------.First.lib-------------------------------
 .First.lib <- function(library,section){
-    cat("MICE V1.16 library            Copyright (2004) TNO Prevention and Health, Leiden\n")
-    cat("This library is distributed under the GNU General Public License (version 2)\n")
+    cat("MICE V1.21 library            Copyright 1999-2009 TNO Quality of Life, Leiden\n")
     # require(Hmisc)
     require(MASS)
     require(nnet)

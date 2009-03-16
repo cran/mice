@@ -42,10 +42,13 @@
   Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple Imputation Strategies for 
   the Statistical Analysis of Incomplete Data Sets. Ph.D. Thesis, 
   TNO Prevention and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1. 
+  
+  Venables, W.N. & Ripley, B.D. (1997). Modern applied statistics with S-Plus (2nd ed). Springer, Berlin.
+
 }
 \seealso{\code{\link{mice}}, \code{\link{glm}}, \code{\link{glm.fit}},
   \code{\link{mice.impute.logreg2}} }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
 \keyword{misc}

@@ -13,9 +13,9 @@
   \item{ry}{Vector of missing data pattern (FALSE=missing, TRUE=observed)}
   \item{x}{Matrix (n x p) of complete covariates.
   }
-  
-  \value{
-   A vector of length nmis with imputations.}
+}
+\value{
+   A vector of length nmis with imputations.
 }
 
 \section{Warning}{

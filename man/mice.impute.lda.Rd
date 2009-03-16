@@ -17,7 +17,7 @@ mice.impute.lda(y, ry, x)
 \details{
   Imputation of categorical response variables by linear discriminant
   analysis. This function uses the Venables/Ripley functions
-  lda and predict.lda to compute posterior probabilities for
+  \code{lda()} and \code{predict.lda()} to compute posterior probabilities for
   each incomplete case, and draws the imputations from this 
   posterior. 
 }
@@ -28,23 +28,26 @@ mice.impute.lda(y, ry, x)
   therefore be somewhat underestimated. 
 }
 \note{  This function can be called from within the Gibbs sampler by specifying 
-  'lda' in the imputationMethod argument. 
-  This method is usually faster and uses less resources than 
+  'lda' in the \code{imputationMethod} argument of \code{mice()}. 
+  This method is usually faster and uses fewer resources than 
   \code{\link{mice.impute.polyreg}}.
 }   
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
-  
+  Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
+ \emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
+ Leiden: TNO Quality of Life.
+ \url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+
   Brand, J.P.L. (1999). Development, Implementation and Evaluation of
   Multiple Imputation Strategies for the Statistical Analysis of
   Incomplete Data Sets.
   Ph.D. Thesis, TNO Prevention and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1. 
-  
-  Venables, W.N. & Ripley, B.D. (1999). Modern applied statistics with S-Plus (3rd ed). Springer, Berlin.
-}
-\seealso{ \code{\link{mice}}, \code{\link{lda}}, \code{\link{predict.lda}}
+
+  Venables, W.N. & Ripley, B.D. (1997). Modern applied statistics with S-Plus (2nd ed). Springer, Berlin.
 }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\seealso{ \code{\link{mice}}, \code{\link[MASS]{lda}}}
+
+
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 \keyword{misc} 

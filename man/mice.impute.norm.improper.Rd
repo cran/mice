@@ -29,7 +29,7 @@
   Brand, J.P.L. (1999). Development, Implementation and Evaluation of
   Multiple Imputation Strategies for the Statistical Analysis of
   Incomplete Data Sets. Ph.D. Thesis, TNO Prevention
-  and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1. 
+  and Health/Erasmus University Rotterdam.
   
 }
 \note{  This function is provided mainly to allow comparison between proper
@@ -39,6 +39,6 @@
 }
 
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000}
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}
 
 \keyword{misc} 

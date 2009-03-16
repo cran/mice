@@ -8,7 +8,8 @@ Release Notes & known issues:
 * Imputation functions 'impute.norm.improper' and 'impute.logreg2' are disabled.
 
 FIXED: Passive imputation works again. (Roel de Jong)
-CHANGED: Random seed is now left alone, UNLESS the argument "seed" is specified. This means that unless you specify identical seed values, imputations of the same dataset will be different for multiple calls to mice. (Roel de Jong) 
+CHANGED: Random seed is now left alone, UNLESS the argument "seed" is specified. This means that unless you 
+specify identical seed values, imputations of the same dataset will be different for multiple calls to mice. (Roel de Jong) 
 FIXED (docs): Documentation for "impute.mean" (Roel de Jong)
 FIXED: Function 'summary.mids' now works (Roel de Jong)
 FIXED: Imputation function 'impute.polyreg' and 'impute.lda' should now work under R
@@ -23,4 +24,15 @@ FIXED: In the lm.mids and glm.mids functions, parameters were not passed through
 v1.16 - 6/25/2007
 
 FIXED: The impution function impute.logreg used convergence criteria that were too optimistic when fitting a GLM with glm.fit. Thanks to Ulrike Gromping (groemping@tfh-berlin.de).
- 
+
+
+v1.21 - 15/3/2009 SvB  Maintainance release
+
+FIXED:      Stricter type checking on logicals in mice() to evade warnings.
+CHANGED:    Modernization of all help files.
+FIXED:      padModel: treatment changed to contr.treatment
+CHANGED:    Functions check.visitSequence, check.predictorMatrix, check.imputationMethod are now coded as local to mice()
+FIXED:      existsFunction in check.imputationMethod now works both under S-Plus and R
+
+
+

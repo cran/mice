@@ -1,66 +1,77 @@
 \name{complete}
 \alias{complete}
-\title{Produces Imputed Flat Files
-  from Multiply Imputed Data Set (mids)
-}
+\title{Creates a Complete Flat File from a Multiply Imputed Data Set}
 \description{
-  Takes an object of type mids, fills in the missing data, and
+  Takes an object of class \code{mids}, fills in the missing data, and
   returns the completed data in a specified format.
 }
 \usage{
     complete(x, action=1)
 }
 \arguments{
-  \item{x}{An object of class \code{'mids'}
-    (created by the function \code{mice()}).}
+  \item{x}{An object of class \code{mids}
+    as created by the function \code{mice()}.}
   \item{action}{If action is a scalar between 1 and \code{x$m},
     the function returns the data with the action's
     imputation filled in. Thus, \code{action=1} returns
-    the first
-    completed data set. 
-    The can also be one of the following
-    strings: \code{"long"}, \code{"broad"}, \code{"repeated"}.
-    This has the following meaning:
-    \begin{description}
-    \item[\code{action="long"}] produces a long matrix with n*m
-    rows,containing all imputed data plus two additional
-    variables \code{"_ID_"} (containing the row.names)
-    and \code{"_IMP_"} (containing the imputation number).
-    \item[\code{action="broad"}] produces a broad matrix with m times
-    the number of columns in the original data.
-    The first ncol(\code{x$data}) columns contain the first
-    imputed data matrix. Column names are changed to
-    reflect the imputation number.
-    \item[\code{action="repeated"}] produces a broad matrix with m times
-    \code{ncol(x$data)} columns. The first m columns
-    give the filled-in first variable. Column names are
-    changed to reflect the imputation number.
-    \end{description}
-  }
+    the first completed data set, \code{action=2} returns the second 
+    completed data set, and so on. 
+    The value of \code{action} can also be one of the following
+    strings: \code{"long"}, \code{"broad"}, \code{"repeated"}. 
+    See 'Details' for the interpretation.} 
 }
+\details{
+    The argument \code{action} can also be a string, which is partially matched as follows:
+    \describe{
+        \item{\code{"long"}}{
+        produces a long data frame of vertically stacked imputed data sets with \code{nrow(x$data) * x$m}
+        rows and \code{ncol(x$data)+2} columns. The two additional columns are labeled
+        \code{.id} containing the row names of \code{x$data}, 
+        and \code{.imp} containing the imputation number.}
+    
+        \item{\code{"broad"}}{
+        produces a broad data frame with \code{nrow(x$data)} rows and \code{ncol(x$data) * x$m} columns. 
+        Columns are ordered such that the first \code{ncol(x$data)} columns corresponds to the first 
+        imputed data matrix. The imputation number is appended to each column name.}
+
+        \item{\code{"repeated"}}{
+        produces a broad data frame with \code{nrow(x$data)} rows and \code{ncol(x$data) * x$m} columns. 
+        Columns are ordered such that the first \code{x$m} columns correspond to the \code{x$m} imputed 
+        versions of the first column in \code{x$data}. 
+        The imputation number is appended to each column name.}
+    }
+}
+
 \value{
   A data frame with the imputed values filled in.
 }
-\references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
-}
+
 \seealso{\code{\link{mice}}, \code{\link{mids}} }
+
 \examples{
 data(nhanes)
-imp <- mice(nhanes)     # do default multiple imputation on a numeric matrix
-mat <- complete(imp)    # fills in the first imputation
-mat <- complete(imp, 3) # fills in the third imputation
-mat <- complete(imp, "long") # produces a long matrix with stacked complete data
-mat <- complete(imp, "b") # a broad matrix
-cor(mat)                # for numeric mat, produces a blocked correlation matrix, where
-            # each m*m block contains of the same variable pair over different
-            # multiple imputations.
+
+# do default multiple imputation on a numeric matrix
+imp <- mice(nhanes)          
+
+# obtain first imputated matrix
+mat <- complete(imp)         
+
+# fill in the third imputation
+mat <- complete(imp, 3)      
+
+# long matrix with stacked complete data
+mat <- complete(imp, "long") 
+
+# repeated matrix with complete data
+mat <- complete(imp, "r")    
+
+# for numeric data, produces a blocked correlation matrix, where
+# each block contains of the same variable pair over different
+# multiple imputations.
+cor(mat)               
 }
 
-
-
-
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
 \keyword{misc} 

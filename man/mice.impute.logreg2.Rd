@@ -32,15 +32,17 @@
     \item Compare the score to a random (0,1) deviate, and mice.impute.
   }
   This method uses direct minimization of the likelihood function
-  by means of V&R function logitreg (V&R, 2nd ed, p. 293).
+  by means of V&R function \code{logitreg()} (V&R, 2nd ed, p. 293).
 }
 
 \note{
-  An alternative is mice.impute.logreg.
+  An alternative is \code{link{mice.impute.logreg}}.
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
+\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
+Leiden: TNO Quality of Life.
+\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
   
   Brand, J.P.L. (1999). Development, Implementation and Evaluation
   of Multiple
@@ -53,7 +55,7 @@
 \seealso{
   \code{\link{mice}}, \code{\link{logitreg}}, \code{\link{mice.impute.logreg}}
 }
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
 \keyword{misc}
 

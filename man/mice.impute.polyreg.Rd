@@ -19,24 +19,30 @@ mice.impute.polyreg(y, ry, x)
   Appendix B.
   
   The method consists of the following steps:
-  \begin{enumerate}
-  \item Fit categorical response as a multinomial model 
-  \item Compute predicted categories
-  \item Add appropriate noise to predictions.
-  \end{enumerate}
-  This algorithm uses the function multinom from the libraries nnet and MASS
+  \enumerate{
+    \item Fit categorical response as a multinomial model 
+    \item Compute predicted categories
+    \item Add appropriate noise to predictions.
+  }
+  This algorithm uses the function \code{multinom()} from the libraries \code{nnet} 
   (Venables and Ripley). 
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
+\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
+Leiden: TNO Quality of Life.
+\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
   
-  Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple Imputation Strategies for the Statistical Analysis of Incomplete Data Sets. Ph.D. Thesis, TNO Prevention and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1. 
+Brand, J.P.L. (1999) 
+\emph{Development, implementation and evaluation of multiple imputation strategies for the statistical analysis of incomplete data sets.} 
+Dissertation. Rotterdam: Erasmus University.
   
+Venables, W.N. & Ripley, B.D. (1997). Modern applied statistics with S-Plus (2nd ed). Springer, Berlin.
+
 }
-\seealso{\code{\link{mice}}, \code{\link{multinom}}
+\seealso{\code{\link{mice}}, \code{\link[nnet]{multinom}}
 }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000}
+\author{Stef van Buuren, Karin Groohuis-Oudshoorn, 2000}
     
 \keyword{misc} 

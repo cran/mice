@@ -23,13 +23,18 @@ mice.impute.norm(y, ry, x)
     method (Schafer, 1997), though much slower.
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
-Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple Imputation Strategies for the Statistical Analysis of Incomplete Data Sets. Ph.D. Thesis, TNO Prevention and Health/Erasmus University Rotterdam. ISBN 90-74479-08-1. 
+Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
+\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
+Leiden: TNO Quality of Life.
+\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+
+Brand, J.P.L. (1999) 
+\emph{Development, implementation and evaluation of multiple imputation strategies for the statistical analysis of incomplete data sets.} 
+Dissertation. Rotterdam: Erasmus University.
 
 Schafer, J.L. (1997). Analysis of incomplete multivariate data. London: Chapman & Hall.
 
 }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 \keyword{misc} 
