@@ -1,39 +1,50 @@
 \name{mice.impute.pmm}
 \alias{mice.impute.pmm}
-\title{Elementary Imputation Method: Linear Regression Analysis}
+\title{Imputation by Predictive Mean Matching}
 \usage{
 mice.impute.pmm(y, ry, x)
 }
-\description{Imputes univariate missing data using predictive mean matching
-}
+\description{Imputes univariate missing data using predictive mean matching}
 \arguments{
-  \item{y}{ Incomplete data vector of length n}
-  \item{ry}{    Vector of missing data pattern (FALSE=missing, TRUE=observed)}
-  \item{x}{ Matrix (n x p) of complete covariates.}
-  
+  \item{y}{ Numeric vector with incomplete data}
+  \item{ry}{Response pattern of \code{y} (\code{TRUE}=observed, \code{FALSE}=missing)}
+  \item{x}{ Design matrix with \code{length(y)} rows and \code{p} columns containing 
+  complete covariates}
 }
-\value{\item{imp}{  A vector of length nmis with imputations.}
+
+\value{\item{imp}{Numeric vector of length \code{sum(!ry)} with imputations}
 }
+
 \details{
-  Imputation of y by predictive mean matching, based on
-  Rubin (p. 168, formulas a and b).
+  Imputation of \code{y} by predictive mean matching, based on Rubin (1987, p. 168, formulas a and b).
   The procedure is as follows:
   \enumerate{
-    \item Draw $\beta$ and $\sigma$ from the proper posterior
-    \item Compute predicted values for yobs and ymis
-    \item For each $y_{mis}$, find the observation with closest predicted
-  value, and take its observed $y$ as the imputation.
-  The matching is on $\hat{y}$, NOT on $y$, which deviates from formula b.
+    \item Draw beta and sigma from the proper posterior
+    \item Compute predicted values for \code{yobs} and \code{ymis}
+    \item For each \code{ymis}, find the observation with closest predicted
+  value, and take its observed value in \code{y} as the imputation.
+    \item If there is more than one candidate, make a random draw among them.
+  Note: The matching is done on predicted \code{y}, NOT on observed \code{y}.
   }
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
-\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
-Leiden: TNO Quality of Life.
-\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
-  
-  Rubin, D.B. (1987). Multiple imputation for nonresponse in surveys. New York: Wiley.
+Little, R.J.A. (1988), Missing data adjustments in large surveys (with discussion), 
+Journal of Business Economics and Statistics, 6, 287--301.
+
+Rubin, D.B. (1987). Multiple imputation for nonresponse in surveys. New York: Wiley.
+
+Van Buuren, S., Brand, J.P.L., Groothuis-Oudshoorn C.G.M., Rubin, D.B. (2006) 
+Fully conditional specification in multivariate imputation. 
+\emph{Journal of Statistical Computation and Simulation}, \bold{76}, 12, 1049--1064. 
+\url{http://www.stefvanbuuren.nl/publications/FCS in multivariate imputation - JSCS 2006.pdf}
+
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
+
+
 }
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
-\keyword{misc} 
+\keyword{datagen} 

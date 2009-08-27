@@ -1,0 +1,119 @@
+-------------- MICE NEWS-------------------------------------------
+
+MICE: Multivariate Imputation by Chained Equations
+
+MICE is an R package implementing multiple imputation of
+incomplete multivariate data according the principle of
+Fully Conditional Specification (FCS).
+
+
+The current version is MICE V2.0, which is described in
+
+  Van Buuren S, Groothuis-Oudshoorn K (2009).
+  MICE: Multivariate Imputation by Chained Equations in R.
+  Journal of Statistical Software, forthcoming.
+  http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
+
+The pdf of this document is also distributed in doc subdirectory of
+the directory in which the package mice was installed.
+
+
+For more background on FCS see:
+
+1)  Van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB (2006).
+    Fully conditional specification in multivariate imputation,
+    Journal of Statistical Computation and Simulation, 76(12),1049--1064.
+    http://www.stefvanbuuren.nl/publications/FCS%20in%20multivariate%20imputation%20-%20JSCS%202006.pdf
+
+2)  Van Buuren S (2007).
+    Multiple imputation of discrete and continuous data by fully conditional specification
+    Statistical Methods in Medical Research, 16(3), 219--242.
+    http://www.stefvanbuuren.nl/publications/MI%20by%20FCS%20-%20SMMR%202007.pdf
+
+
+More information and papers about MICE can be found in
+
+http://www.multiple-imputation.com/
+
+
+Question or suggestions about MICE can be send to
+
+   stef.vanbuuren@tno.nl
+or
+   k.groothuis@rrd.nl
+
+
+---------------------------------------------------------------------
+
+
+CHANGELOG MICE
+~~~~~~~~~~~~~~
+
+v2.0 - 26-08-2009 / SvB, KO 	Major upgrade for JSS manuscript
+
+ADDED:  new functions cbind.mids(), rbind.mids(), ibind()
+ADDED:  new argument in mice(): 'post' in post-processing imputations
+ADDED:  new functions: pool.scaler(), pool.compare(), pool.r.squared()
+ADDED:	new data: boys, popmis, windspeed
+FIXED:	function summary.mipo all(object$df) command fixed
+DELETED: data.frame.to.matrix replaced by the internal data.matrix function
+ADDED: new imputation method mice.impute.2l.norm() for multilevel data
+CHANGED: pool now works for any class having a vcov() method
+ADDED: with.mids() provides a general complete-data analysis
+ADDED: type checking in mice() to ensure appropriate imputation methods
+ADDED: warning added in mice() for constant predictors
+ADDED: prevention of perfect prediction in mice.impute.logreg() and mice.impute.polyreg()
+CHANGES: mice.impute.norm.improper() changed into mice.impute.norm.nob()
+DELETED: mice.impute.polyreg2() deleted
+ADDED: new 'include' argument in complete()
+ADDED: support for the empty imputation method in mice()
+ADDED: new function md.pairs()
+ADDED: support for intercept imputation
+ADDED: new function quickpred()
+FIXED: plot.mids() bug fix when number of variables > 5
+
+v1.21 - 15/3/2009 SvB  Maintainance release
+
+FIXED:      Stricter type checking on logicals in mice() to evade warnings.
+CHANGED:    Modernization of all help files.
+FIXED:      padModel: treatment changed to contr.treatment
+CHANGED:    Functions check.visitSequence, check.predictorMatrix, check.imputationMethod are now coded as local to mice()
+FIXED:      existsFunction in check.imputationMethod now works both under S-Plus and R
+
+v1.16 - 6/25/2007
+
+FIXED: The impution function impute.logreg used convergence criteria that were too optimistic when fitting a GLM with glm.fit. Thanks to Ulrike Gromping (groemping@tfh-berlin.de).
+
+v1.15 - 01/09/2006
+
+Release Notes & known issues:
+* Work is underway to completely rewrite the library, including imputation functions for multilevel models
+
+FIXED: In the lm.mids and glm.mids functions, parameters were not passed through to glm and lm.
+
+v1.14R - 9/26/2005 11:44AM
+
+Release Notes & known issues:
+* Although MICE will remain compatible with S-PLUS, because of its superior memory management we encourage the use of R for multiple imputation with MICE.
+* Imputation functions 'impute.norm.improper' and 'impute.logreg2' are disabled.
+
+FIXED: Passive imputation works again. (Roel de Jong)
+CHANGED: Random seed is now left alone, UNLESS the argument "seed" is specified. This means that unless you
+specify identical seed values, imputations of the same dataset will be different for multiple calls to mice. (Roel de Jong)
+FIXED (docs): Documentation for "impute.mean" (Roel de Jong)
+FIXED: Function 'summary.mids' now works (Roel de Jong)
+FIXED: Imputation function 'impute.polyreg' and 'impute.lda' should now work under R
+
+v1.13
+Changed function checkImputationMethod, Feb 6, 2004
+
+v1.12
+Maintainance, S-Plus 6.1 and R 1.8 unicode, January 2004
+
+v1.1
+R version (with help of Peter Malewski and Frank Harrell), Feb 2001
+
+v1.0
+Original S-PLUS release, June 14 2000
+
+

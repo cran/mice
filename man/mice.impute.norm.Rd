@@ -1,32 +1,32 @@
 \name{mice.impute.norm}
 \alias{mice.impute.norm}
-\title{Elementary Imputation Method: Linear Regression Analysis}
+\title{Imputation by Bayesian Linear Regression}
 \usage{
 mice.impute.norm(y, ry, x)
 }
-\description{Imputes univariate missing data using linear regression analysis 
+\description{Imputes univariate missing data using Bayesian linear regression analysis 
 }
 \arguments{
-  \item{y}{Incomplete data vector of length n}
-  \item{ry}{Vector of missing data pattern (FALSE=missing, TRUE=observed)}
-  \item{x}{Matrix (n x p) of complete covariates.}
+  \item{y}{Incomplete data vector of length \code{n}}
+  \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
+  \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
 
 }
-\value{A vector of length nmis with imputations.
+\value{A vector of length \code{nmis} with imputations.
 }
 \details{
-    Draws values of beta and sigma for Bayesian linear regression imputation 
-    of y given x according to Rubin p. 167.
+    Draws values of \code{beta} and \code{sigma} for Bayesian linear regression imputation 
+    of \code{y} given \code{x} according to Rubin p. 167.
 }
 \note{
-    Using mice.impute.norm for all columns gives results similar to Schafer's norm 
-    method (Schafer, 1997), though much slower.
+    Using \code{mice.impute.norm} for all columns is similar to Schafer's NORM
+    method (Schafer, 1997).
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
-\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
-Leiden: TNO Quality of Life.
-\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
 
 Brand, J.P.L. (1999) 
 \emph{Development, implementation and evaluation of multiple imputation strategies for the statistical analysis of incomplete data sets.} 
@@ -37,4 +37,4 @@ Schafer, J.L. (1997). Analysis of incomplete multivariate data. London: Chapman 
 }
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
-\keyword{misc} 
+\keyword{datagen} 

@@ -1,0 +1,66 @@
+importFrom("stats",lm)
+importFrom("stats",glm)
+importFrom("nnet",multinom)
+importFrom("MASS",lda)
+importFrom("nlme",lme)
+
+exportClasses("mids","mira","mipo")
+
+export("mice",
+       "mice.mids",
+       "sampler",
+       "mice.impute.norm",
+       "mice.impute.norm.nob",
+       "mice.impute.pmm",
+       "mice.impute.logreg",
+       "mice.impute.polyreg",
+       "mice.impute.lda",
+       "mice.impute.mean",
+       "mice.impute.sample",
+       "mice.impute.passive",
+       "mice.impute.2l.norm",
+       "squeeze",
+       "md.pattern",
+       "md.pairs",
+       "quickpred",
+       "is.mids",
+       "is.mira",
+       "is.mipo",
+       "is.passive",
+       "cbind.mids",
+       "rbind.mids",
+       "ibind",
+       "complete",
+       "lm.mids",
+       "glm.mids",
+       "pool",
+       "pool.scalar",
+       "pool.r.squared",
+       "pool.compare"
+       )
+
+exportMethods("print",
+              "summary",
+              "plot",
+              "cbind",
+              "rbind",
+              "with",
+              "lm",
+              "glm"
+              )
+
+S3method(print, mids)
+S3method(print, mira)
+S3method(print, mipo)
+S3method(summary, mids)
+S3method(summary, mira)
+S3method(summary, mipo)
+S3method(plot, mids)
+S3method(cbind, mids)
+S3method(rbind, mids)
+S3method(with, mids)
+S3method(lm, mids)
+S3method(glm, mids)
+
+
+

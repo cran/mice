@@ -7,7 +7,7 @@
 \usage{
 \method{print}{mids}(x,\dots)
 \method{summary}{mids}(object,\dots)
-\method{plot}{mids}(x,y,\dots)
+\method{plot}{mids}(x,y,layoutplot = c(3, 2), askplot = TRUE, \dots)
 }
 
 \description{An object containing a multiply imputed data set. The
@@ -18,6 +18,9 @@
 \arguments{
   \item{x, object}{A \code{mids} object.}
   \item{y}{Currently not used.}
+  \item{layoutplot}{Vector of two integers specifying the number of panel per row 
+  and column respectively.}
+  \item{askplot}{\code{TRUE} if the user needs to be asked before drawing a new page}
   \item{\dots}{Currently not used.}
 }
 \value{
@@ -28,13 +31,14 @@
   \item{imp}{   A list of nvar components with the generated multiple imputations. 
     Each part of the list is a \code{nmis[j]} by \code{m} matrix of imputed values for 
     variable \code{j}.}
-  \item{imputationMethod}{A vector of strings of length(nvar) specifying the elementary 
+  \item{method}{A vector of strings of length(nvar) specifying the elementary 
     imputation method per column.}
   \item{predictorMatrix}{
     A square matrix of size \code{ncol(data)} containing code 0/1 data specifying 
     the predictor set.}
   \item{visitSequence}{
     The sequence in which columns are visited.}
+  \item{post}{A vector of strings of length \code{ncol(data)} with commands for post-processing}
   \item{seed}{  The seed value of the solution.}
   \item{iteration}{
     Last Gibbs sampling iteration number.}
@@ -45,19 +49,22 @@
     by \code{maxit} matrix containing the mean of the generated multiple 
     imputations. The array can be used for monitoring convergence.
     Note that observed data are not present in this mean.}
-  \item{chainCov}{
-    A list with similar structure of itermean, containing the covariances 
+  \item{chainVar}{
+    A list with similar structure of \code{chainMean}, containing the covariances 
     of the imputed values.}
   \item{pad}{   A list containing various settings of the padded imputation model, 
     i.e. the imputation model after creating dummy variables. Normally, 
     this array is only useful for error checking.}
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
-\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
-Leiden: TNO Quality of Life.
-\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
 }
+
+\seealso{\code{\link{mice}}, \code{\link{mira}}, \code{\link{mipo}}}
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}
 
+\keyword{classes}

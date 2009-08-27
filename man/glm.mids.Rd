@@ -25,7 +25,8 @@
 }
 
 \details{
-  see \code{\link{glm}}
+  This function is included for backward compatibility with V1.0. The function is
+  superseeded by \code{\link{with.mids}}.
 }
 
 \references{
@@ -36,10 +37,10 @@ Leiden: TNO Quality of Life.
 }
 
 \seealso{
-  \code{\link{glm}},  \code{\link{mids}}, \code{\link{mira}}
+  \code{\link{with.mids}}, \code{\link{glm}},  \code{\link{mids}}, \code{\link{mira}}
 }
 \examples{
-data(nhanes)
+
 imp <- mice(nhanes)
 glm.mids((hyp==2)~bmi+chl, data=imp)
     # fit
@@ -80,4 +81,4 @@ glm.mids((hyp==2)~bmi+chl, data=imp)
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
-\keyword{misc} 
+\keyword{multivariate} 

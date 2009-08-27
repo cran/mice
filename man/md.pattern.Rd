@@ -32,9 +32,14 @@ Display missing-data patterns.
     Schafer, J.L. (1997), Analysis of multivariate incomplete data. 
     London: Chapman&Hall.
 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
+
 }
 \examples{
-data(nhanes)
+
 md.pattern(nhanes)
 #     age hyp bmi chl    
 #  13   1   1   1   1  0
@@ -49,4 +54,4 @@ md.pattern(nhanes)
 
 \author{Stef van Buuren, Karin Oudshoorn, 2000}     
 
-\keyword{misc} 
+\keyword{univar} 

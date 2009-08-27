@@ -1,6 +1,6 @@
 \name{mice.impute.logreg}
 \alias{mice.impute.logreg}
-\title{Elementary Imputation Method: Logistic Regression}
+\title{Imputation by Logistic Regression}
 
 \description{
   Imputes univariate missing data using logistic regression.
@@ -10,14 +10,14 @@
 }
 \arguments{
   
-  \item{y}{Incomplete data vector of length n}
-  \item{ry}{Vector of missing data pattern of length n (FALSE=missing,
-    TRUE=observed) }
-  \item{x}{Matrix (n x p) of complete covariates.}
+  \item{y}{Incomplete data vector of length \code{n}}
+  \item{ry}{Vector of missing data pattern of length \code{n} (\code{FALSE}=missing,
+    \code{TRUE}=observed) }
+  \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
 }
 
 \value{
-  \item{imp}{A vector of length nmis with imputations (0 or 1).}
+  \item{imp}{A vector of length \code{nmis} with imputations (0 or 1).}
 }
 
 \details{
@@ -29,15 +29,14 @@
     \item Fit a logit, and find (bhat, V(bhat))
     \item Draw BETA from N(bhat, V(bhat))
     \item Compute predicted scores for m.d., i.e. logit-1(X BETA)
-    \item Compare the score to a random (0,1) deviate, and mice.impute.}
-  The method relies on the standard glm.fit function.
-}
-\note{
-  An alternative is mice.impute.logreg2.
+    \item Compare the score to a random (0,1) deviate, and impute.}
+  The method relies on the standard \code{glm.fit} function.
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
   
   Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple Imputation Strategies for 
   the Statistical Analysis of Incomplete Data Sets. Ph.D. Thesis, 
@@ -46,9 +45,8 @@
   Venables, W.N. & Ripley, B.D. (1997). Modern applied statistics with S-Plus (2nd ed). Springer, Berlin.
 
 }
-\seealso{\code{\link{mice}}, \code{\link{glm}}, \code{\link{glm.fit}},
-  \code{\link{mice.impute.logreg2}} }
+\seealso{\code{\link{mice}}, \code{\link{glm}}, \code{\link{glm.fit}}}
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 
-\keyword{misc}
+\keyword{datagen}

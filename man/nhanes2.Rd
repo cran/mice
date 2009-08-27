@@ -10,7 +10,7 @@ A small data set with non-monotone missing values.
   A data frame with 25 observations on the following 4 variables.
   \describe{
     \item{\code{age}}{Age group (1=20-39, 2=40-59, 3=60+)}
-    \item{\code{bmi}}{Body mass index ($kg/m^2$)}
+    \item{\code{bmi}}{Body mass index (kg/m**2)}
     \item{\code{hyp}}{Hypertensive (1=no,2=yes)}
     \item{\code{chl}}{Total serum cholesterol (mg/dL)}
   }
@@ -31,7 +31,7 @@ London: Chapman & Hall. Table 6.14.
 
 
 \examples{
-data(nhanes2)
+
 imp <- mice(nhanes2)     # create 5 imputed data sets
 complete(imp)           # print the first imputed data set
 }

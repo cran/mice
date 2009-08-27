@@ -1,6 +1,6 @@
 \name{mice.impute.mean}
 \alias{mice.impute.mean}
-\title{Elementary Imputation Method: Simple Mean Imputation}
+\title{Imputation by the Mean}
 
 \description{
   Imputes the arithmetic mean of the observed data
@@ -9,22 +9,24 @@
     mice.impute.mean(y, ry, x=NULL)
 }
 \arguments{
-  \item{y}{Incomplete data vector of length n}
-  \item{ry}{Vector of missing data pattern (FALSE=missing, TRUE=observed)}
-  \item{x}{Matrix (n x p) of complete covariates.
-  }
+  \item{y}{Incomplete data vector of length \code{n}}
+  \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
+  \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
 }
+
 \value{
-   A vector of length nmis with imputations.
+   A vector of length \code{nmis} with imputations.
 }
 
 \section{Warning}{
-  Imputing the mean of a variable rarely produces appropriate inferences.
+  Imputing the mean of a variable is almost never appropriate.
   See Little and Rubin (1987). 
 }
 \references{
-  Van Buuren, S. & Oudshoorn, C.G.M. (2000). Multivariate Imputation by Chained Equations: 
-  MICE V1.0 User's manual. Report PG/VGZ/00.038, TNO Prevention and Health, Leiden.
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
   
   Little, R.J.A. and Rubin, D.B. (1987). Statistical Analysis with Missing Data. 
   New York: John Wiley and Sons.
@@ -33,4 +35,4 @@
   \code{\link{mice}}, \code{\link{mean}}
 }
 \author{Stef van Buuren, Karin Oudshoorn, 2000} 
-\keyword{misc} 
+\keyword{datagen} 

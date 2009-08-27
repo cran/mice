@@ -10,11 +10,11 @@
   \item{obj}{   An object of class \code{mids}, typically produces by a previous call
     to \code{mice()} or \code{mice.mids()} }
   \item{maxit}{ The number of additional Gibbs sampling iterations. }
-  \item{diagnostics}{A Boolean flag. If TRUE, diagnostic information will be appended to 
-    the value of the function. If FALSE, only the imputed data are saved. 
-    The default is TRUE.}
-  \item{printFlag}{A Boolean flag. If TRUE, diagnostic information during the Gibbs sampling
-    iterations will be written to the command window.  The default is TRUE.}
+  \item{diagnostics}{A Boolean flag. If \code{TRUE}, diagnostic information will be appended to 
+    the value of the function. If \code{FALSE}, only the imputed data are saved. 
+    The default is \code{TRUE}.}
+  \item{printFlag}{A Boolean flag. If \code{TRUE}, diagnostic information during the Gibbs sampling
+    iterations will be written to the command window.  The default is \code{TRUE}.}
 }
 \details{
   This function enables the user to split up the computations of the 
@@ -33,17 +33,17 @@
   
 }
 \references{
- Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000) 
-\emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
-Leiden: TNO Quality of Life.
-\url{http://www.stefvanbuuren.nl/publications/MICE V1.0 Manual TNO00038 2000.pdf}
+Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+MICE: Multivariate Imputation by Chained Equations in R. 
+\emph{Journal of Statistical Software}, forthcoming.
+\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
  
 }
 
 \seealso{\code{\link{complete}}, \code{\link{mice}}, \code{\link{set.seed}}}
 
 \examples{
-data(nhanes)
+
 imp1 <- mice(nhanes,maxit=1)
 imp2 <- mice.mids(imp1)
 
@@ -63,4 +63,4 @@ imp <- mice(nhanes,maxit=2)
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}     
 
-\keyword{misc} 
+\keyword{iteration} 

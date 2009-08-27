@@ -2,7 +2,7 @@
 \alias{lm.mids}
 \title{Linear Regression on Multiply Imputed Data}
 \usage{
-lm.mids(formula, data, ...)
+lm.mids(formula, data, \dots)
 }
 \description{Applies \code{lm()} to  multiply imputed data set
 }
@@ -15,14 +15,21 @@ lm.mids(formula, data, ...)
     An object of type 'mids', which stands for 'multiply imputed data set', typically
     created by a call to function \code{mice()}.}
 
-\item{...}{	Additional parameters passed to \code{\link{lm}}}
+\item{\dots}{	Additional parameters passed to \code{\link{lm}}}
 }
 
 \value{
-    An objects of class 'mira', which stands for 'multiply imputed repeated analysis'.
+    An objects of class \code{mira}, which stands for 'multiply imputed repeated analysis'.
     This object contains \code{data$m} distinct \code{lm.objects}, plus some descriptive information.
 
 }
+
+\details{
+  This function is included for backward compatibility with V1.0. The function is
+  superseeded by \code{\link{with.mids}}.
+}
+
+
 \references{
 Van Buuren, S., Groothuis-Oudshoorn, C.G.M. (2000). 
 \emph{Multivariate Imputation by Chained Equations:  MICE V1.0 User's manual.} 
@@ -33,10 +40,10 @@ Leiden: TNO Quality of Life.
 \seealso{ \code{\link{lm}}, \code{\link{mids}}, \code{\link{mira}}
 }
 \examples{
-data(nhanes)
+
 imp <- mice(nhanes)
 fit <- lm.mids(bmi~hyp+chl,data=imp)
 }
 \author{Stef van Buuren, Karin Oudshoorn, 2000}     
 
-\keyword{misc}
+\keyword{multivariate}
