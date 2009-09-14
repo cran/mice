@@ -1,5 +1,5 @@
 #
-# MICE V2.0 (26-08-2009)
+# MICE V2.1 (31-08-2009)
 #
 #	R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2009 TNO Quality of Life, Leiden
@@ -10,7 +10,6 @@
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation; either version 2 of the License, or
 #    (at your option) any later version.
-#
 #   
 #   Authors:    
 #           S. van Buuren, C.G.M. Oudshoorn 
@@ -18,10 +17,7 @@
 #           The Netherlands
 #   with contributions of John Fox, Frank E. Harrell, Roel de Jong, 
 #                         Jason Turner, Martijn Heijmans, Peter Malewski
-#
-#   See S. van Buuren & C.G.M. Oudshoorn (2009) MICE User's Guide V2.0     
-#   Leiden: TNO Quality of Life. 
-#
+##
 #   ## SVB: changes by Stef van Buuren
 #   ## FEH: changes by Frank E. Harrell 
 #   ## PM:  changes by Peter Malewski
@@ -51,7 +47,7 @@ mice <- function(data,
 )
 
 {
-#   MICE - Multivariate Imputation by Chained Equations V2.0
+#   MICE - Multivariate Imputation by Chained Equations V2.1
 #
 #   Main algorithm for imputing datasets.
 #   Authors: K. Oudshoorn and S. van Buuren
@@ -139,10 +135,10 @@ mice <- function(data,
     #
         active <- !is.passive(method) & nmis > 0 & !(method=="")
         fullNames <- paste("mice.impute", method[active], sep=".")
-        # notFound <- !sapply(fullNames,exists,mode="function") ## SVB 6 Feb 2004
+        notFound <- !sapply(fullNames, exists, mode="function", inherit=TRUE) ## SVB 6 Feb 2004
         # notFound <- !sapply(fullNames, existsFunction)  ## FEH
-        notFound <- vector( mode="logical",length=length(fullNames))
-        for (i in 1:length(notFound)) notFound[i] <- !existsFunction(fullNames[i])
+        # notFound <- vector( mode="logical",length=length(fullNames))
+        # for (i in 1:length(notFound)) notFound[i] <- !existsFunction(fullNames[i])
         if (any(notFound)) stop(paste("The following functions were not found:",paste(fullNames[notFound],collapse=", ")))
     #
     #   type checks on built-in imputation methods
@@ -675,7 +671,7 @@ augment <- function(y, ry, x){
 
 #--------------------MICE.IMPUTE.POLYREG-----------------------------   
     
-mice.impute.polyreg<-function(y, ry, x)
+mice.impute.polyreg <- function(y, ry, x)
 {
 # mice.impute.polyreg
 #
@@ -706,6 +702,7 @@ mice.impute.polyreg<-function(y, ry, x)
     fit <- multinom(formula(data), data=data[ry,], weights=w[ry], maxit=200, trace=FALSE)
     post <- predict(fit, data[!ry,], type = "probs")
     remove("data", pos = 1)
+    if (sum(!ry)==1) post <- matrix(post, nr=1, nc=length(post))   # SvB 14 sept 2009
     fy <- as.factor(y)
     nc <- length(levels(fy))
     un <- rep(runif(sum(!ry)),each=nc)
@@ -714,7 +711,6 @@ mice.impute.polyreg<-function(y, ry, x)
     draws <- un>apply(post,1,cumsum)
     # if (!is.matrix(draws)) draws <- matrix(draws,nr=2)
     idx <- 1+apply(draws,2,sum)
-    # browser()
     return(levels(fy)[idx])
 }
 
@@ -1126,33 +1122,44 @@ summary.mids<-function(object, ...)
     invisible()
 }
 
-
-
 #------------------------------PLOT.MIDS---------------------------------
 
-plot.mids <-function(x, y, layoutplot=c(3,2),askplot=TRUE, ...){
+plot.mids <-function(x, layoutplot=c(3,2), askplot=TRUE, ...){
 
+    eps <- 0.000001
     names <- dimnames(x$chainVar[,,1])[[1]]
     s.mat <- sqrt(x$chainVar)
     m.mat <- x$chainMean
 
     old.par <- par(mfrow=layoutplot, ask=askplot)
-    yli1.min<-apply(m.mat,1,min,na.rm=TRUE)
-    yli1.max<-apply(m.mat,1,max,na.rm=TRUE)
-    yli2.min<-apply(s.mat,1,min,na.rm=TRUE)
-    yli2.max<-apply(s.mat,1,max,na.rm=TRUE)
+    suppressWarnings(yli1.min<-apply(m.mat,1,min,na.rm=TRUE))
+    suppressWarnings(yli1.max<-apply(m.mat,1,max,na.rm=TRUE))
+    suppressWarnings(yli2.min<-apply(s.mat,1,min,na.rm=TRUE))
+    suppressWarnings(yli2.max<-apply(s.mat,1,max,na.rm=TRUE))
     for (m in 1:(dim(m.mat)[1])){
-        plot(1:(dim(m.mat)[2]),m.mat[m,,1],type="n",ylim=c(yli1.min[m],yli1.max[m]),xlab="iteration",ylab="mean")
-        title(names[m])
-        for (i in 1:(dim(m.mat)[3]))
-          lines(1:(dim(m.mat)[2]),m.mat[m,,i],col=i)
-        plot(1:(dim(s.mat)[2]),s.mat[m,,1],type="n",ylim=c(yli2.min[m],yli2.max[m]),xlab="iteration",ylab="sd")
-        title(names[m])
-        for (i in 1:(dim(s.mat)[3]))
-          lines(1:(dim(s.mat)[2]),s.mat[m,,i],col=i)
+        if ((yli1.max[m]-yli1.min[m])<eps) {
+          plot(x=1:(dim(m.mat)[2]),xlab="iteration",ylim=c(0,1),ylab="mean",type="n")
+          text(x=dim(m.mat)[2]/2,y=0.5,labels="no data",col="blue",cex=3)
+        } else {
+          plot(1:(dim(m.mat)[2]),m.mat[m,,1],type="n",ylim=c(yli1.min[m],yli1.max[m]),xlab="iteration",ylab="mean")
+          title(names[m])
+          for (i in 1:(dim(m.mat)[3]))
+            lines(1:(dim(m.mat)[2]),m.mat[m,,i],col=i)
+        }
+        if ((yli2.max[m]-yli2.min[m])<eps) {
+          plot(x=1:(dim(s.mat)[2]),xlab="iteration",ylim=c(0,1),ylab="sd",type="n")
+          text(x=dim(s.mat)[2]/2,y=0.5,labels="no data",col="blue",cex=3,adj=0.5)
+        } else {
+          plot(1:(dim(s.mat)[2]),s.mat[m,,1],type="n",ylim=c(yli2.min[m],yli2.max[m]),xlab="iteration",ylab="sd")
+          title(names[m])
+          for (i in 1:(dim(s.mat)[3]))
+            lines(1:(dim(s.mat)[2]),s.mat[m,,i],col=i)
+        }
     }
     par(old.par)
 }
+
+
 
 
 #------------------------------cbind.mids--------------------------------
@@ -1669,14 +1676,15 @@ with.mids<-function(data, expr, ...)
 
 #------------------------------pool-------------------------------
 
-pool <- function (object, method = "smallsample")
+pool<-function (object, method = "smallsample")
 {
 # General pooling function for multiple imputation parameters
 # object: an object of class mira (Multiple Imputed Repeated Analysis)
 # Based on Rubin's rules (Rubin, 1987);
 #
 # Stef van Buuren, Karin Oudshoorn, July 1999.
-# Extended for mle objects, KO 2009.
+# Extended for mle (S3) and mer (S4) objects, KO 2009.
+# Updated V2.1 - Aug 31, 2009
 #
 #   Check the arguments
 #
@@ -1686,30 +1694,42 @@ pool <- function (object, method = "smallsample")
     if ((m <- length(object$analyses)) < 2)
         stop("At least two imputations are needed for pooling.\n" )
 
+    analyses <- object$analyses
+    if (class(analyses[[1]])=="lme") require(nlme)
+    if (class(analyses[[1]])=="mer") require(lme4)
+
 #
 #   Set up arrays for object.
 #
-    analyses <- object$analyses
     mess <- try(coef(analyses[[1]]), silent=TRUE)
     if (inherits(mess,"try-error")) stop("Object has no coefficients.")
     mess <- try(vcov(analyses[[1]]), silent=TRUE)
     if (inherits(mess,"try-error")) stop("Object has no vcov() function.")
-    
-    k <- length(coef(analyses[[1]]))
-    names <- names(coef(analyses[[1]]))
-    qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m,
-        names))
+
+    if (class(analyses[[1]])=="mer"){
+      k <- length(fixef(analyses[[1]]))
+      names <- names(fixef(analyses[[1]]))
+    }
+    else {
+      k <- length(coef(analyses[[1]]))
+      names <- names(coef(analyses[[1]]))}
+    qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m, names))
     u <- array(NA, dim = c(m, k, k), dimnames = list(1:m, names,
         names))
-
 #
 #   Fill arrays
 #
     for (i in 1:m) {
         fit <- analyses[[i]]
-        if (class(fit)[1]=="lme") qhat[i, ]<-fixef(fit)
-        else qhat[i, ] <- coef(fit)
-        u[i, , ] <- vcov(fit)
+        if (class(fit)[1]=="mer") {
+          qhat[i, ]<-fixef(fit)
+          u[i , ,] <- as.matrix(vcov(fit))}
+        else {
+          if (class(fit)[1]=="lme") {
+            qhat[i,]<-fit$coefficients$fixed  }
+            else qhat[i, ] <- coef(fit)
+          u[i, , ] <- vcov(fit)    
+        }
     }
 #
 #   Compute within, between and total variances
@@ -1726,11 +1746,11 @@ pool <- function (object, method = "smallsample")
     f <- (1 + 1/m) * diag(b/t)                                # fraction of missing information
     df <- (m - 1) * (1 + 1/r)^2                               # (3.1.6)
     if (method == "smallsample") {                            # Barnard-Rubin adjustment
-        if (class(fit)[1]=="lme") dfc<-fit$fixDF[["X"]]          # Adjustment for lme-objects, KO 2009.
+        if (class(fit)[1]=="lme") dfc <- fit$fixDF[["X"]]     # Adjustment for lme-objects, KO 2009.
+        else if (class(fit)[1]=="mer") dfc <- sum(fit@dims[2:4]*c(1,-1,-1))+1 # Adjustment for lmer-objects, KO 2009.
         else dfc <- fit$df.residual
         df <- dfc/((1 - (f/(m + 1)))/(1 - f) + dfc/df)
     }
-    # formula <- formula(analyses[[1]]$terms)
     names(r) <- names(df) <- names(f) <- names
     fit <- list(call = call, call1 = object$call, call2 = object$call1,
         nmis = object$nmis, m = m, qhat = qhat, u = u, qbar = qbar,
@@ -1738,6 +1758,7 @@ pool <- function (object, method = "smallsample")
     oldClass(fit) <- c("mipo", oldClass(object))              ## FEH
     return(fit)
 }
+
 
 #------------------------------pool.scalar----------------------------
 

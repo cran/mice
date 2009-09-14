@@ -5,13 +5,12 @@
 #	
 #	 This file is part of the R package MICE.
 #
-# System functions for the MICE library V2.0
+# System functions for the MICE library V2.1
 
 #------------------------------.First.lib-------------------------------
 .First.lib <- function(library, section){
-    # cat("MICE V2.0\n")
+    # cat("MICE V2.1\n")
     # require(Hmisc)
     require(MASS)
     require(nnet)
-    require(nlme)
 }

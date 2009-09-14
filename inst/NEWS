@@ -7,15 +7,12 @@ incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
 
 
-The current version is MICE V2.0, which is described in
+The current version is MICE V2.1, which is described in
 
   Van Buuren S, Groothuis-Oudshoorn K (2009).
   MICE: Multivariate Imputation by Chained Equations in R.
   Journal of Statistical Software, forthcoming.
   http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
-
-The pdf of this document is also distributed in doc subdirectory of
-the directory in which the package mice was installed.
 
 
 For more background on FCS see:
@@ -49,36 +46,47 @@ or
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
 
+V2.1 - 14-09-2009 / SvB
+
+ADDED:   pool() now also supports class 'mer'
+CHANGED: nlme and lme4 are now only loaded if needed (by pool())
+FIXED:   bug fixed in mice.impute.polyreg() when there was one missing entry (Emmanuel Charpentier)
+FIXED:   bug fixed in plot.mids() when there was one missing entry (Emmanuel Charpentier) 
+CHANGED: NAMESPACE expanded to allow easy access to function code
+FIXED:   mice() can now find mice.impute.xxx() functions in the .GlobalEnv 
+
+
 v2.0 - 26-08-2009 / SvB, KO 	Major upgrade for JSS manuscript
 
-ADDED:  new functions cbind.mids(), rbind.mids(), ibind()
-ADDED:  new argument in mice(): 'post' in post-processing imputations
-ADDED:  new functions: pool.scaler(), pool.compare(), pool.r.squared()
-ADDED:	new data: boys, popmis, windspeed
-FIXED:	function summary.mipo all(object$df) command fixed
+ADDED:   new functions cbind.mids(), rbind.mids(), ibind()
+ADDED:   new argument in mice(): 'post' in post-processing imputations
+ADDED:   new functions: pool.scaler(), pool.compare(), pool.r.squared()
+ADDED:	 new data: boys, popmis, windspeed
+FIXED:	 function summary.mipo all(object$df) command fixed
 DELETED: data.frame.to.matrix replaced by the internal data.matrix function
-ADDED: new imputation method mice.impute.2l.norm() for multilevel data
+ADDED:   new imputation method mice.impute.2l.norm() for multilevel data
 CHANGED: pool now works for any class having a vcov() method
-ADDED: with.mids() provides a general complete-data analysis
-ADDED: type checking in mice() to ensure appropriate imputation methods
-ADDED: warning added in mice() for constant predictors
-ADDED: prevention of perfect prediction in mice.impute.logreg() and mice.impute.polyreg()
-CHANGES: mice.impute.norm.improper() changed into mice.impute.norm.nob()
+ADDED:   with.mids() provides a general complete-data analysis
+ADDED:   type checking in mice() to ensure appropriate imputation methods
+ADDED:   warning added in mice() for constant predictors
+ADDED:   prevention of perfect prediction in mice.impute.logreg() and mice.impute.polyreg()
+CHANGED: mice.impute.norm.improper() changed into mice.impute.norm.nob()
 DELETED: mice.impute.polyreg2() deleted
-ADDED: new 'include' argument in complete()
-ADDED: support for the empty imputation method in mice()
-ADDED: new function md.pairs()
-ADDED: support for intercept imputation
-ADDED: new function quickpred()
-FIXED: plot.mids() bug fix when number of variables > 5
+ADDED:   new 'include' argument in complete()
+ADDED:   support for the empty imputation method in mice()
+ADDED:   new function md.pairs()
+ADDED:   support for intercept imputation
+ADDED:   new function quickpred()
+FIXED:   plot.mids() bug fix when number of variables > 5
+
 
 v1.21 - 15/3/2009 SvB  Maintainance release
 
-FIXED:      Stricter type checking on logicals in mice() to evade warnings.
-CHANGED:    Modernization of all help files.
-FIXED:      padModel: treatment changed to contr.treatment
-CHANGED:    Functions check.visitSequence, check.predictorMatrix, check.imputationMethod are now coded as local to mice()
-FIXED:      existsFunction in check.imputationMethod now works both under S-Plus and R
+FIXED:   Stricter type checking on logicals in mice() to evade warnings.
+CHANGED: Modernization of all help files.
+FIXED:   padModel: treatment changed to contr.treatment
+CHANGED: Functions check.visitSequence, check.predictorMatrix, check.imputationMethod are now coded as local to mice()
+FIXED:   existsFunction in check.imputationMethod now works both under S-Plus and R
 
 v1.16 - 6/25/2007
 

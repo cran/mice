@@ -52,7 +52,7 @@ pool(object, method="smallsample")
     \item an appropriate estimate of the variance-covariance matrix of the 
     estimates per analyses (estimated by \code{\link{vcov}}.
   }
-  The function pools also estimates obtained with \code{lme()}, 
+  The function pools also estimates obtained with \code{lme()} and \code{lmer()}, 
   BUT only the fixed part of the model.
 }   
 
@@ -77,7 +77,6 @@ MICE: Multivariate Imputation by Chained Equations in R.
 \seealso{
   \code{\link{with.mids}}, \code{\link{vcov}},
   \code{\link{print.mipo}}, \code{\link{summary.mipo}}
-  \code{\link{lme}}
 }
 
 \examples{
@@ -111,6 +110,6 @@ pool(fit)
 }
 
 
-\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2009} 
 
 \keyword{htest}  

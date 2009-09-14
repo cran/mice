@@ -7,7 +7,7 @@
 \usage{
 \method{print}{mids}(x,\dots)
 \method{summary}{mids}(object,\dots)
-\method{plot}{mids}(x,y,layoutplot = c(3, 2), askplot = TRUE, \dots)
+\method{plot}{mids}(x, layoutplot = c(3, 2), askplot = TRUE, \dots)
 }
 
 \description{An object containing a multiply imputed data set. The
@@ -17,7 +17,6 @@
 }
 \arguments{
   \item{x, object}{A \code{mids} object.}
-  \item{y}{Currently not used.}
   \item{layoutplot}{Vector of two integers specifying the number of panel per row 
   and column respectively.}
   \item{askplot}{\code{TRUE} if the user needs to be asked before drawing a new page}

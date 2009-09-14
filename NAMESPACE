@@ -2,13 +2,13 @@ importFrom("stats",lm)
 importFrom("stats",glm)
 importFrom("nnet",multinom)
 importFrom("MASS",lda)
-importFrom("nlme",lme)
 
 exportClasses("mids","mira","mipo")
 
 export("mice",
        "mice.mids",
        "sampler",
+       "padModel",
        "mice.impute.norm",
        "mice.impute.norm.nob",
        "mice.impute.pmm",
@@ -19,6 +19,10 @@ export("mice",
        "mice.impute.sample",
        "mice.impute.passive",
        "mice.impute.2l.norm",
+       ".norm.draw",
+       ".norm.fix",
+       ".pmm.match",
+       "augment",
        "squeeze",
        "md.pattern",
        "md.pairs",
