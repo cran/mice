@@ -1,8 +1,8 @@
 #
-# MICE V2.1 (31-08-2009)
+# MICE V2.2 (13-01-2010)
 #
 #	R package MICE: Multivariate Imputation by Chained Equations
-#    Copyright (c) 1999-2009 TNO Quality of Life, Leiden
+#    Copyright (c) 1999-2010 TNO Quality of Life, Leiden
 #	
 #	 This file is part of the R package MICE.
 #
@@ -47,16 +47,16 @@ mice <- function(data,
 )
 
 {
-#   MICE - Multivariate Imputation by Chained Equations V2.1
+#   MICE - Multivariate Imputation by Chained Equations V2.2
 #
 #   Main algorithm for imputing datasets.
 #   Authors: K. Oudshoorn and S. van Buuren
 #            TNO Quality of Life, Leiden
 #            The Netherlands
 ##
-#   Copyright (c) 2009 TNO Quality of Life, Leiden
+#   Copyright (c) 2010 TNO Quality of Life, Leiden
 #
-    #------------------------------CHECK.VISITSEQUENCE-------------------------------
+    #------------------------------CHECK.VISITSEQUENCE------------------------
     check.visitSequence<-function(visitSequence, nmis, nvar)
     {
     #   checks the visitSequence array
@@ -158,7 +158,7 @@ mice <- function(data,
 
     check.data <- function(data, predictorMatrix, method, nmis, nvar){
         is.predictor <- colSums(predictorMatrix) > 0
-        is.constant <- (unlist(lapply(data[,is.predictor], var, na.rm=TRUE)) < 0.00001) | (nmis[is.predictor] == rep(nrow(data),sum(is.predictor)))
+        is.constant <- (unlist(lapply(data[,is.predictor,drop=FALSE], var, na.rm=TRUE)) < 0.00001) | (nmis[is.predictor] == rep(nrow(data),sum(is.predictor)))   # V2.2 13/1 SvB bug replaced for 1 predictor
         if (any(is.constant & !is.passive(method[is.predictor]))) warning(paste("Constant predictor(s) detected:",dimnames(data)[[2]][is.predictor][is.constant]))
     }
 
@@ -413,14 +413,28 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                 if(printFlag & theMethod!="dummy") cat(" ",dimnames(p$data)[[2]][j])
                 if(theMethod!="" & (!is.passive(theMethod)) & theMethod!="dummy"){  # for a true imputation method
                     if (substring(theMethod, 1, 2) != "2l") {			# RJ: for an non-multilevel imputation method 
-                    	imp[[j]][,i] <- do.call(paste("mice.impute",theMethod,sep="."), 
-                        	args = list(p$data[,j], r[,j], p$data[,p$predictorMatrix[j,]==1,drop=FALSE]))
+                      x <- p$data[, p$predictorMatrix[j, ] == 
+                        1, drop = FALSE]
+                      y <- p$data[, j]
+                      ry <- r[, j]
+                      nam <- dimnames(p$data)[[2]][j]
+                      f <- paste("mice.impute", theMethod, sep = ".")
+                      x <- remove.lindep(x, y, ry, nam)
+                      imp[[j]][, i] <- do.call(f, args = list(y, 
+                        ry, x))
                     }
                     else { # for a multilevel imputation method
-                    	predictors <- p$predictorMatrix[j,] != 0
-                    	imp[[j]][,i] <- do.call(paste("mice.impute",theMethod,sep="."), 
-                        	args = list(p$data[,j], r[,j], p$data[,predictors,drop=FALSE], p$predictorMatrix[j,predictors]))
-                    }	    	
+                      predictors <- p$predictorMatrix[j, ] != 0
+                      x <- p$data[, predictors, drop = FALSE]
+                      y <- p$data[, j]
+                      ry <- r[, j]
+                      type <- p$predictorMatrix[j, predictors]
+                      nam <- dimnames(p$data)[[2]][j]
+                      f <- paste("mice.impute", theMethod, sep = ".")
+                      x <- remove.lindep(x, y, ry, nam)
+                      imp[[j]][, i] <- do.call(f, args = list(y, 
+                        ry, x, type))
+                    }
                     p$data[!r[,j],j] <- imp[[j]][,i]
                 }
                 else if (is.passive(theMethod)) {
@@ -430,14 +444,16 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                 else if (theMethod== "dummy") {
                   ## FEH
                     cat.columns <- p$data[,p$categories[j,4]] 
-                    p$data[,(j:(j+p$categories[p$categories[j,4],2]-1))]<-
-                             matrix((model.matrix(~cat.columns-1)[,-1]),ncol=p$categories[p$categories[j,4],2],nrow=nrow(p$data))
+                    p$data[,(j:(j+p$categories[p$categories[j,4],2]-1))] <-
+                             matrix((model.matrix(~cat.columns-1)[,-1]),
+                             ncol=p$categories[p$categories[j,4],2],
+                             nrow=nrow(p$data))
                     remove("cat.columns")
                 }
                 # optional post-processing
                 cmd <- p$post[j]          # SvB Aug 2009
-                if (cmd!="") {
-                  eval(parse(text=cmd))
+                if (cmd != "") {
+                  eval(parse(text = cmd))
                   p$data[!r[,j],j] <- imp[[j]][,i]
                 }  
            } # end j loop 
@@ -460,6 +476,36 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
     if (printFlag) cat("\n")
 }
     return(list(iteration=iteration, imp=imp, chainMean = chainMean, chainVar = chainVar))
+}
+
+
+remove.lindep <- function (x, y, ry, nam, eps = 1000 * .Machine$double.eps, 
+    maxcor = 0.99) 
+{
+    if (eps <= 0) 
+        stop("\n Argument 'eps' must be positive.")
+    xobs <- x[ry, , drop=FALSE]
+    yobs <- as.numeric(y[ry])
+    keep <- unlist(apply(xobs, 2, var) > eps)
+    keep <- keep & (unlist(apply(xobs, 2, cor, yobs)) < maxcor)
+    if (all(!keep)) 
+        warning("All predictors are constant or have too high correlation.")
+    k <- sum(keep)
+    cx <- cor(xobs[, keep, drop=FALSE], use = "all.obs")
+    eig <- eigen(cx, symmetric = TRUE)
+    ncx <- cx
+    while (eig$values[k]/eig$values[1] < eps) {
+        j <- (1:k)[order(abs(eig$vectors[, k]), decreasing = TRUE)[1]]
+        keep[keep][j] <- FALSE
+        ncx <- cx[keep[keep], keep[keep], drop = FALSE]
+        k <- k - 1
+        eig <- eigen(ncx)
+    }
+    if (!all(keep)) 
+        warning(paste("Predictors removed:", paste(dimnames(x)[[2]][!keep], 
+            collapse = ", ")))
+    # tsak
+    return(x[, keep, drop = FALSE])
 }
 
 
@@ -1676,7 +1722,7 @@ with.mids<-function(data, expr, ...)
 
 #------------------------------pool-------------------------------
 
-pool<-function (object, method = "smallsample")
+pool <- function (object, method = "smallsample")
 {
 # General pooling function for multiple imputation parameters
 # object: an object of class mira (Multiple Imputed Repeated Analysis)
@@ -1685,7 +1731,7 @@ pool<-function (object, method = "smallsample")
 # Stef van Buuren, Karin Oudshoorn, July 1999.
 # Extended for mle (S3) and mer (S4) objects, KO 2009.
 # Updated V2.1 - Aug 31, 2009
-#
+# Updated V2.2 - Jan 13, 2010
 #   Check the arguments
 #
     call <- match.call()
@@ -1695,8 +1741,8 @@ pool<-function (object, method = "smallsample")
         stop("At least two imputations are needed for pooling.\n" )
 
     analyses <- object$analyses
-    if (class(analyses[[1]])=="lme") require(nlme)
-    if (class(analyses[[1]])=="mer") require(lme4)
+    if (class(analyses[[1]])[1]=="lme") require(nlme)  # fixed 13/1/2010
+    if (class(analyses[[1]])[1]=="mer") require(lme4)  # fixed 13/1/2010
 
 #
 #   Set up arrays for object.
@@ -1706,7 +1752,7 @@ pool<-function (object, method = "smallsample")
     mess <- try(vcov(analyses[[1]]), silent=TRUE)
     if (inherits(mess,"try-error")) stop("Object has no vcov() function.")
 
-    if (class(analyses[[1]])=="mer"){
+    if (class(analyses[[1]])[1]=="mer"){               # fixed 13/1/2010
       k <- length(fixef(analyses[[1]]))
       names <- names(fixef(analyses[[1]]))
     }
@@ -1746,8 +1792,12 @@ pool<-function (object, method = "smallsample")
     f <- (1 + 1/m) * diag(b/t)                                # fraction of missing information
     df <- (m - 1) * (1 + 1/r)^2                               # (3.1.6)
     if (method == "smallsample") {                            # Barnard-Rubin adjustment
-        if (class(fit)[1]=="lme") dfc <- fit$fixDF[["X"]]     # Adjustment for lme-objects, KO 2009.
-        else if (class(fit)[1]=="mer") dfc <- sum(fit@dims[2:4]*c(1,-1,-1))+1 # Adjustment for lmer-objects, KO 2009.
+        cls <- class(fit)[1]
+        if (cls=="lme") dfc <- fit$fixDF[["X"]]     # Adjustment for lme-objects, KO 2009.
+        else if (cls=="mer") dfc <- sum(fit@dims[2:4]*c(1,-1,-1))+1 # Adjustment for lmer-objects, KO 2009.
+        else if (cls=="multinom") dfc <- fit$edf   # Adjustment for multinom-objects, SvB 2010.
+        else if (is.null(fit$df.residual)) 
+            stop('Cannot extract df from object of class ',cls,'. Use pool(.., method="plain").')
         else dfc <- fit$df.residual
         df <- dfc/((1 - (f/(m + 1)))/(1 - f) + dfc/df)
     }

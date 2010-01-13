@@ -1,7 +1,7 @@
 citHeader("To cite package 'mice' in publications use:")
 
   desc <- packageDescription("mice")
-  year <- 2009
+  year <- 2010
   vers <- paste("R package version", desc$Version)
 
 citEntry(entry="article",
@@ -9,11 +9,11 @@ citEntry(entry="article",
                       as.person("Karin Groothuis-Oudshoorn")),
   title = "MICE: Multivariate Imputation by Chained Equations in R",
   journal = "Journal of Statistical Software, forthcoming",
-  year = 2009,
+  year = 2010,
   volume = "0",
   pages = "00--00",
   textVersion =
-  paste("Stef van Buuren, Karin Groothuis-Oudshoorn(2009)." ,
+  paste("Stef van Buuren, Karin Groothuis-Oudshoorn(2010)." ,
       "MICE: Multivariate Imputation by Chained Equations in R." ,
       "Journal of Statistical Software, forthcoming.", sep=" ")
   )
