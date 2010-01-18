@@ -5,13 +5,12 @@
 \title{Multiply Imputed Repeated Analyses}
 \usage{
 \method{print}{mira}(x, \dots)
-\method{summary}{mira}(object, correlation, \dots)
+\method{summary}{mira}(object, \dots)
 }
 
 \arguments{
     \item{x, object}{An object containing the \code{m} fit objects of a complete data analysis, 
         plus some additional information.}
-    \item{correlation}{}
     \item{\dots}{not used}
 }
 \description{

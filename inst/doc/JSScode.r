@@ -6,8 +6,9 @@
 # date: 27/08/2009
 # See: http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
 #
-# The code assumes mice V2.0.
-if (substring(packageDescription("mice")$Version,1,1)<2) warning("MICE V2.0 needed")
+# adapted for V2.3 14/2/2010
+# The code assumes mice V2.3.
+if (as.numeric(packageDescription("mice")$Version)<2.3) warning("MICE V2.3 needed")
 
 # 2.4 Simple example
 #
@@ -90,10 +91,11 @@ imp$imp$bmi
 # -- random: intercept, sex
 # -- class: school
 popmis[1:3,]
-ini <- mice(popmis, maxit=0)
+popmis2 <- popmis[,-6]
+ini <- mice(popmis2, maxit=0)
 pred <- ini$pred
-pred["popular",] <- c(0, -2, 0, 2, 1, 2, 0)
-imp <- mice(popmis, meth=c("","","2l.norm","","","",""), pred=pred, maxit=1)
+pred["popular",] <- c(0, -2, 0, 2, 1, 0)
+imp <- mice(popmis2, meth=c("","","2l.norm","","",""), pred=pred, maxit=1)
 
 # quick predictor selection
 #
@@ -333,8 +335,8 @@ densityplot(~hc|.imp, data=long, group=hc.na, plot.points=FALSE,
 # conditional propensity score plot
 fit.hc <- with(imp, glm(hc.na~age+wgt+hgt+mat+reg,family=binomial))
 ps <- rowMeans(sapply(fit.hc$analyses, fitted.values))
-hc.1 <- complete(imp.ext,1)$hc
-hc.na <- is.na(imp.ext$data$hc)
+hc.1 <- complete(imp,1)$hc
+hc.na <- is.na(imp$data$hc)
 xyplot(hc.1 ~ ps, groups=hc.na, 	
    xlab="Probability of missing head circumference",
    ylab="Head circumference",
@@ -457,6 +459,7 @@ imp <- cbind.mids(imp,data.frame(Rhc=is.na(boys$hc)))
 mydata2 <- mi(complete(imp,1), complete(imp,2), complete(imp,3), complete(imp,4),complete(imp,5))
 fit <- zelig(Rhc~age+wgt+hgt+bmi+gen+phb+tv+reg, model="logit", data=mydata2)
 summary(fit)
+
 
 
 

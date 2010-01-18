@@ -7,9 +7,9 @@ incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
 
 
-The current version is MICE V2.2, which is described in
+The current version is MICE V2.3, which is described in
 
-  Van Buuren S, Groothuis-Oudshoorn K (2009).
+  Van Buuren S, Groothuis-Oudshoorn K (2010).
   MICE: Multivariate Imputation by Chained Equations in R.
   Journal of Statistical Software, forthcoming.
   http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
@@ -45,6 +45,15 @@ or
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+
+V2.3 - 14-02-2010 / SvB
+
+FIXED:   check.method: logicals are now treated as binary variables (Emmanuel Charpentier)
+FIXED:   complete: the NULL imputation case is now properly handled
+FIXED:   mice.impute.pmm: now creates between imputation variability for univariate predictor
+FIXED:   remove.lindep: returns 'keep' vector instead of data 
+
+
 V2.2 - 13-01-2010 / SvB
 
 ADDED:   pool() now supports class 'multinom' (Jean-Baptiste Pingault)

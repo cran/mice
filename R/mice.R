@@ -1,5 +1,5 @@
 #
-# MICE V2.2 (13-01-2010)
+# MICE V2.3 (18-01-2010)
 #
 #	R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2010 TNO Quality of Life, Leiden
@@ -47,7 +47,7 @@ mice <- function(data,
 )
 
 {
-#   MICE - Multivariate Imputation by Chained Equations V2.2
+#   MICE - Multivariate Imputation by Chained Equations
 #
 #   Main algorithm for imputing datasets.
 #   Authors: K. Oudshoorn and S. van Buuren
@@ -116,6 +116,7 @@ mice <- function(data,
                 if(is.numeric(data[,j])) method[j] <- defaultMethod[1]
                 else if(nlevels(data[,j]) == 2) method[j] <- defaultMethod[2]
                 else if(nlevels(data[,j])  > 2) method[j] <- defaultMethod[3]
+                else if(is.logical(data[,j])) method[j] <- defaultMethod[2]  # SvB 18/1/2010
                 else method[j] <- defaultMethod[1]
             }
         }
@@ -419,7 +420,8 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                       ry <- r[, j]
                       nam <- dimnames(p$data)[[2]][j]
                       f <- paste("mice.impute", theMethod, sep = ".")
-                      x <- remove.lindep(x, y, ry, nam)
+                      keep <- remove.lindep(x, y, ry)
+                      x <- x[, keep, drop = FALSE]
                       imp[[j]][, i] <- do.call(f, args = list(y, 
                         ry, x))
                     }
@@ -431,7 +433,9 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
                       type <- p$predictorMatrix[j, predictors]
                       nam <- dimnames(p$data)[[2]][j]
                       f <- paste("mice.impute", theMethod, sep = ".")
-                      x <- remove.lindep(x, y, ry, nam)
+                      keep <- remove.lindep(x, y, ry)
+                      x <- x[, keep, drop = FALSE]
+                      type <- type[keep]
                       imp[[j]][, i] <- do.call(f, args = list(y, 
                         ry, x, type))
                     }
@@ -479,9 +483,9 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 }
 
 
-remove.lindep <- function (x, y, ry, nam, eps = 1000 * .Machine$double.eps, 
-    maxcor = 0.99) 
-{
+remove.lindep <- function(x, y, ry, eps = 1000 * .Machine$double.eps, 
+    maxcor = 0.99) {
+    if (ncol(x)==0) return(x) 
     if (eps <= 0) 
         stop("\n Argument 'eps' must be positive.")
     xobs <- x[ry, , drop=FALSE]
@@ -504,8 +508,8 @@ remove.lindep <- function (x, y, ry, nam, eps = 1000 * .Machine$double.eps,
     if (!all(keep)) 
         warning(paste("Predictors removed:", paste(dimnames(x)[[2]][!keep], 
             collapse = ", ")))
-    # tsak
-    return(x[, keep, drop = FALSE])
+    return(keep)
+    # return(x[, keep, drop = FALSE])
 }
 
 
@@ -550,10 +554,11 @@ mice.impute.norm <- function(y, ry, x)
     residuals <- yobs - xobs %*% coef
     sigma.star <- sqrt(sum((residuals)^2)/rgamma(1, sum(ry) - ncol(x)))
     beta.star <- coef + (t(chol((v + t(v))/2)) %*% rnorm(ncol(x))) * sigma.star
-    parm <- list(beta.star, sigma.star)
-    names(parm) <- c("beta", "sigma")
+    parm <- list(coef, beta.star, sigma.star)      # SvB 10/2/2010
+    names(parm) <- c("coef","beta", "sigma")       # SvB 10/2/2010
     return(parm)
 }
+
 
 #------------------------MICE.IMPUTE.NORM.NOB-----------------------
 mice.impute.norm.nob <- function(y, ry, x)
@@ -589,11 +594,9 @@ mice.impute.norm.nob <- function(y, ry, x)
     return(parm)
 }
 
-
 #-----------------------------MICE.IMPUTE.PMM-------------------------
 
-mice.impute.pmm <- function(y, ry, x)
-{
+mice.impute.pmm <- function (y, ry, x)
 # Imputation of y by predictive mean matching, based on
 # Rubin (p. 168, formulas a and b).
 # The procedure is as follows:
@@ -605,13 +608,19 @@ mice.impute.pmm <- function(y, ry, x)
 # ry=TRUE if y observed, ry=FALSE if y missing
 #
 # Authors: S. van Buuren and K. Oudshoorn
-# 2 dec SvB
-#
+# Version 10/2/2010: yhatobs is calculated using the estimated 
+#                    rather than the drawn regression weights
+#                    this creates between imputation variability 
+#                    for the one-predictor case
+{
     x <- cbind(1, as.matrix(x))
     parm <- .norm.draw(y, ry, x)
-    yhat <- x %*% parm$beta
-    return(apply(as.array(yhat[!ry]),1,.pmm.match,yhat=yhat[ry],y=y[ry]))
+    yhatobs <- x[ry,] %*% parm$coef
+    yhatmis <- x[!ry,] %*% parm$beta
+    return(apply(as.array(yhatmis), 1, .pmm.match, yhat = yhatobs,
+        y = y[ry]))
 }
+
 
 #-------------------------.PMM.MATCH---------------------------------
 .pmm.match <- function(z, yhat=yhat, y=y)
@@ -857,6 +866,9 @@ mice.impute.2l.norm <- function(y, ry, x, type)
   }
   # written by Roel de Jong
 	# Initialize
+  x <- cbind(1, as.matrix(x))   # SvB 13/2/2010
+  type <- c(2, type)            # SvB 13/2/2010
+  #
 	n.iter <- 100
 	nry <- !ry
 	n.class <- length(unique(x[, type==(-2)]))
@@ -1108,7 +1120,7 @@ print.mira <- function(x,... )
 }
 
 #------------------------------summary.mira-------------------------------
-summary.mira<-function(object, correlation = TRUE, ...)
+summary.mira<-function(object, ...)
 {
 # This summary function is for a mira object. 
 # Then the seperate analyses are of class lm (glm), it calls
@@ -1583,7 +1595,8 @@ complete <- function(x, action = 1, include = FALSE)
         mis <- is.na(data)
         ind <- (1:ncol(data))[colSums(mis) > 0]
         for(j in ind) {         
-            data[mis[, j], j] <- x$imp[[j]][, action]
+            if (is.null(x$imp[[j]])) data[mis[,j],j] <- NA   # SvB 10/2/2010
+            else data[mis[, j], j] <- x$imp[[j]][, action]   # SvB 10/2/2010
         }
         return(data)
     }

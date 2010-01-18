@@ -19,13 +19,14 @@ mice.impute.pmm(y, ry, x)
   Imputation of \code{y} by predictive mean matching, based on Rubin (1987, p. 168, formulas a and b).
   The procedure is as follows:
   \enumerate{
-    \item Draw beta and sigma from the proper posterior
-    \item Compute predicted values for \code{yobs} and \code{ymis}
+    \item Estimate beta and sigma by linear regression
+    \item Draw beta* and sigma* from the proper posterior
+    \item Compute predicted values for \code{yobs}beta and \code{ymis}beta*
     \item For each \code{ymis}, find the observation with closest predicted
   value, and take its observed value in \code{y} as the imputation.
     \item If there is more than one candidate, make a random draw among them.
   Note: The matching is done on predicted \code{y}, NOT on observed \code{y}.
-  }
+}
 }
 \references{
 Little, R.J.A. (1988), Missing data adjustments in large surveys (with discussion), 
