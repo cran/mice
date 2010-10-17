@@ -33,10 +33,10 @@ MICE: Multivariate Imputation by Chained Equations in R.
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
 
-Van Buuren, S. (2010) 
+Van Buuren, S. (2011) 
 Multiple imputation of multilevel data.
-In Hox, J.J. and and Roberts, K. (Eds.), 
-\emph{The Handbook of Advanced Multilevel Analysis},
+In Hox, J.J. and and Roberts, J.K. (Eds.), 
+\emph{The Handbook of Advanced Multilevel Analysis}, Chapter 10, pp. 173--196.
 Milton Park, UK: Routledge.
 
 }

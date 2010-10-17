@@ -1,8 +1,5 @@
 \name{mice.internal}
 
-\alias{is.mids}
-\alias{is.mipo}
-\alias{is.mira}
 \alias{is.passive}
 \alias{.norm.draw}
 \alias{.norm.fix}
@@ -20,9 +17,6 @@ Internal functions for package \code{mice}.
 }
 
 \usage{
-is.mids(data)
-is.mipo(data)
-is.mira(data)
 is.passive(string)
 .norm.draw(y, ry, x)
 padModel(data, method, predictorMatrix, visitSequence, post, 

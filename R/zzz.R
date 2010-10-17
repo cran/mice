@@ -5,12 +5,20 @@
 #	
 #	 This file is part of the R package MICE.
 #
-# System functions for the MICE library V2.2
+# System functions for the MICE library
 
-#------------------------------.First.lib-------------------------------
-.First.lib <- function(library, section){
-    cat("mice V2.2\n")
-    # require(Hmisc)
-    require(MASS)
-    require(nnet)
+#------------------------------.onLoad-------------------------------
+.onLoad <- function(...){
+  lib <- dirname(system.file(package = "mice"))
+  d <- packageDescription("mice", lib = lib)
+  cat(paste(d$Package,d$Version,d$Date,"\n"))
+
+  require(MASS, quietly=TRUE)
+  require(nnet, quietly=TRUE)
+}
+
+version <- function(pkg="mice"){
+  lib <- dirname(system.file(package = pkg))
+  d <- packageDescription(pkg, lib = lib)
+  return(paste(d$Package,d$Version,d$Date,lib))
 }

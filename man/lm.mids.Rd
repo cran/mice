@@ -2,7 +2,7 @@
 \alias{lm.mids}
 \title{Linear Regression on Multiply Imputed Data}
 \usage{
-lm.mids(formula, data, \dots)
+\method{lm}{mids}(formula, data, \dots)
 }
 \description{Applies \code{lm()} to  multiply imputed data set
 }
@@ -44,6 +44,6 @@ Leiden: TNO Quality of Life.
 imp <- mice(nhanes)
 fit <- lm.mids(bmi~hyp+chl,data=imp)
 }
-\author{Stef van Buuren, Karin Oudshoorn, 2000}     
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}     
 
 \keyword{multivariate}

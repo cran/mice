@@ -1,11 +1,20 @@
 \name{mipo}
+%classes
+\alias{mipo-class}
+
+%functions
 \alias{mipo}
-\alias{print.mipo}
-\alias{summary.mipo}
+\alias{is.mipo}
+
+\alias{print,mipo-method}
+\alias{summary,mipo-method}
+
 \title{Multiply Imputed Pooled Analysis}
+
 \usage{
-\method{print}{mipo}(x,\dots)
-\method{summary}{mipo}(object,\dots)
+is.mipo(x)
+\S4method{print}{mipo}(x,\dots)
+\S4method{summary}{mipo}(object,\dots)
 }
 
 \description{
@@ -37,7 +46,7 @@
 }
 
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2010) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

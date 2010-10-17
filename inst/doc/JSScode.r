@@ -6,8 +6,8 @@
 # date: 27/08/2009
 # See: http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
 #
-# adapted for V2.3 14/2/2010
-# The code assumes mice V2.3.
+# adapted for V2.4 17/10/2010
+# The code assumes mice V2.3 or higher.
 if (as.numeric(packageDescription("mice")$Version)<2.3) warning("MICE V2.3 needed")
 
 # 2.4 Simple example
@@ -295,12 +295,27 @@ imp <- mice(cbind(boys,mat=NA), pred=pred, meth=meth, maxit=20)
 plot(imp)
 
 # monitor Kendall's tau between gen and phb
+
+### Oct 2010: We need to define a conversion function
+### since cor() does not allow factors anymore (even not
+### for spearman or kendall)
+fac2int <- function(f){
+  if (!is.data.frame(f)) stop("Sorry: Only dataframes")
+  z <- f
+  for (j in 1:length(f))
+    { if (is.factor(f[[j]])) z[[j]] <- as.integer(f[[j]])
+    }
+  return(z)
+}
+  
 imp <- mice(cbind(boys,mat=NA), meth=meth, pred=pred, maxit=0, seed=5222)
 tau <- matrix(NA,nr=20,nc=5)
 for (i in 1:20) {
     imp <- mice.mids(imp, maxit=1)
     x <- complete(imp,"repeated")[,paste("gen",1:5,sep=".")]
     y <- complete(imp,"repeated")[,paste("phb",1:5,sep=".")]
+    x <- fac2int(x)   # added Oct 2010
+    y <- fac2int(y)   # added Oct 2010
     tau[i,] <- diag(cor(x=x,y=y,method="kendall"))
 }
 matplot(x=1:20,y=tau,xlab="Iteration",type="l")

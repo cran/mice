@@ -71,7 +71,6 @@ MICE: Multivariate Imputation by Chained Equations in R.
 
 \seealso{
   \code{\link{lm.mids}}, \code{\link{glm.mids}}, \code{\link{vcov}},
-  \code{\link{print.mira}}, \code{\link{summary.mira}}
 }
 
 \examples{

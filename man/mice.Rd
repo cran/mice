@@ -218,7 +218,7 @@ be synchronized.
     operation).}
 }
 
-\author{Stef van Buuren (stef.vanbuuren@tno.nl), Karin Groothuis-Oudshoorn (k.groothuis@rrd.nl) (2000-2009) 
+\author{Stef van Buuren (stef.vanbuuren@tno.nl), Karin Groothuis-Oudshoorn (c.g.m.oudshoorn@utwente.nl) (2000-2010) 
     with contributions of Roel de Jong, Jason Turner, John Fox, Frank E. Harrell, and Peter Malewski.}     
 
 

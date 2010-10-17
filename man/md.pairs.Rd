@@ -47,6 +47,6 @@ pat$rr + pat$rm + pat$mr + pat$mm
 round(100*pat$mr/(pat$mr+pat$mm))
 }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2009}
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2009}
 
 \keyword{univar} 

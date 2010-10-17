@@ -34,5 +34,5 @@ MICE: Multivariate Imputation by Chained Equations in R.
 \seealso{
   \code{\link{mice}}, \code{\link{mean}}
 }
-\author{Stef van Buuren, Karin Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
 \keyword{datagen} 

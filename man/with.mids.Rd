@@ -14,7 +14,7 @@
     a \code{~} operator, and the
     terms, separated by \code{+} operators, on the right. See the documentation
     of \code{\link{lm}} and \code{\link{formula}} for details.}
-  \item{\dots}{	Additional parameters passed to \code{expr}}
+  \item{\dots}{ Additional parameters passed to 'expr'}
 }
 
 \value{
@@ -32,7 +32,7 @@ MICE: Multivariate Imputation by Chained Equations in R.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
 
 }
-\seealso{ \code{\link{lm.mids}}, \code{\link{glm.mids}}, \code{\link{mids}}, \code{\link{mira}},
+\seealso{ \code{\link{mids}}, \code{\link{mira}},
   \code{\link{pool}}, \code{\link{pool.compare}}, \code{\link{pool.r.squared}}
 }
 

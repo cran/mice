@@ -2,8 +2,13 @@ importFrom("stats",lm)
 importFrom("stats",glm)
 importFrom("nnet",multinom)
 importFrom("MASS",lda)
+importFrom("utils",packageDescription)
+importFrom("graphics",plot)
 
-exportClasses("mids","mira","mipo")
+exportClasses("mids",
+              "mira",
+              "mipo"
+)
 
 export("mice",
        "mice.mids",
@@ -27,6 +32,12 @@ export("mice",
        "squeeze",
        "md.pattern",
        "md.pairs",
+       "cc",
+       "ic",
+       "cci",
+       "ici",
+       "ccn",
+       "icn",
        "quickpred",
        "is.mids",
        "is.mira",
@@ -38,29 +49,19 @@ export("mice",
        "complete",
        "lm.mids",
        "glm.mids",
+       "with.mids",
        "pool",
        "pool.scalar",
        "pool.r.squared",
-       "pool.compare"
+       "pool.compare",
+       "version"
        )
 
-exportMethods("print",
-              "summary",
-              "plot",
-              "cbind",
-              "rbind",
-              "with",
-              "lm",
-              "glm"
+exportMethods(print,
+              summary,
+              plot
               )
 
-S3method(print, mids)
-S3method(print, mira)
-S3method(print, mipo)
-S3method(summary, mids)
-S3method(summary, mira)
-S3method(summary, mipo)
-S3method(plot, mids)
 S3method(cbind, mids)
 S3method(rbind, mids)
 S3method(with, mids)

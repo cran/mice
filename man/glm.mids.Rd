@@ -6,14 +6,14 @@
   Applies \code{glm()} to a multiply imputed data set
 }
 \usage{
-    glm.mids(formula, data, \dots)
+\method{glm}{mids}(formula, family = gaussian, data, \dots)
 }
 
 \arguments{
   \item{formula}{   a formula expression as for other regression models, of the form 
     response ~ predictors. See the documentation
     of \code{\link{lm}} and \code{\link{formula}} for details.}
-  
+  \item{family}{The family of the glm model}  
   \item{data}{  An object of type \code{mids}, which stands for 'multiply imputed data set', typically
     created by function \code{mice()}.}
   

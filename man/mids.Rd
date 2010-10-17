@@ -1,13 +1,23 @@
 \name{mids}
+%classes
+\alias{mids-class}
+
+%functions
 \alias{mids}
-\alias{print.mids}
-\alias{summary.mids}
-\alias{plot.mids}
+\alias{is.mids}
+
+%methods
+\alias{print,mids-method}
+\alias{summary,mids-method}
+\alias{plot,mids-method}
+
 \title{Multiply Imputed Data Set}
+
 \usage{
-\method{print}{mids}(x,\dots)
-\method{summary}{mids}(object,\dots)
-\method{plot}{mids}(x, layoutplot = c(3, 2), askplot = TRUE, \dots)
+is.mids(x)
+\S4method{print}{mids}(x,\dots)
+\S4method{summary}{mids}(object,\dots)
+\S4method{plot}{mids}(x, y = 0, layoutplot = c(3, 2), askplot = TRUE, \dots)
 }
 
 \description{An object containing a multiply imputed data set. The
@@ -16,7 +26,8 @@
   functions: \code{print}, \code{summary}, \code{plot}.
 }
 \arguments{
-  \item{x, object}{A \code{mids} object.}
+  \item{x, object}{A object of class \code{mids}.}
+  \item{y}{Not used.}
   \item{layoutplot}{Vector of two integers specifying the number of panel per row 
   and column respectively.}
   \item{askplot}{\code{TRUE} if the user needs to be asked before drawing a new page}
@@ -56,7 +67,7 @@
     this array is only useful for error checking.}
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2010) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

@@ -1,7 +1,7 @@
 #
-# MICE V2.3 (18-01-2010)
+# MICE V2.4-1 (12-10-2010)
 #
-#	R package MICE: Multivariate Imputation by Chained Equations
+#    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2010 TNO Quality of Life, Leiden
 #	
 #	 This file is part of the R package MICE.
@@ -12,7 +12,7 @@
 #    (at your option) any later version.
 #   
 #   Authors:    
-#           S. van Buuren, C.G.M. Oudshoorn 
+#           S. van Buuren, C.G.M. Groothuis-Oudshoorn 
 #           TNO Quality of Life, Leiden
 #           The Netherlands
 #   with contributions of John Fox, Frank E. Harrell, Roel de Jong, 
@@ -50,7 +50,7 @@ mice <- function(data,
 #   MICE - Multivariate Imputation by Chained Equations
 #
 #   Main algorithm for imputing datasets.
-#   Authors: K. Oudshoorn and S. van Buuren
+#   Authors: K. Groothuis-Oudshoorn and S. van Buuren
 #            TNO Quality of Life, Leiden
 #            The Netherlands
 ##
@@ -382,7 +382,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 #   The sampler controls the actual Gibbs sampling iteration scheme
 #   This function is called by mice and mice.mids
 #
-#   Authors: S van Buuren, K Oudshoorn
+#   Authors: S van Buuren, K Groothuis-Oudshoorn
 #   Copyright (c) 1999-2008 TNO Quality of Life
 {
     # set up array for convergence checking
@@ -485,7 +485,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, maxit, printFlag)
 
 remove.lindep <- function(x, y, ry, eps = 1000 * .Machine$double.eps, 
     maxcor = 0.99) {
-    if (ncol(x)==0) return(x) 
+    if (ncol(x)==0) return(NULL) 
     if (eps <= 0) 
         stop("\n Argument 'eps' must be positive.")
     xobs <- x[ry, , drop=FALSE]
@@ -518,7 +518,7 @@ remove.lindep <- function(x, y, ry, eps = 1000 * .Machine$double.eps,
 # mice.impute.ssc
 #
 # Standard collection of elementary imputation functions.
-# Part of Oudshoorn & Van Buuren MICE library V1.12
+# Part of Groothuis-Oudshoorn & Van Buuren MICE library V1.12
 #
 #--------------------MICE.IMPUTE.NORM----------------------------------
 
@@ -528,7 +528,7 @@ mice.impute.norm <- function(y, ry, x)
 # x is complete.
 #
 # TNO Quality of Life
-# authors: S. van Buuren and K. Oudshoorn
+# authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
     x <- cbind(1, as.matrix(x))
     parm <- .norm.draw(y, ry, x)
@@ -544,7 +544,7 @@ mice.impute.norm <- function(y, ry, x)
 # x is complete.
 #
 # TNO Quality of Life
-# authors: S. van Buuren and K. Oudshoorn
+# authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
 # adapted 17/12 nrow(x) should be sum(ry)
     xobs <- x[ry,]
@@ -581,7 +581,7 @@ mice.impute.norm.nob <- function(y, ry, x)
 # Calculates regression coefficients + error estimate
 #
 # TNO Quality of Life
-# authors: S. van Buuren and K. Oudshoorn
+# authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
     xobs <- x[ry,]
     yobs <- y[ry]
@@ -607,7 +607,7 @@ mice.impute.pmm <- function (y, ry, x)
 # NOTE: The matching is on yhat, NOT on y, which deviates from formula b.
 # ry=TRUE if y observed, ry=FALSE if y missing
 #
-# Authors: S. van Buuren and K. Oudshoorn
+# Authors: S. van Buuren and K. Groothuis-Oudshoorn
 # Version 10/2/2010: yhatobs is calculated using the estimated 
 #                    rather than the drawn regression weights
 #                    this creates between imputation variability 
@@ -654,7 +654,7 @@ mice.impute.logreg <- function(y, ry, x)
 # 3. Compute predicted scores for m.d., i.e. logit-1(X BETA)
 # 4. Compare the score to a random (0,1) deviate, and impute.
 #
-# Authors: Stef van Buuren, Karin Oudshoorn, 1998
+# Authors: Stef van Buuren, Karin Groothuis-Oudshoorn, 1998
 #
 #   added statements May 2009
     aug <- augment(y, ry, x)
@@ -742,7 +742,7 @@ mice.impute.polyreg <- function(y, ry, x)
 # This algorithm uses the function multinom from the libraries nnet and MASS
 # (Venables and Ripley).
 #
-# Authors: Stef van Buuren, Karin Oudshoorn, 2000
+# Authors: Stef van Buuren, Karin Groothuis-Oudshoorn, 2000
 #
 # SvB May 2009   # augmented data added for stability
 #
@@ -753,8 +753,8 @@ mice.impute.polyreg <- function(y, ry, x)
     ry <- aug$ry
     w <- aug$w
 #
-    assign("data", cbind.data.frame(y, x), pos = 1)
-    fit <- multinom(formula(data), data=data[ry,], weights=w[ry], maxit=200, trace=FALSE)
+    assign("data", cbind.data.frame(y=y, x=x), pos = 1)     # fixed y-naming problem 13 oct 2010
+    fit <- multinom(formula(data), data=data[ry,], weights=w[ry], maxit=100, trace=FALSE, maxNWts=1500)  # SvB 12 oct 2010
     post <- predict(fit, data[!ry,], type = "probs")
     remove("data", pos = 1)
     if (sum(!ry)==1) post <- matrix(post, nr=1, nc=length(post))   # SvB 14 sept 2009
@@ -782,7 +782,7 @@ mice.impute.lda <- function(y, ry, x)
 # each incomplete case, and draws the imputations from this
 # posterior.
 #
-# Authors: Stef van Buuren, Karin Oudshoorn, 11 okt 1999
+# Authors: Stef van Buuren, Karin Groothuis-Oudshoorn, 11 okt 1999
 # V2: Adapted SvB June 2009 to include bootstrap - disabled since
 # bootstrapping it may easily to constant variables within groups.
 # which will be difficult to detect when bootstrapped
@@ -1051,26 +1051,26 @@ quickpred <- function(data, mincor=0.1, minpuc=0, include="", exclude="", method
 
 #--------------------------------IS.MIDS--------------------------------------
 
-is.mids<-function(data)
+is.mids<-function(x)
 {
-    inherits(data,"mids")
+    inherits(x,"mids")
 }
 
 
 #--------------------------------IS.MIRA--------------------------------------
 
 is.mira <- 
-function(data)
+function(x)
 {
-    inherits(data, "mira")
+    inherits(x, "mira")
 }
 
 #--------------------------------IS.MIPO--------------------------------------
 
 is.mipo <- 
-function(data)
+function(x)
 {
-    inherits(data, "mipo")
+    inherits(x, "mipo")
 }
 
 #------------------------------is.passive------------------------------------
@@ -1083,9 +1083,13 @@ is.passive <- function(string)
 
 
 #--------------------------------PRINT.MIDS--------------------------------------
+setMethod("print", "mids",
+   function( x, ...) {
+     print.mids( x, ...)
+   }
+)
 
-print.mids<-function(x, ...)
-{
+print.mids <- function(x, ...){
     if (is.mids(x)) {
         cat("Multiply imputed data set")
         cat("\nCall:\n")
@@ -1106,7 +1110,13 @@ print.mids<-function(x, ...)
 }
 #------------------------------print.mira-------------------------------
 
-print.mira <- function(x,... )
+setMethod("print",signature(x = "mira"),
+   function( x ) {
+     print.mira( x )
+   }
+)
+
+print.mira <- function(x )
 {
  ## prints the mira object; A mira object
  ## is in fact a list, so it will be printed as such.
@@ -1120,7 +1130,13 @@ print.mira <- function(x,... )
 }
 
 #------------------------------summary.mira-------------------------------
-summary.mira<-function(object, ...)
+setMethod("summary",signature(object = "mira"),
+   function( object ) {
+     summary.mira( object )
+   }
+)
+
+summary.mira<-function(object)
 {
 # This summary function is for a mira object. 
 # Then the seperate analyses are of class lm (glm), it calls
@@ -1134,6 +1150,12 @@ summary.mira<-function(object, ...)
 }
 
 #------------------------------print.mipo-------------------------------
+setMethod("print",signature(x = "mipo"),
+   function( x, ...) {
+     print.mipo( x, ...)
+   }
+)
+
 print.mipo <- function(x, ...)
 {
     if(!is.null(x$call)) {
@@ -1151,6 +1173,11 @@ print.mipo <- function(x, ...)
 
 
 #------------------------------summary.mipo-------------------------------
+setMethod("summary",signature(object = "mipo"),
+   function( object, ...) {
+     summary.mipo( object, ...)
+   }
+)
 
 summary.mipo <- function(object, ...){
 # 
@@ -1158,21 +1185,27 @@ summary.mipo <- function(object, ...){
 #
 # object: object of class mipo
 #
-    table <- array(object$qbar, dim = c(length(object$qbar), 9))
-    dimnames(table) <- list(labels(object$qbar), c("est", "se", "t", "df", "Pr(>|t|)", "lo 95","hi 95", "missing", "fmi"))
-    table[, 2] <- sqrt(diag(object$t))
+    x <- object
+    table <- array(x$qbar, dim = c(length(x$qbar), 9))
+    dimnames(table) <- list(labels(x$qbar), c("est", "se", "t", "df", "Pr(>|t|)", "lo 95","hi 95", "missing", "fmi"))
+    table[, 2] <- sqrt(diag(x$t))
     table[, 3] <- table[,1] / table[,2]
-    table[, 4] <- object$df
-    table[, 5] <- if(all(object$df > 0)) 2 * (1 - pt(abs(table[, 3]), object$df)) else NA
-    table[, 6] <- table[,1] - qt(0.975, object$df) * table[, 2]
-    table[, 7] <- table[,1] + qt(0.975, object$df) * table[, 2]
-    table[, 8] <- object$nmis[names(object$qbar)]
-    table[, 9] <- object$f
+    table[, 4] <- x$df
+    table[, 5] <- if(all(x$df > 0)) 2 * (1 - pt(abs(table[, 3]), x$df)) else NA
+    table[, 6] <- table[,1] - qt(0.975, x$df) * table[, 2]
+    table[, 7] <- table[,1] + qt(0.975, x$df) * table[, 2]
+    table[, 8] <- x$nmis[names(x$qbar)]
+    table[, 9] <- x$f
     return(table)
 }
 
 
 #--------------------------------SUMMARY.MIDS--------------------------------------
+setMethod("summary",signature(object = "mids"),
+   function( object, ...) {
+     summary.mids( object, ...)
+   }
+)
 
 summary.mids<-function(object, ...)
 {
@@ -1182,7 +1215,13 @@ summary.mids<-function(object, ...)
 
 #------------------------------PLOT.MIDS---------------------------------
 
-plot.mids <-function(x, layoutplot=c(3,2), askplot=TRUE, ...){
+setMethod("plot",signature(x = "mids", y="ANY"),
+   function( x, y=0, layoutplot=c(3,2), askplot=TRUE, ...) {
+     plot.mids( x, y, ...)
+   }
+)
+
+plot.mids <-function(x, y=0, layoutplot=c(3,2), askplot=TRUE, ...){
 
     eps <- 0.000001
     names <- dimnames(x$chainVar[,,1])[[1]]
@@ -1221,6 +1260,11 @@ plot.mids <-function(x, layoutplot=c(3,2), askplot=TRUE, ...){
 
 
 #------------------------------cbind.mids--------------------------------
+#setMethod("cbind",signature(x = "mids", y="ANY"),
+#   function( x, y, ...) {
+#     cbind.mids( x, y, ...)
+#   }
+#)
 
 
 cbind.mids<-function(x,y,...){
@@ -1375,6 +1419,12 @@ cbind.mids<-function(x,y,...){
   oldClass(x) <- "mids"
   return(x)
 }
+
+#setMethod("rbind",signature(x = "mids", y = "ANY"),
+#   function( x, y, ...) {
+#     rbind.mids( x, y, ...)
+#   }
+#)
 
 rbind.mids<-function(x,y,...){
   # This function combines x and y rowwise into a single midsobject.
@@ -1584,7 +1634,7 @@ complete <- function(x, action = 1, include = FALSE)
 #       first variable. Column names are changed to reflect the 
 #       imputation number.
 #
-#   Authors: S van Buuren, K Oudshoorn
+#   Authors: S van Buuren, K Groothuis-Oudshoorn
 #   Copyright (c) 1999 TNO Quality of Life
 #   Adapted for data frames 15 okt 99
 #
@@ -1650,7 +1700,7 @@ complete <- function(x, action = 1, include = FALSE)
 
 #------------------------------with.mids----------------------------
 
-with.mids<-function(data, expr, ...)
+with.mids <- function(data, expr, ...)
 {
 # General function to do repeated analyses.
 # Generalisation of lm.mids and glm.mids.
@@ -1667,7 +1717,10 @@ with.mids<-function(data, expr, ...)
 #  do the repeated analysis, store the result.
 #
   for (i in 1:data$m){
-    analyses[[i]]<- eval(substitute(expr),complete(data,i),enclos=parent.frame())
+    data.i <- complete(data,i)
+    analyses[[i]] <- eval(expr = substitute(expr),
+                          envir = data.i,
+                          enclos = parent.frame())
     }
 #
 # return the complete data analyses as a list of length nimp
@@ -1682,6 +1735,13 @@ with.mids<-function(data, expr, ...)
 
 
 #-------------------------------LM.MIDS---------------------------------
+
+#setMethod("lm",signature(data = "mids"),
+#   function( formula, data, ...) {
+#     lm.mids( formula, data, ...)
+#   }
+#)
+
 
 "lm.mids" <- function(formula, data, ...)
 {
@@ -1707,8 +1767,13 @@ with.mids<-function(data, expr, ...)
 }
 
 #-------------------------------GLM.MIDS---------------------------------
+#setMethod("glm",signature(data = "mids"),
+#   function( formula, family = gaussian, data, ...) {
+#     glm.mids( formula, family = gaussian, data, ...)
+#   }
+#)
 
-"glm.mids" <- function(formula, data, ...)
+"glm.mids" <- function(formula, family = gaussian, data, ...)
 {
 #  adapted 04/02/00
 #  repeated complete data regression (glm) on a mids data set
@@ -1721,7 +1786,7 @@ with.mids<-function(data, expr, ...)
 #
     for(i in 1:data$m) {
         data.i <- complete(data, i)
-        analyses[[i]] <- glm(formula, data = data.i, ...)
+        analyses[[i]] <- glm(formula, family = gaussian, data = data.i, ...)
     }
 #
 # return the complete data analyses as a list of length nimp
@@ -1737,16 +1802,18 @@ with.mids<-function(data, expr, ...)
 
 pool <- function (object, method = "smallsample")
 {
-# General pooling function for multiple imputation parameters
-# object: an object of class mira (Multiple Imputed Repeated Analysis)
-# Based on Rubin's rules (Rubin, 1987);
+### General pooling function for multiple imputation parameters
+### object: an object of class mira (Multiple Imputed Repeated Analysis)
+### Based on Rubin's rules (Rubin, 1987);
 #
-# Stef van Buuren, Karin Oudshoorn, July 1999.
-# Extended for mle (S3) and mer (S4) objects, KO 2009.
-# Updated V2.1 - Aug 31, 2009
-# Updated V2.2 - Jan 13, 2010
-#   Check the arguments
-#
+### Stef van Buuren, Karin Groothuis-Oudshoorn, July 1999.
+### Extended for mle (S3) and mer (S4) objects, KO 2009.
+### Updated V2.1 - Aug 31, 2009
+### Updated V2.2 - Jan 13, 2010
+### Updated V2.4 - Oct 12, 2010
+
+### Check the arguments
+
     call <- match.call()
     if (!is.mira(object))
         stop("The object must have class 'mira'")
@@ -1757,58 +1824,78 @@ pool <- function (object, method = "smallsample")
     if (class(analyses[[1]])[1]=="lme") require(nlme)  # fixed 13/1/2010
     if (class(analyses[[1]])[1]=="mer") require(lme4)  # fixed 13/1/2010
 
-#
-#   Set up arrays for object.
-#
+###   Set up arrays for object.
+                                       
     mess <- try(coef(analyses[[1]]), silent=TRUE)
     if (inherits(mess,"try-error")) stop("Object has no coefficients.")
     mess <- try(vcov(analyses[[1]]), silent=TRUE)
     if (inherits(mess,"try-error")) stop("Object has no vcov() function.")
 
-    if (class(analyses[[1]])[1]=="mer"){               # fixed 13/1/2010
+    if (class(analyses[[1]])[1]=="mer")               # fixed 13/1/2010
+    { 
       k <- length(fixef(analyses[[1]]))
       names <- names(fixef(analyses[[1]]))
     }
-    else {
+    else if (class(analyses[[1]])[1]=="polr")          # fixed 17/10/2010
+    {
+      k <- length(coef(analyses[[1]]))+length(analyses[[1]]$zeta)
+      names <- c(names(coef(analyses[[1]])),names(analyses[[1]]$zeta))
+    }
+    else
+    {
       k <- length(coef(analyses[[1]]))
-      names <- names(coef(analyses[[1]]))}
+      names <- names(coef(analyses[[1]]))
+    }
+
     qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m, names))
     u <- array(NA, dim = c(m, k, k), dimnames = list(1:m, names,
         names))
-#
-#   Fill arrays
-#
+
+###   Fill arrays
+
     for (i in 1:m) {
         fit <- analyses[[i]]
-        if (class(fit)[1]=="mer") {
-          qhat[i, ]<-fixef(fit)
-          u[i , ,] <- as.matrix(vcov(fit))}
-        else {
-          if (class(fit)[1]=="lme") {
-            qhat[i,]<-fit$coefficients$fixed  }
-            else qhat[i, ] <- coef(fit)
+        if (class(fit)[1]=="mer")
+        {
+          qhat[i,] <- fixef(fit)
+          u[i , ,] <- as.matrix(vcov(fit))
+        }
+        else if (class(fit)[1]=="lme")
+        {
+          qhat[i,] <- fit$coefficients$fixed
+          u[i, , ] <- vcov(fit)
+        }
+        else if (class(fit)[1]=="polr")
+        {
+          qhat[i,] <- c(coef(fit),fit$zeta)
+          u[i, , ] <- vcov(fit)    
+        }
+        else
+        {
+          qhat[i,] <- coef(fit)
           u[i, , ] <- vcov(fit)    
         }
     }
-#
-#   Compute within, between and total variances
-#
+
+###   Within, between and total variances
+
     qbar <- apply(qhat, 2, mean)                              # (3.1.2)
     ubar <- apply(u, c(2, 3), mean)                           # (3.1.3)
     e <- qhat - matrix(qbar, nrow = m, ncol = k, byrow = TRUE)
     b <- (t(e) %*% e)/(m - 1)                                 # (3.1.4)
     t <- ubar + (1 + 1/m) * b                                 # (3.1.5)
 
-#   compute scalar inference quantities
-#
+###   Scalar inference quantities
+
     r <- (1 + 1/m) * diag(b/ubar)                             # (3.1.7)
     f <- (1 + 1/m) * diag(b/t)                                # fraction of missing information
     df <- (m - 1) * (1 + 1/r)^2                               # (3.1.6)
-    if (method == "smallsample") {                            # Barnard-Rubin adjustment
+    if (method == "smallsample")                              # Barnard-Rubin adjustment
+    {                            
         cls <- class(fit)[1]
-        if (cls=="lme") dfc <- fit$fixDF[["X"]]     # Adjustment for lme-objects, KO 2009.
+        if (cls=="lme") dfc <- fit$fixDF[["X"]]               # Adjustment for lme-objects, KO 2009.
         else if (cls=="mer") dfc <- sum(fit@dims[2:4]*c(1,-1,-1))+1 # Adjustment for lmer-objects, KO 2009.
-        else if (cls=="multinom") dfc <- fit$edf   # Adjustment for multinom-objects, SvB 2010.
+        else if (cls=="multinom") dfc <- fit$edf              # Adjustment for multinom-objects, SvB 2010.
         else if (is.null(fit$df.residual)) 
             stop('Cannot extract df from object of class ',cls,'. Use pool(.., method="plain").')
         else dfc <- fit$df.residual

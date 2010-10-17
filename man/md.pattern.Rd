@@ -52,6 +52,6 @@ md.pattern(nhanes)
 
 }
 
-\author{Stef van Buuren, Karin Oudshoorn, 2000}     
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000}     
 
 \keyword{univar} 

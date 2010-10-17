@@ -7,7 +7,7 @@ incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
 
 
-The current version is MICE V2.3, which is described in
+The current version is MICE V2.4, which is described in
 
   Van Buuren S, Groothuis-Oudshoorn K (2010).
   MICE: Multivariate Imputation by Chained Equations in R.
@@ -37,7 +37,7 @@ Question or suggestions about MICE can be send to
 
    stef.vanbuuren@tno.nl
 or
-   k.groothuis@rrd.nl
+   c.g.m.oudshoorn@utwente.nl
 
 
 ---------------------------------------------------------------------
@@ -45,6 +45,13 @@ or
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+
+V2.4 - 17-10-2010 / SvB
+ADDED:   pool() now supports class 'polr' (Jean-Baptiste Pingault) 
+FIXED:   solved problem in mice.impute.polyreg when one of the variables was named y or x 
+FIXED:   remove.lindep: intercept prediction bug 
+ADDED:   version() function
+ADDED:   cc(), cci() and ccn() convenience functions
 
 V2.3 - 14-02-2010 / SvB
 
@@ -105,21 +112,13 @@ FIXED:   existsFunction in check.imputationMethod now works both under S-Plus an
 
 v1.16 - 6/25/2007
 
-FIXED: The impution function impute.logreg used convergence criteria that were too optimistic when fitting a GLM with glm.fit. Thanks to Ulrike Gromping (groemping@tfh-berlin.de).
+FIXED: The impution function impute.logreg used convergence criteria that were too optimistic when fitting a GLM with glm.fit. Thanks to Ulrike Gromping.
 
 v1.15 - 01/09/2006
-
-Release Notes & known issues:
-* Work is underway to completely rewrite the library, including imputation functions for multilevel models
 
 FIXED: In the lm.mids and glm.mids functions, parameters were not passed through to glm and lm.
 
 v1.14R - 9/26/2005 11:44AM
-
-Release Notes & known issues:
-* Although MICE will remain compatible with S-PLUS, because of its superior memory management we encourage the use of R for multiple imputation with MICE.
-* Imputation functions 'impute.norm.improper' and 'impute.logreg2' are disabled.
-
 FIXED: Passive imputation works again. (Roel de Jong)
 CHANGED: Random seed is now left alone, UNLESS the argument "seed" is specified. This means that unless you
 specify identical seed values, imputations of the same dataset will be different for multiple calls to mice. (Roel de Jong)
