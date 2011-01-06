@@ -11,7 +11,7 @@ mice(data, m = 5,
     predictorMatrix = (1 - diag(1, ncol(data))),
     visitSequence = (1:ncol(data))[apply(is.na(data),2,any)], 
     post = vector("character", length = ncol(data)), 
-    defaultMethod = c("pmm","logreg","polyreg"),
+    defaultMethod = c("pmm","logreg","polyreg","polr"),
     maxit = 5, 
     diagnostics = TRUE, 
     printFlag = TRUE,
@@ -66,11 +66,13 @@ The keyword should be supplied as a string and may be abbreviated.}
   
    \item{defaultMethod}{
 A vector of three strings containing the default imputation methods for numerical columns, factor 
-columns with 2 levels, and factor columns with more than two levels, respectively. If nothing is 
+columns with 2 levels, and columns with (unordered or ordered) factors with more than two levels, respectively. If nothing is 
 specified, the following defaults will be used:
         \code{pmm}, predictive mean matching (numeric data)
         \code{logreg}, logistic regression imputation (binary data, factor with 2 levels)
-        \code{polyreg}, polytomous regression imputation categorical data (factor >= 2 levels)
+        \code{polyreg}, polytomous regression imputation for unordered
+        categorical data (factor >= 2 levels)
+        \code{polr}, proportional odds model for (ordered, >= 2 levels)
     }
    
    \item{maxit}{A scalar giving the number of iterations. The default is 5.}
@@ -124,8 +126,10 @@ Built-in elementary imputation methods are:
   \item{\code{norm.nob}}{Linear regression ignoring model error (numeric)}
   \item{\code{mean}}{Unconditional mean imputation (numeric)}
   \item{\code{2l.norm}}{Two-level normal imputation (numeric)}
-  \item{\code{logreg}}{Logistic regression (factor, 2 categories)}        
-  \item{\code{polyreg}}{Polytomous logistic regression (factor, >= 2 categories)}
+  \item{\code{logreg}}{Logistic regression (factor, 2 levels)}        
+  \item{\code{polyreg}}{Polytomous logistic regression (factor, >= 2
+      levels)}
+  \item{\code{polr}}{Proportional odds model (ordered, >=2 levels)}
   \item{\code{lda}}{Linear discriminant analysis (factor, >= 2 categories)}        
   \item{\code{sample}}{Random sample from the observed values (any)}
   }
@@ -216,6 +220,23 @@ be synchronized.
     data), \code{pad$post} (post-processing commands for padded data) and
     \code{categories} (a matrix containing descriptive information about the padding 
     operation).}
+\item{loggedEvents}{A matrix with six columns containing a record of automatic 
+    removal actions. It is \code{NULL} is no action was made.
+    At initialization the program does the following
+    three actions: 1. A variable that contains missing values, that is not imputed and
+    that is used as a predictor is removed, 2. a constant variable is
+    removed, and 3. a collinear variable is removed. During iteration,
+    the program does the following actions: 1. one or more variables
+    that are linearly dependent are removed (for categorical data, a 
+    'variable' corresponds to a dummy variable), and 2. proportional odds
+    regression imputation that does not converge and is replaced by
+    \code{polyreg}. Column \code{it} is the iteration number at
+    which the record was added, \code{im} is the imputation
+    number, \code{co} is the column number in the data, \code{dep} is
+    the name of the name of the dependent variable, \code{meth} is the
+    imputation method used, and \code{out} is a (possibly long)
+    character vector with the names of the altered or removed
+    predictors.}
 }
 
 \author{Stef van Buuren (stef.vanbuuren@tno.nl), Karin Groothuis-Oudshoorn (c.g.m.oudshoorn@utwente.nl) (2000-2010) 
@@ -223,7 +244,7 @@ be synchronized.
 
 
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

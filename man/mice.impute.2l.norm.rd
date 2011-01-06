@@ -1,8 +1,14 @@
-\name{mice.impute.2l.norm}
+\name{mice.impute.2L.norm}
+\alias{mice.impute.2L.norm}
 \alias{mice.impute.2l.norm}
+\alias{mice.impute.2L.norm.noint}
+
 \title{Imputation by a Two-Level Normal Model}
 \usage{
-mice.impute.2l.norm(y, ry, x, type)
+mice.impute.2L.norm(y, ry, x, type, intercept=TRUE)
+mice.impute.2l.norm(y, ry, x, type, intercept=TRUE)
+mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE)
+
 }
 \description{Imputes univariate missing data using a two-level normal model}
 \arguments{
@@ -11,8 +17,10 @@ mice.impute.2l.norm(y, ry, x, type)
   \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
   \item{type}{Vector of length \code{ncol(x)} identifying random and class variables. 
       Random variables are identified by a '2'. The class variable (only one 
-      is allow) is code as '-2'. Random variables always include the fixed 
+      is allowed) is coded as '-2'. Random variables also include the fixed 
       effect.}
+  \item{intercept}{Logical determining whether the intercept is
+      automatically added.}
 }
 
 \value{A vector of length \code{nmis} with imputations.
@@ -20,7 +28,12 @@ mice.impute.2l.norm(y, ry, x, type)
 \details{
     Implements the Gibbs sampler for the linear multilevel model with heterogeneous
     with-class variance (Kasim and Raudenbush, 1998). Imputations are drawn as an 
-    extra step to the algorithm. For statistical properties see Van Buuren (2010).
+    extra step to the algorithm. For simulation work see Van
+    Buuren (2011). 
+
+    The random intercept is automatically added in
+    \code{mice.impute.2L.norm()}. Use \code{mice.impute.2L.norm.noint()}
+    if you do not want the random intercept.
 }
 \references{
 
@@ -28,7 +41,7 @@ Kasim RM, Raudenbush SW. (1998). Application of Gibbs sampling to nested varianc
 components models with heterogeneous within-group variance. Journal of Educational 
 and Behavioral Statistics, 23(2), 93--116.
 
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

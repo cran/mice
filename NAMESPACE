@@ -1,7 +1,7 @@
 importFrom("stats",lm)
 importFrom("stats",glm)
 importFrom("nnet",multinom)
-importFrom("MASS",lda)
+importFrom("MASS",lda,polr)
 importFrom("utils",packageDescription)
 importFrom("graphics",plot)
 
@@ -15,11 +15,14 @@ export("mice",
        "sampler",
        "padModel",
        "remove.lindep",
+       "find.collinear",
+       "updateLog",
        "mice.impute.norm",
        "mice.impute.norm.nob",
        "mice.impute.pmm",
        "mice.impute.logreg",
        "mice.impute.polyreg",
+       "mice.impute.polr",
        "mice.impute.lda",
        "mice.impute.mean",
        "mice.impute.sample",

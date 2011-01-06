@@ -182,10 +182,11 @@ meth[c("lchl","chl")] <- c("~log(chl)","norm")
 pred <- ini$pred
 pred[c("hyp","chl"),"lchl"] <- 0
 pred["bmi","chl"] <- 0
-# next statement produces an error in iteration 6
-# imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=1, maxit=10)
+# next statement produces an error in iteration 7
+# imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=8, maxit=10)
 meth["lchl"] <- "~log(squeeze(chl,bounds=c(100,300)))"
-imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=1, maxit=10)
+# while this one goes through
+imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=8, maxit=10)
 
 # post-processing: prevent negative chl
 nhanes2.ext <- cbind(nhanes2, lchl=NA)
