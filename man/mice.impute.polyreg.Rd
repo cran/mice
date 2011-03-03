@@ -5,15 +5,19 @@
 \title{Imputation by Polytomous Regression}
 
 \usage{
-mice.impute.polyreg(y, ry, x)
-mice.impute.polr(y, ry, x)
+mice.impute.polyreg(y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet.maxNWts=1500, ...)
+mice.impute.polr(y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet.maxNWts=1500, ...)
 }
-\description{Imputes missing data in a categorical variable using polytomous regression
-}
+\description{Imputes missing data in a categorical variable using polytomous regression}
+
 \arguments{
   \item{y}{ Incomplete data vector of length \code{n}}
   \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
   \item{x}{ Matrix (\code{n} x \code{p}) of complete covariates.}
+  \item{nnet.maxit}{Tuning parameter for \code{nnet()}.}
+  \item{nnet.trace}{Tuning parameter for \code{nnet()}.}
+  \item{nnet.maxNWts}{Tuning parameter for \code{nnet()}.}
+  \item{...}{Other named arguments.}
 }
 \value{A vector of length \code{nmis} with imputations.
 }

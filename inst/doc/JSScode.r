@@ -1,14 +1,12 @@
 # This file contains the R code used in 
 # 
-# Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+# Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 # MICE: Multivariate Imputation by Chained Equations in R. 
-# Journal of Statistical Software, forthcoming.
-# date: 27/08/2009
-# See: http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
+# Journal of Statistical Software.
+# date: 03/03/2011
 #
-# adapted for V2.4 17/10/2010
-# The code assumes mice V2.3 or higher.
-if (as.numeric(packageDescription("mice")$Version)<2.3) warning("MICE V2.3 needed")
+# adapted for V2.6
+if (as.numeric(packageDescription("mice")$Version)<2.6) warning("MICE 2.6 needed")
 
 # 2.4 Simple example
 #
@@ -19,22 +17,20 @@ md.pattern(nhanes)
 p <- md.pairs(nhanes)
 p
 
-# two missing data plots
-library(VIM)
-marginplot(nhanes[,c("chl","bmi")], col=c("blue","red","orange"), cex=1.5, cex.lab=1.5, cex.numbers=1.3, pch=19)
-pbox(nhanes,pos=1,int=FALSE,cex=1.2)
+## missing data plots from VIM
+## outcommented since we do not want to load VIM here
+## library(VIM)
+## marginplot(nhanes[,c("chl","bmi")], col=mdc(1:2), cex=2, cex.lab=1.5, cex.numbers=1.3, pch=20)
 
 # impute
-imp <- mice(nhanes)
+imp <- mice(nhanes, seed=23109)
 imp
 imp$imp$bmi
 complete(imp)
 
 # plot data and imputations
-library(lattice)
-com <- complete(imp, "long", inc=T)
-col <- rep(c("blue","red")[1+as.numeric(is.na(imp$data$chl))],6)
-stripplot(chl~.imp, data=com, jit=TRUE, fac=0.8, col=col, pch=20, cex=1.4, xlab="Imputation number")
+stripplot(imp, pch=20, cex=1.2)
+xyplot(imp, bmi~chl|.imp, pch=20, cex=1.4)
 
 # do the analysis of interest
 fit <- with(imp, lm(chl~age+bmi))
@@ -42,6 +38,11 @@ fit <- with(imp, lm(chl~age+bmi))
 # pool the results
 pool(fit)
 summary(pool(fit))
+
+## repeat for m=50
+imp <- mice(nhanes, m=50, seed=23109)
+fit <- with(imp, lm(chl~age+bmi))
+round(summary(pool(fit)),2)
 
 
 #  3.2 Elementary imputation methods
@@ -51,8 +52,7 @@ imp <- mice(nhanes, method = "norm")
 imp <- mice(nhanes, meth = c("", "norm", "pmm", "mean"))
 str(nhanes2)
 imp <- mice(nhanes2, me=c("polyreg","pmm","logreg","norm"))
-# next statement errors on purpose
-# imp <- mice(nhanes2, meth=c("","","logreg","norm"))
+imp <- mice(nhanes2, meth=c("","","logreg","norm"))
 mice(nhanes, defaultMethod = c("norm","logreg","polyreg"))
 
 
@@ -91,11 +91,11 @@ imp$imp$bmi
 # -- random: intercept, sex
 # -- class: school
 popmis[1:3,]
-popmis2 <- popmis[,-6]
-ini <- mice(popmis2, maxit=0)
+ini <- mice(popmis, maxit=0)
 pred <- ini$pred
-pred["popular",] <- c(0, -2, 0, 2, 1, 0)
-imp <- mice(popmis2, meth=c("","","2l.norm","","",""), pred=pred, maxit=1)
+pred["popular",] <- c(0, -2, 0, 2, 1, 2, 0)
+imp <- mice(popmis, meth=c("","","2l.norm","","","",""), pred=pred, maxit=1)
+xyplot(imp,popular~texp|.imp)
 
 # quick predictor selection
 #
@@ -150,9 +150,7 @@ pred[c("gen","phb","tv"),c("hgt","wgt","hc")] <- 0
 pred[c("bmi","mat"),] <- 0
 pred
 imp <- mice(cbind(boys,mat=NA), pred=pred, meth=meth, maxit=20)
-col <- c("blue","red")[1+as.numeric(is.na(boys$gen)|is.na(boys$phb)|is.na(boys$tv))] 
-with(complete(imp,1),plot(age,mat,type="n",ylab="Maturation sum score",xlab="Age (years)"))
-with(complete(imp,1),points(age,mat,col=col))
+xyplot(imp,mat~age|.imp, na=gen|phb|tv, subset=.imp==1,ylab="Maturation score", xlab="Age (years)")
 
 # interactions continuous variables
 nhanes2.ext <- cbind(nhanes2, bmi.chl=NA)
@@ -182,10 +180,7 @@ meth[c("lchl","chl")] <- c("~log(chl)","norm")
 pred <- ini$pred
 pred[c("hyp","chl"),"lchl"] <- 0
 pred["bmi","chl"] <- 0
-# next statement produces an error in iteration 7
-# imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=8, maxit=10)
 meth["lchl"] <- "~log(squeeze(chl,bounds=c(100,300)))"
-# while this one goes through
 imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=8, maxit=10)
 
 # post-processing: prevent negative chl
@@ -196,9 +191,12 @@ meth[c("lchl","chl")] <- c("~log(chl)","norm")
 pred <- ini$pred
 pred[c("hyp","chl"),"lchl"] <- 0
 pred["bmi","chl"] <- 0
+## the following produces an error at iteration 27 
+## imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=1, maxit=100)
 post <- ini$post
 post["chl"] <- "imp[[j]][,i] <- squeeze(imp[[j]][,i],c(100,300))"
-imp <- mice(nhanes2.ext, meth=meth, pred=pred, post=post, seed=1, maxit=10)
+## but this one works
+imp <- mice(nhanes2.ext, meth=meth, pred=pred, post=post, seed=1, maxit=100)
 imp$imp$chl
 
 # post-processing: constrain maturation scores below age 5 yrs
@@ -218,9 +216,7 @@ post["phb"] <- "imp[[j]][p$data$age[!r[,j]]<5,i] <- levels(boys$phb)[1]"
 post["tv"]  <- "imp[[j]][p$data$age[!r[,j]]<5,i] <- 1"
 imp <- mice(cbind(boys,mat=NA), pred=pred, meth=meth, post=post, maxit=10)
 
-col <- c("blue","red")[1+as.numeric(is.na(boys$gen)|is.na(boys$phb)|is.na(boys$tv))] 
-with(complete(imp,1),plot(age,mat,type="n",ylab="Maturation sum score",xlab="Age (years)"))
-with(complete(imp,1),points(age,mat,col=col))
+xyplot(imp,mat~age|.imp, na=gen|phb|tv, subset=.imp==1,ylab="Maturation score", xlab="Age (years)")
  
   
 # 3.6 Visiting scheme
@@ -274,6 +270,7 @@ imp <- mice(boys, meth=meth, maxit=20)
 plot(imp)
 
 # second pathological example
+
 ini <- mice(boys,max=0,print=FALSE)
 meth <- ini$meth
 meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
@@ -339,37 +336,26 @@ pred[,"hc.na"] <- 0
 pred
 imp <- mice(cbind(boys,mat=NA,hc.na=is.na(boys$hc)), pred=pred, meth=meth, maxit=20)
 
-library(lattice)
-long <- complete(imp,"long")
-levels(long$.imp) <- paste("Imputation",1:5)
-long <- cbind(long, hc.na=is.na(imp$data$hc))
-densityplot(~hc|.imp, data=long, group=hc.na, plot.points=FALSE,
-		ref=TRUE, xlab="Head circumference",scales=list(y=list(draw=F)),
-    par.settings=simpleTheme(col.line=rep(c("blue","red"))),
-    auto.key = list(columns=2,text=c("Observed","Imputed")))
+densityplot(imp)
 
 # conditional propensity score plot
 fit.hc <- with(imp, glm(hc.na~age+wgt+hgt+mat+reg,family=binomial))
-ps <- rowMeans(sapply(fit.hc$analyses, fitted.values))
-hc.1 <- complete(imp,1)$hc
-hc.na <- is.na(imp$data$hc)
-xyplot(hc.1 ~ ps, groups=hc.na, 	
-   xlab="Probability of missing head circumference",
-   ylab="Head circumference",
-   par.settings = simpleTheme(col.points = rep(c("blue","red")), 
-   cex=1.2, pch=19),
-   auto.key = list(columns=2, text = c("Observed","Imputed")))
+ps <- rep(rowMeans(sapply(fit.hc$analyses, fitted.values)),6)
+xyplot(imp, hc~ps|.imp, pch=c(1,20), cex=c(0.8,1.2), xlab="Probability that head circumference is missing", ylab="Head circumference (cm)")
+
+xyplot(imp, hc~ps|reg, pch=c(1,20), cex=c(0.8,1.2), xlab="Probability that head circumference is missing", ylab="Head circumference (cm)",scales=list(tick.number=3))
 
 ## Kernel density estimates of the distributions of the residuals
 ## from the regression of the observe/imputed values on the
 ## propensity scores
-fit <- lm(hc.1 ~ poly(ps,4))
-summary(fit)
+hc <- complete(imp,"long",TRUE)$hc
+hc.na <- is.na(imp$data$hc)
+fit <- lm(hc ~ poly(ps,4))
+
 densityplot(~ residuals(fit), group = hc.na, plot.points = FALSE,
-	ref = TRUE, xlab = "Residuals of regression of hc on propensity score",
-      scales = list(y=list(draw=F)),
-      par.settings = simpleTheme(col.line = rep(c("blue","red"))),
-      auto.key = list(columns = 2, text=c("Observed","Imputed")))
+            ref = TRUE, xlab = "Residuals of regression of hc on propensity score",
+            scales = list(y=list(draw=F)),
+            par.settings = simpleTheme(col.line = rep(mdc(1:2))), lwd=2)
 
 
 # 5.1 Repeated data analysis
@@ -381,7 +367,7 @@ summary(fit)
 fit$ana[[3]]
 
 expr <- expression(ov<-cut(bmi,c(10,25,50)),table(age,ov))
-fit <- with(imp, eval(expr))   
+fit <- with(imp, expr)   
 fit$an
     
 com <- complete(imp, 3)
@@ -401,7 +387,7 @@ methods(coef)
 methods(vcov)
 
 # Model testing - Wald method
-imp <- mice(nhanes2, pri=F)
+imp <- mice(nhanes2, pri=F, m=50)
 fit0 <- with(data=imp,expr=lm(bmi~age+hyp))
 fit1 <- with(data=imp,expr=lm(bmi~age+hyp+chl))
 stat <- pool.compare(fit1, fit0, method="Wald")

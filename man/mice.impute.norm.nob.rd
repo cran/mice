@@ -2,7 +2,7 @@
 \alias{mice.impute.norm.nob}
 \title{Imputation by Linear Regression (non Bayesian)}
 \usage{
-    mice.impute.norm.nob(y, ry, x)
+    mice.impute.norm.nob(y, ry, x, ...)
 }
 \description{Imputes univariate missing data using linear regression analysis (non Bayesian version)
 }
@@ -10,6 +10,7 @@
   \item{y}{Incomplete data vector of length \code{n}}
   \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
   \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
+  \item{...}{Other named arguments.}
 }
 \value{A vector of length \code{nmis} with imputations.
 }

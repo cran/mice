@@ -2,7 +2,7 @@
 \alias{mice.impute.lda}
 \title{Imputation by Linear Discriminant Analysis}
 \usage{
-mice.impute.lda(y, ry, x)
+mice.impute.lda(y, ry, x, ...)
 }
 \description{Imputes univariate missing data using linear discriminant analysis 
 }
@@ -10,7 +10,8 @@ mice.impute.lda(y, ry, x)
   \item{y}{ Incomplete data vector of length \code{n}}
   \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
   \item{x}{ Matrix (\code{n} x \code{p}) of complete covariates.}
-  
+ \item{...}{Other named arguments.}
+
 }
 \value{A vector of length \code{nmis} with imputations.
 }
@@ -33,7 +34,7 @@ mice.impute.lda(y, ry, x)
   calling the function \code{\link{mice.impute.polyreg}}.
 }   
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

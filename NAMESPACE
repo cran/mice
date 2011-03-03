@@ -4,6 +4,10 @@ importFrom("nnet",multinom)
 importFrom("MASS",lda,polr)
 importFrom("utils",packageDescription)
 importFrom("graphics",plot)
+importFrom("lattice",bwplot)
+importFrom("lattice",stripplot)
+importFrom("lattice",densityplot)
+importFrom("lattice",xyplot)
 
 exportClasses("mids",
               "mira",
@@ -57,19 +61,27 @@ export("mice",
        "pool.scalar",
        "pool.r.squared",
        "pool.compare",
-       "version"
+       "version",
+       "mdc",
+       "mice.theme",
+       "stripplot.mids",
+       "bwplot.mids",
+       "densityplot.mids",
+       "xyplot.mids"
        )
 
 exportMethods(print,
               summary,
-              plot
-              )
+              plot)
 
 S3method(cbind, mids)
 S3method(rbind, mids)
 S3method(with, mids)
 S3method(lm, mids)
 S3method(glm, mids)
-
+S3method(stripplot, mids)
+S3method(bwplot, mids)
+S3method(densityplot, mids)
+S3method(xyplot, mids)
 
 

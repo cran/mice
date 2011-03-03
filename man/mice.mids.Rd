@@ -2,7 +2,7 @@
 \alias{mice.mids}
 \title{Multivariate Imputation by Chained Equations (Iteration Step)}
 \usage{
-\method{mice}{mids}(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE)
+\method{mice}{mids}(obj, maxit=1, diagnostics=TRUE, printFlag=TRUE, ...)
 }
 \description{Takes a \code{mids} object, and produces a new object of class \code{mids}.
 }
@@ -14,7 +14,10 @@
     the value of the function. If \code{FALSE}, only the imputed data are saved. 
     The default is \code{TRUE}.}
   \item{printFlag}{A Boolean flag. If \code{TRUE}, diagnostic information during the Gibbs sampling
-    iterations will be written to the command window.  The default is \code{TRUE}.}
+    iterations will be written to the command window.  The default is
+    \code{TRUE}.}
+   \item{...}{Named arguments that are passed down to the elementary imputation
+     functions.} 
 }
 \details{
   This function enables the user to split up the computations of the 
@@ -33,7 +36,7 @@
   
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2010) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

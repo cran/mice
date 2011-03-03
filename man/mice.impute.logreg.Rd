@@ -6,7 +6,7 @@
   Imputes univariate missing data using logistic regression.
 }
 \usage{
-    mice.impute.logreg(y, ry, x)
+    mice.impute.logreg(y, ry, x, ...)
 }
 \arguments{
   
@@ -14,6 +14,7 @@
   \item{ry}{Vector of missing data pattern of length \code{n} (\code{FALSE}=missing,
     \code{TRUE}=observed) }
   \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
+  \item{...}{Other named arguments.}
 }
 
 \value{
@@ -33,7 +34,7 @@
   The method relies on the standard \code{glm.fit} function.
 }
 \references{
-Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
+Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
 MICE: Multivariate Imputation by Chained Equations in R. 
 \emph{Journal of Statistical Software}, forthcoming.
 \url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}

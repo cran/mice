@@ -2,14 +2,15 @@
 \alias{mice.impute.pmm}
 \title{Imputation by Predictive Mean Matching}
 \usage{
-mice.impute.pmm(y, ry, x)
+mice.impute.pmm(y, ry, x, ...)
 }
 \description{Imputes univariate missing data using predictive mean matching}
 \arguments{
   \item{y}{ Numeric vector with incomplete data}
   \item{ry}{Response pattern of \code{y} (\code{TRUE}=observed, \code{FALSE}=missing)}
   \item{x}{ Design matrix with \code{length(y)} rows and \code{p} columns containing 
-  complete covariates}
+  complete covariates.}
+  \item{...}{Other named arguments.}
 }
 
 \value{\item{imp}{Numeric vector of length \code{sum(!ry)} with imputations}

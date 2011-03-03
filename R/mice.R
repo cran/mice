@@ -1,5 +1,5 @@
 #
-# MICE V2.5 (06jan2011)
+# MICE V2.6 (feb2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -43,7 +43,8 @@ mice <- function(data,
     printFlag = TRUE,
     seed = NA,
     imputationMethod = NULL,
-    defaultImputationMethod = NULL
+    defaultImputationMethod = NULL,
+    ...
 )
 
 {
@@ -198,7 +199,7 @@ mice <- function(data,
   }
   ##------------------------------CHECK.data-------------------------------
   
-  check.data <- function(setup, data){
+  check.data <- function(setup, data, ...){
     
     pred <- setup$predictorMatrix
     nvar <- setup$nvar
@@ -231,7 +232,7 @@ mice <- function(data,
     }
 
     ## remove collinear variables
-    droplist <- find.collinear(data)
+    droplist <- find.collinear(data, ...)
     if (length(droplist)>0) {
       for (k in 1:length(droplist)) {
         j <- which(varnames %in% droplist[k])
@@ -293,7 +294,7 @@ mice <- function(data,
   setup <- check.visitSequence(setup)
   setup <- check.method(setup, data)
   setup <- check.predictorMatrix(setup)
-  setup <- check.data(setup, data)
+  setup <- check.data(setup, data, ...)
 
   ##   Pad the imputation model with dummy variables for the factors
   method <- setup$method
@@ -319,7 +320,7 @@ mice <- function(data,
         for(i in 1:m) {
           if (nmis[j]<nrow(data)) {
             ## if (is.passive(method[j])) p$data[ry,j] <- data[ry,j] <- model.frame(method[j],data[ry,])
-            imp[[j]][,i] <- mice.impute.sample(y, ry)
+            imp[[j]][,i] <- mice.impute.sample(y, ry, ...)
           }
           else imp[[j]][,i] <- rnorm(nrow(data))
         }
@@ -330,7 +331,7 @@ mice <- function(data,
   # OK. Iterate.
   from <- 1
   to <- from + maxit - 1
-  q <- sampler(p, data, m, imp, r, visitSequence, c(from,to), printFlag)
+  q <- sampler(p, data, m, imp, r, visitSequence, c(from,to), printFlag,...)
   
   ## restore the original NA's in the data
   for(j in p$visitSequence) p$data[(!r[,j]),j] <- NA
@@ -363,7 +364,7 @@ mice <- function(data,
 
 #---------------------- MICE.MIDS -------------------------------------------
 
-mice.mids <- function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE)
+mice.mids <- function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE, ...)
 {
 # MICE.MIDS - 
 # MICE algorithm that takes mids object as input, iterates maxit 
@@ -400,7 +401,7 @@ mice.mids <- function(obj, maxit=1, diagnostics = TRUE, printFlag = TRUE)
   assign(".Random.seed", obj$lastSeedValue, pos=1) ##pm 04/02
  
   ## OK. Iterate.
-  q <- sampler(p, obj$data, obj$m, imp, r, obj$visitSequence, c(from, to), printFlag)
+  q <- sampler(p, obj$data, obj$m, imp, r, obj$visitSequence, c(from, to), printFlag, ...)
   
   ## restore the original NA's in the data
   for(j in p$visitSequence) p$data[(!r[,j]),j] <- NA
@@ -512,7 +513,7 @@ padModel <- function(data, method, predictorMatrix, visitSequence, post,
 
 #------------------------------sampler-------------------------------
 
-sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag)
+sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag, ...)
 #
 #   The sampler controls the actual Gibbs sampling iteration scheme
 #   This function is called by mice and mice.mids
@@ -570,10 +571,10 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag)
               ry <- r[, j]
               nam <- vname
               f <- paste("mice.impute", theMethod, sep = ".")
-              keep <- remove.lindep(x, y, ry)
+              keep <- remove.lindep(x, y, ry, ...)
               x <- x[, keep, drop = FALSE]
               imp[[j]][, i] <- do.call(f, args = list(y, 
-                                            ry, x))
+                                            ry, x, ...))
             }
             else { # for a multilevel imputation method
               predictors <- p$predictorMatrix[j, ] != 0
@@ -583,11 +584,11 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag)
               type <- p$predictorMatrix[j, predictors]
               nam <- vname
               f <- paste("mice.impute", theMethod, sep = ".")
-              keep <- remove.lindep(x, y, ry)
+              keep <- remove.lindep(x, y, ry, ...)
               x <- x[, keep, drop = FALSE]
               type <- type[keep]
               imp[[j]][, i] <- do.call(f, args = list(y, 
-                                            ry, x, type))
+                                            ry, x, type, ...))
             }
             p$data[!r[,j],j] <- imp[[j]][,i]
           }
@@ -636,7 +637,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag)
 
 
 remove.lindep <- function(x, y, ry, eps = 0.0001, 
-    maxcor = 0.99) {
+    maxcor = 0.99, ...) {
   if (ncol(x)==0) return(NULL) 
   if (eps <= 0) 
     stop("\n Argument 'eps' must be positive.")
@@ -667,7 +668,7 @@ remove.lindep <- function(x, y, ry, eps = 0.0001,
 
 
 ## make list of collinear variables to remove
-find.collinear <- function(x, threshold=0.999) {
+find.collinear <- function(x, threshold=0.999, ...) {
   nvar <- ncol(x)
   x <- data.matrix(x)
   r <- !is.na(x)
@@ -703,14 +704,12 @@ updateLog <- function(out=NULL, meth=NULL, frame=2){
 
 
 #
-# mice.impute.ssc
-#
 # Standard collection of elementary imputation functions.
 # Part of Groothuis-Oudshoorn & Van Buuren MICE library V1.12
 #
 #--------------------MICE.IMPUTE.NORM----------------------------------
 
-mice.impute.norm <- function(y, ry, x)
+mice.impute.norm <- function(y, ry, x, ...)
 {
 # Bayesian normal imputation of y given x according to Rubin p. 167
 # x is complete.
@@ -719,12 +718,12 @@ mice.impute.norm <- function(y, ry, x)
 # authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
     x <- cbind(1, as.matrix(x))
-    parm <- .norm.draw(y, ry, x)
+    parm <- .norm.draw(y, ry, x, ...)
     return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
 }
 
 #--------------------------------.NORM.DRAW-----------------------------
-.norm.draw <- function(y, ry, x)
+.norm.draw <- function(y, ry, x, ridge=0.00001, ...)
 {
 # .norm.draw
 # Draws values of beta and sigma for Bayesian linear regrssion imputation 
@@ -735,16 +734,16 @@ mice.impute.norm <- function(y, ry, x)
 # authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
 # adapted 17/12 nrow(x) should be sum(ry)
-  lambda <- 0.01
   xobs <- x[ry,]
   yobs <- y[ry]
   xtx <- t(xobs) %*% xobs
-  pen <- lambda * diag(xtx)
+  pen <- ridge * diag(xtx)
   if (length(pen)==1) pen <- matrix(pen)
   v <- solve(xtx + diag(pen))
   coef <- t(yobs %*% xobs %*% v)
   residuals <- yobs - xobs %*% coef
-  sigma.star <- sqrt(sum((residuals)^2)/rgamma(1, sum(ry) - ncol(x)))
+#  sigma.star <- sqrt(sum((residuals)^2)/rgamma(1, sum(ry) - ncol(x)))
+  sigma.star <- sqrt(sum((residuals)^2)/rchisq(1, sum(ry) - ncol(x)))  # SvB 01/02/2011
   beta.star <- coef + (t(chol((v + t(v))/2)) %*% rnorm(ncol(x))) * sigma.star
   parm <- list(coef, beta.star, sigma.star)      # SvB 10/2/2010
   names(parm) <- c("coef","beta", "sigma")       # SvB 10/2/2010
@@ -753,7 +752,7 @@ mice.impute.norm <- function(y, ry, x)
 
 
 #------------------------MICE.IMPUTE.NORM.NOB-----------------------
-mice.impute.norm.nob <- function(y, ry, x)
+mice.impute.norm.nob <- function(y, ry, x, ...)
 {
 # mice.impute.norm.nob
 # Regression imputation of y given x, with a fixed regression
@@ -761,13 +760,13 @@ mice.impute.norm.nob <- function(y, ry, x)
 # x is complete.
 #
     x <- cbind(1, as.matrix(x))
-    parm <- .norm.fix(y, ry, x)
+    parm <- .norm.fix(y, ry, x, ...)
     return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
 # 	stop("mice.impute.norm.nob is disabled this release")
 }
 
 #--------------------------------.NORM.FIX-----------------------------
-.norm.fix <- function(y, ry, x)
+.norm.fix <- function(y, ry, x, ridge=0.00001, ...)
 {
 # .norm.fix
 # Calculates regression coefficients + error estimate
@@ -775,11 +774,10 @@ mice.impute.norm.nob <- function(y, ry, x)
 # TNO Quality of Life
 # authors: S. van Buuren and K. Groothuis-Oudshoorn
 #
-  lambda <- 0.01
   xobs <- x[ry,]
   yobs <- y[ry]
   xtx <- t(xobs) %*% xobs
-  pen <- lambda * diag(xtx)
+  pen <- ridge * diag(xtx)
   if (length(pen)==1) pen <- matrix(pen)
   v <- solve(xtx + diag(pen))
   coef <- t(yobs %*% xobs %*% v)
@@ -790,9 +788,12 @@ mice.impute.norm.nob <- function(y, ry, x)
   return(parm)
 }
 
-#-----------------------------MICE.IMPUTE.PMM-------------------------
 
-mice.impute.pmm <- function (y, ry, x)
+
+
+###-----------------------------MICE.IMPUTE.PMM-------------------------
+
+mice.impute.pmm <- function (y, ry, x, ...)
 # Imputation of y by predictive mean matching, based on
 # Rubin (p. 168, formulas a and b).
 # The procedure is as follows:
@@ -811,16 +812,16 @@ mice.impute.pmm <- function (y, ry, x)
 # Version 06/12/2010 A random draw is made from the closest THREE donors.
 {
     x <- cbind(1, as.matrix(x))
-    parm <- .norm.draw(y, ry, x)
+    parm <- .norm.draw(y, ry, x, ...)
     yhatobs <- x[ry,] %*% parm$coef
     yhatmis <- x[!ry,] %*% parm$beta
     return(apply(as.array(yhatmis), 1, .pmm.match, yhat = yhatobs,
-        y = y[ry]))
+        y = y[ry], ...))
 }
 
 
 #-------------------------.PMM.MATCH---------------------------------
-.pmm.match <- function(z, yhat=yhat, y=y)
+.pmm.match <- function(z, yhat=yhat, y=y, donors=3, ...)
 {
 # Auxilary function for mice.impute.pmm.
 # z    = target predictive value (scalar)
@@ -829,14 +830,14 @@ mice.impute.pmm <- function (y, ry, x)
 ### Finds the three cases for which abs(yhat-z) is minimal,
 ### and makes a random draw from these.
     d <- abs(yhat-z)
-    m <- sample( y[rank(d, ties="ran") <= 3], 1)
+    m <- sample( y[rank(d, ties="ran") <= donors], 1)
     return(m)
 }
 
 
 #-------------------------MICE.IMPUTE.LOGREG-------------------------
 
-mice.impute.logreg <- function(y, ry, x)
+mice.impute.logreg <- function(y, ry, x, ...)
 {
 # mice.impute.logreg 
 #
@@ -853,7 +854,7 @@ mice.impute.logreg <- function(y, ry, x)
 # Authors: Stef van Buuren, Karin Groothuis-Oudshoorn, 1998
 #
 #   added statements May 2009
-    aug <- augment(y, ry, x)
+    aug <- augment(y, ry, x, ...)
     x <- aug$x
     y <- aug$y
     ry <- aug$ry
@@ -877,7 +878,7 @@ mice.impute.logreg <- function(y, ry, x)
     return(vec)
 }
 
-augment <- function(y, ry, x){
+augment <- function(y, ry, x, maxcat=50, ...){
     # define augmented data for stabilizing logreg and polyreg
     # by the ad hoc procedure of White, Daniel & Royston (forthcoming)
     # This function is new to V2.0
@@ -892,7 +893,7 @@ augment <- function(y, ry, x){
     # SvB May 2009
     icod <- sort(unique(unclass(y)))
     k <- length(icod)
-    if (k>50) stop("Maximum number of categories (50) exceeded")
+    if (k>maxcat) stop(paste("Maximum number of categories (",maxcat,") exceeded", sep=""))
     p <- ncol(x)
 
     # skip augmentation if there are no predictors
@@ -925,7 +926,7 @@ augment <- function(y, ry, x){
 
 #--------------------MICE.IMPUTE.POLYREG-----------------------------   
     
-mice.impute.polyreg <- function(y, ry, x)
+mice.impute.polyreg <- function(y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet.maxNWts=1500, ...)
 {
 # mice.impute.polyreg
 #
@@ -946,7 +947,7 @@ mice.impute.polyreg <- function(y, ry, x)
 # SvB May 2009   # augmented data added for stability
 # SvB Dec 2010   # assign(data) hack removed
     x <- as.matrix(x)
-    aug <- augment(y, ry, x)
+    aug <- augment(y, ry, x, ...)
     x <- aug$x
     y <- aug$y
     ry <- aug$ry
@@ -955,7 +956,7 @@ mice.impute.polyreg <- function(y, ry, x)
     xy <- cbind.data.frame(y=y, x=x)  # fixed SvB 6/12/2010
     fit <- multinom(formula(xy), data=xy[ry,],
                     weights=w[ry],
-                    maxit=100, trace=FALSE, maxNWts=1500)
+                    maxit=nnet.maxit, trace=nnet.trace, maxNWts=nnet.maxNWts, ...)
     post <- predict(fit, xy[!ry,], type = "probs")
     if (sum(!ry)==1) post <- matrix(post, nr=1, nc=length(post))   # SvB 14 sept 2009
     fy <- as.factor(y)
@@ -970,11 +971,11 @@ mice.impute.polyreg <- function(y, ry, x)
 
 #--------------------MICE.IMPUTE.POLR-----------------------------
 
-mice.impute.polr <- function (y, ry, x)
+mice.impute.polr <- function (y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet.maxNWts=1500, ...)
 {
   ### added 08/12/2010
   x <- as.matrix(x)
-  aug <- augment(y, ry, x)
+  aug <- augment(y, ry, x, ...)
   x <- aug$x
   y <- aug$y
   ry <- aug$ry
@@ -982,11 +983,11 @@ mice.impute.polr <- function (y, ry, x)
   xy <- cbind.data.frame(y = y, x = x)
 
   ## polr may fail on sparse data. We revert to multinom in such cases. 
-  fit <- try(suppressWarnings(polr(formula(xy), data = xy[ry, ], weights=w[ry])), silent=TRUE)
+  fit <- try(suppressWarnings(polr(formula(xy), data = xy[ry, ], weights=w[ry],...)), silent=TRUE)
   if (inherits(fit, "try-error")) {
     fit <- multinom(formula(xy), data=xy[ry,],
                     weights=w[ry],
-                    maxit=100, trace=FALSE, maxNWts=1500)
+                    maxit=nnet.maxit, trace=nnet.trace, maxNWts=nnet.maxNWts, ...)
     updateLog(meth="multinom", frame=3)
   }
   post <- predict(fit, xy[!ry, ], type = "probs")
@@ -1005,7 +1006,7 @@ mice.impute.polr <- function (y, ry, x)
     
 #--------------------MICE.IMPUTE.LDA-----------------------------
 
-mice.impute.lda <- function(y, ry, x)
+mice.impute.lda <- function(y, ry, x, ...)
 {
 # mice.impute.lda
 #
@@ -1038,7 +1039,7 @@ mice.impute.lda <- function(y, ry, x)
 
 #-------------------MICE.IMPUTE.MEAN------------------------------
 
-mice.impute.mean<-function(y, ry, x=NULL)
+mice.impute.mean<-function(y, ry, x=NULL, ...)
 # mice.impute.mean
 #
 # Unconditional mean imputation 
@@ -1049,7 +1050,7 @@ mice.impute.mean<-function(y, ry, x=NULL)
 
 #-------------------MICE.IMPUTE.SAMPLE----------------------------
 
-mice.impute.sample<-function(y, ry, x=NULL)
+mice.impute.sample<-function(y, ry, x=NULL, ...)
 # mice.impute.sample
 #
 # Generates random sample from the observed y's
@@ -1069,7 +1070,7 @@ mice.impute.passive <- function(data, func)
 
 #-------------------MICE.IMPUTE.2L.NORM----------------------------
 
-mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE)
+mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE, ...)
 {
   rwishart <- function(df, p = nrow(SqrtSigma), SqrtSigma = diag(p)) {
     ## rwishart, written by Bill Venables
@@ -1161,7 +1162,7 @@ mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE)
 
 mice.impute.2l.norm <- mice.impute.2L.norm   # for backward compatibility
 
-mice.impute.2L.norm.noint <- function(y, ry, x, type, intercept=FALSE)
+mice.impute.2L.norm.noint <- function(y, ry, x, type, intercept=FALSE, ...)
 {
   rwishart <- function(df, p = nrow(SqrtSigma), SqrtSigma = diag(p)) {
     ## rwishart, written by Bill Venables
@@ -1255,7 +1256,7 @@ mice.impute.2L.norm.noint <- function(y, ry, x, type, intercept=FALSE)
 
 #------------------------------SQUEEZE------------------------------------
 
-squeeze <- function(x, bounds=c(min(x[r]),max(x[r])), r=rep(TRUE,length(x))){
+squeeze <- function(x, bounds=c(min(x[r]),max(x[r])), r=rep(TRUE,length(x)), ...){
     if (length(r) != length(x)) stop("Different length of vectors x and r")
     x[x<bounds[1]] <- bounds[1]
     x[x>bounds[2]] <- bounds[2]
@@ -1533,16 +1534,18 @@ summary.mipo <- function(object, ...){
 # object: object of class mipo
 #
     x <- object
-    table <- array(x$qbar, dim = c(length(x$qbar), 9))
-    dimnames(table) <- list(labels(x$qbar), c("est", "se", "t", "df", "Pr(>|t|)", "lo 95","hi 95", "missing", "fmi"))
+    table <- array(x$qbar, dim = c(length(x$qbar), 10))
+    dimnames(table) <- list(labels(x$qbar), c("est", "se", "t", "df", "Pr(>|t|)", "lo 95","hi 95", "nmis", "fmi","lambda"))
     table[, 2] <- sqrt(diag(x$t))
     table[, 3] <- table[,1] / table[,2]
     table[, 4] <- x$df
     table[, 5] <- if(all(x$df > 0)) 2 * (1 - pt(abs(table[, 3]), x$df)) else NA
     table[, 6] <- table[,1] - qt(0.975, x$df) * table[, 2]
     table[, 7] <- table[,1] + qt(0.975, x$df) * table[, 2]
-    table[, 8] <- ifelse(is.null(x$nmis),rep(NA,nrow(table)),x$nmis[names(x$qbar)])
-    table[, 9] <- x$f
+    if (is.null(x$nmis)) table[, 8] <- NA
+    else table[, 8] <- x$nmis[names(x$qbar)]
+    table[, 9] <- x$fmi
+    table[,10] <- x$lambda
     return(table)
 }
 
@@ -1602,7 +1605,6 @@ plot.mids <-function(x, y=0, layoutplot=c(3,2), askplot=TRUE, ...){
     }
     par(old.par)
 }
-
 
 
 
@@ -2024,8 +2026,6 @@ complete <- function(x, action = 1, include = FALSE)
 
 
 
-
-
 #------------------------------with.mids----------------------------
 
 with.mids <- function(data, expr, ...)
@@ -2038,10 +2038,12 @@ with.mids <- function(data, expr, ...)
 # Depending on 'expr' different types of regressions are preformed.
 # for 'expr' can be used: lm, lme, glm, etc.
 # SvB formula deleted, 13Aug09: expr can contain any executable expression
-
+# SvB: now works for both calls and expressions
+  
   call <- match.call()
   if (!is.mids(data)) stop("The data must have class mids")
   analyses <- as.list(1:data$m)
+  
 #  do the repeated analysis, store the result.
 #
   for (i in 1:data$m){
@@ -2049,6 +2051,10 @@ with.mids <- function(data, expr, ...)
     analyses[[i]] <- eval(expr = substitute(expr),
                           envir = data.i,
                           enclos = parent.frame())
+    if (is.expression(analyses[[i]]))
+      analyses[[i]] <- eval(expr = analyses[[i]],
+                            envir = data.i,
+                            enclos = parent.frame())      
     }
 #
 # return the complete data analyses as a list of length nimp
@@ -2061,7 +2067,6 @@ with.mids <- function(data, expr, ...)
 
 
 
-
 #-------------------------------LM.MIDS---------------------------------
 
 #setMethod("lm",signature(data = "mids"),
@@ -2071,7 +2076,7 @@ with.mids <- function(data, expr, ...)
 #)
 
 
-"lm.mids" <- function(formula, data, ...)
+lm.mids <- function(formula, data, ...)
 {
 #  adapted 28/1/00
 #  repeated complete data regression (lm) on a mids data set
@@ -2101,7 +2106,7 @@ with.mids <- function(data, expr, ...)
 #   }
 #)
 
-"glm.mids" <- function(formula, family = gaussian, data, ...)
+glm.mids <- function(formula, family = gaussian, data, ...)
 {
 #  adapted 04/02/00
 #  repeated complete data regression (glm) on a mids data set
@@ -2139,102 +2144,113 @@ pool <- function (object, method = "smallsample")
 ### Updated V2.1 - Aug 31, 2009
 ### Updated V2.2 - Jan 13, 2010
 ### Updated V2.4 - Oct 12, 2010
-
+### Updated V2.6 - Jan 14, 2011
+  
 ### Check the arguments
 
-    call <- match.call()
-    if (!is.mira(object))
-        stop("The object must have class 'mira'")
-    if ((m <- length(object$analyses)) < 2)
-        stop("At least two imputations are needed for pooling.\n" )
-
-    analyses <- object$analyses
-    if (class(analyses[[1]])[1]=="lme") require(nlme)  # fixed 13/1/2010
-    if (class(analyses[[1]])[1]=="mer") require(lme4)  # fixed 13/1/2010
+  call <- match.call()
+  if (!is.mira(object))
+    stop("The object must have class 'mira'")
+  if ((m <- length(object$analyses)) < 2)
+    stop("At least two imputations are needed for pooling.\n" )
+  
+  analyses <- object$analyses
+  if (class(analyses[[1]])[1]=="lme") require(nlme)  # fixed 13/1/2010
+  if (class(analyses[[1]])[1]=="mer") require(lme4)  # fixed 13/1/2010
 
 ###   Set up arrays for object.
-                                       
-    mess <- try(coef(analyses[[1]]), silent=TRUE)
-    if (inherits(mess,"try-error")) stop("Object has no coefficients.")
-    mess <- try(vcov(analyses[[1]]), silent=TRUE)
-    if (inherits(mess,"try-error")) stop("Object has no vcov() function.")
-
-    if (class(analyses[[1]])[1]=="mer")               # fixed 13/1/2010
+  
+  mess <- try(coef(analyses[[1]]), silent=TRUE)
+  if (inherits(mess,"try-error")) stop("Object has no coef() method.")
+  mess <- try(vcov(analyses[[1]]), silent=TRUE)
+  if (inherits(mess,"try-error")) stop("Object has no vcov() method.")
+  
+  if (class(analyses[[1]])[1]=="mer")               # fixed 13/1/2010
     { 
       k <- length(fixef(analyses[[1]]))
       names <- names(fixef(analyses[[1]]))
     }
-    else if (class(analyses[[1]])[1]=="polr")          # fixed 17/10/2010
+  else if (class(analyses[[1]])[1]=="polr")          # fixed 17/10/2010
     {
       k <- length(coef(analyses[[1]]))+length(analyses[[1]]$zeta)
       names <- c(names(coef(analyses[[1]])),names(analyses[[1]]$zeta))
     }
-    else
+  else
     {
       k <- length(coef(analyses[[1]]))
       names <- names(coef(analyses[[1]]))
     }
-
-    qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m, names))
-    u <- array(NA, dim = c(m, k, k), dimnames = list(1:m, names,
-        names))
-
+  
+  qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m, names))
+  u <- array(NA, dim = c(m, k, k), dimnames = list(1:m, names,
+                                     names))
+  
 ###   Fill arrays
-
-    for (i in 1:m) {
-        fit <- analyses[[i]]
-        if (class(fit)[1]=="mer")
-        {
-          qhat[i,] <- fixef(fit)
-          u[i , ,] <- as.matrix(vcov(fit))
-        }
-        else if (class(fit)[1]=="lme")
-        {
-          qhat[i,] <- fit$coefficients$fixed
-          u[i, , ] <- vcov(fit)
-        }
-        else if (class(fit)[1]=="polr")
-        {
-          qhat[i,] <- c(coef(fit),fit$zeta)
-          u[i, , ] <- vcov(fit)    
-        }
-        else
-        {
-          qhat[i,] <- coef(fit)
-          u[i, , ] <- vcov(fit)    
-        }
-    }
-
+  
+  for (i in 1:m) {
+    fit <- analyses[[i]]
+    if (class(fit)[1]=="mer")
+      {
+        qhat[i,] <- fixef(fit)
+        u[i , ,] <- as.matrix(vcov(fit))
+      }
+    else if (class(fit)[1]=="lme")
+      {
+        qhat[i,] <- fit$coefficients$fixed
+        u[i, , ] <- vcov(fit)
+      }
+    else if (class(fit)[1]=="polr")
+      {
+        qhat[i,] <- c(coef(fit),fit$zeta)
+        u[i, , ] <- vcov(fit)    
+      }
+    else
+      {
+        qhat[i,] <- coef(fit)
+        u[i, , ] <- vcov(fit)    
+      }
+  }
+  
 ###   Within, between and total variances
 
-    qbar <- apply(qhat, 2, mean)                              # (3.1.2)
-    ubar <- apply(u, c(2, 3), mean)                           # (3.1.3)
-    e <- qhat - matrix(qbar, nrow = m, ncol = k, byrow = TRUE)
-    b <- (t(e) %*% e)/(m - 1)                                 # (3.1.4)
-    t <- ubar + (1 + 1/m) * b                                 # (3.1.5)
-
+  qbar <- apply(qhat, 2, mean)                              # (3.1.2)
+  ubar <- apply(u, c(2, 3), mean)                           # (3.1.3)
+  e <- qhat - matrix(qbar, nrow = m, ncol = k, byrow = TRUE)
+  b <- (t(e) %*% e)/(m - 1)                                 # (3.1.4)
+  t <- ubar + (1 + 1/m) * b                                 # (3.1.5)
+  
 ###   Scalar inference quantities
+  
+  r <- (1 + 1/m) * diag(b/ubar)                             # (3.1.7)
+  lambda <- (1 + 1/m) * diag(b/t)
+  dfcom <- df.residual(object)
+  df <- mice.df(m, lambda, dfcom)
+  fmi <- (r + 2/(df+3))/(r + 1)                             # fraction of missing information
 
-    r <- (1 + 1/m) * diag(b/ubar)                             # (3.1.7)
-    f <- (1 + 1/m) * diag(b/t)                                # fraction of missing information
-    df <- (m - 1) * (1 + 1/r)^2                               # (3.1.6)
-    if (method == "smallsample")                              # Barnard-Rubin adjustment
-    {                            
-        cls <- class(fit)[1]
-        if (cls=="lme") dfc <- fit$fixDF[["X"]]               # Adjustment for lme-objects, KO 2009.
-        else if (cls=="mer") dfc <- sum(fit@dims[2:4]*c(1,-1,-1))+1 # Adjustment for lmer-objects, KO 2009.
-        else if (cls=="multinom") dfc <- fit$edf              # Adjustment for multinom-objects, SvB 2010.
-        else if (is.null(fit$df.residual)) 
-            stop('Cannot extract df from object of class ',cls,'. Use pool(.., method="plain").')
-        else dfc <- fit$df.residual
-        df <- dfc/((1 - (f/(m + 1)))/(1 - f) + dfc/df)
-    }
-    names(r) <- names(df) <- names(f) <- names
-    fit <- list(call = call, call1 = object$call, call2 = object$call1,
-        nmis = object$nmis, m = m, qhat = qhat, u = u, qbar = qbar,
-        ubar = ubar, b = b, t = t, r = r, df = df, f = f)
-    oldClass(fit) <- c("mipo", oldClass(object))              ## FEH
-    return(fit)
+###
+  names(r) <- names(df) <- names(fmi) <- names(lambda) <- names
+  fit <- list(call = call, call1 = object$call, call2 = object$call1,
+              nmis = object$nmis, m = m, qhat = qhat, u = u, qbar = qbar,
+              ubar = ubar, b = b, t = t, r = r, dfcom = dfcom, df = df,
+              fmi = fmi, lambda = lambda)
+  oldClass(fit) <- c("mipo", oldClass(object))              ## FEH
+  return(fit)
+}
+
+
+#------------------------------mice.df--------------------------------
+
+mice.df <- function(m, lambda, dfcom)
+{
+  if (is.null(dfcom)) {
+    dfcom <- 999999
+    warning("Large sample assumed.")
+  }
+  lambda[lambda<0.0001] <- 0.0001
+  dfold <- (m - 1) / lambda^2
+  dfobs <- (dfcom+1) / (dfcom+3) * dfcom * (1-lambda)
+  df <- dfold * dfobs / (dfold + dfobs)
+  return(df)
 }
 
 
@@ -2393,7 +2409,7 @@ LLlogistic<-function(formula, data, coefs){
       }  
       devL<-devL/m 
       devM<-devM/m  
-      rm<-((m+1)/(dimQ2 * (m-1) ) )*(devL-devM)
+      rm<-((m+1)/(dimQ2 * (m-1) ) )*(devM-devL)   # SvB 17jan2011
       Dm<-devL/(dimQ2 * (1+rm))
     }   
 
@@ -2410,66 +2426,96 @@ LLlogistic<-function(formula, data, coefs){
         pvalue = 1 - pf(Dm,dimQ2,w))
     return(statistic)
    }     
-      
+
+
+df.residual.mira <- function(object, ...){
+  fit <- object$analyses[[1]]
+  return(df.residual(fit))
+}
+
+df.residual.lme <- function(object, ...){
+  return(object$fixDF[["X"]][1])
+}
+
+df.residual.mer <- function(object, ...){
+  return(sum(object@dims[2:4]*c(1,-1,-1))+1)
+}
+
+df.residual.default <- function(object, q=1.3, ...)
+{
+  df <- object$df.residual
+  if (!is.null(df)) return(df)
+  
+  mk <- try(c <- coef(object), silent=TRUE)
+  mn <- try(f <- fitted(object), silent=TRUE)
+  if (inherits(mk,"try-error") | inherits(mn,"try-error")) return(NULL)
+  n <- ifelse(is.data.frame(f) | is.matrix(f), nrow(f), length(f))
+  k <- length(c)
+  if (k==0 | n==0) return(NULL)
+  return(max(1,n-q*k))
+}
+
+
 # miceNews <- function() {
 #     file.show(system.file("doc", "NEWS.txt", package = "mice"))
 # }
 
 
-mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps", path=getwd(), sep="\t", dec=".", silent=FALSE) {
+mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps",
+                      path=getwd(), sep="\t", dec=".", silent=FALSE) {
 
   miceWriteForeignSPSS <- function (df, datafile, codefile, varnames = NULL, dec=".", sep="\t") 
-{
-  ##adapted version of writeForeignSPSS from foreign package to write mids-objects
-  adQuote <- function (x) paste("\"", x, "\"", sep = "")
-  dfn <- lapply(df, function(x) if (is.factor(x)) as.numeric(x) else x)
-  eol <- paste(sep,"\n",sep="")
-    write.table(dfn, file = datafile, row = FALSE, col = FALSE, 
-        sep = sep, dec = dec, quote = FALSE, na = "", eol=eol)
-    varlabels <- names(df)
-    if (is.null(varnames)) {
+    {
+      ##adapted version of writeForeignSPSS from foreign package to write mids-objects
+      adQuote <- function (x) paste("\"", x, "\"", sep = "")
+      dfn <- lapply(df, function(x) if (is.factor(x)) as.numeric(x) else x)
+      eol <- paste(sep,"\n",sep="")
+      write.table(dfn, file = datafile, row = FALSE, col = FALSE, 
+                  sep = sep, dec = dec, quote = FALSE, na = "", eol=eol)
+      varlabels <- names(df)
+      if (is.null(varnames)) {
         varnames <- abbreviate(names(df), 8L)
         if (any(sapply(varnames, nchar) > 8L)) 
-            stop("I cannot abbreviate the variable names to eight or fewer letters")
+          stop("I cannot abbreviate the variable names to eight or fewer letters")
         if (any(varnames != varlabels)) 
-            warning("some variable names were abbreviated")
-    }
-    varnames <- gsub("[^[:alnum:]_\\$@#]", "\\.", varnames)
-    dl.varnames <- varnames
-    if (any(chv <- sapply(df, is.character))) {
+          warning("some variable names were abbreviated")
+      }
+      varnames <- gsub("[^[:alnum:]_\\$@#]", "\\.", varnames)
+      dl.varnames <- varnames
+      if (any(chv <- sapply(df, is.character))) {
         lengths <- sapply(df[chv], function(v) max(nchar(v)))
         if (any(lengths > 255L)) 
-            stop("Cannot handle character variables longer than 255")
+          stop("Cannot handle character variables longer than 255")
         lengths <- paste("(A", lengths, ")", sep = "")
         star <- ifelse(c(FALSE, diff(which(chv) > 1L)), " *", 
-            " ")
+                       " ")
         dl.varnames[chv] <- paste(star, dl.varnames[chv], lengths)
-    }
-    if (sep=="\t") freefield <- " free (TAB)\n"
-    if (sep!="\t") freefield <- cat(' free (\"',sep,'\")\n',sep="")
-    cat("DATA LIST FILE=", adQuote(datafile), freefield, 
-        file = codefile)
-    cat(" /", dl.varnames, ".\n\n", file = codefile, append = TRUE, fill=60, labels=" ")
-    cat("VARIABLE LABELS\n", file = codefile, append = TRUE)
-    cat(" ",paste(varnames, adQuote(varlabels), "\n"), ".\n", file = codefile, 
-        append = TRUE)
-    factors <- sapply(df, is.factor)
-    if (any(factors)) {
+      }
+      if (sep=="\t") freefield <- " free (TAB)\n"
+      if (sep!="\t") freefield <- cat(' free (\"',sep,'\")\n',sep="")
+      cat("DATA LIST FILE=", adQuote(datafile), freefield, 
+          file = codefile)
+      cat(" /", dl.varnames, ".\n\n", file = codefile, append = TRUE, fill=60, labels=" ")
+      cat("VARIABLE LABELS\n", file = codefile, append = TRUE)
+      cat(" ",paste(varnames, adQuote(varlabels), "\n"), ".\n", file = codefile, 
+          append = TRUE)
+      factors <- sapply(df, is.factor)
+      if (any(factors)) {
         cat("\nVALUE LABELS\n", file = codefile, append = TRUE)
         for (v in which(factors)) {
-            cat(" /", varnames[v], "\n", file = codefile, append = TRUE)
-            levs <- levels(df[[v]])
-            for (u in 1:length(levs)) 
-              cat(paste("  ",seq_along(levs)[u], adQuote(levs)[u], sep = " "), 
-                  file = codefile, append = TRUE, fill=60)
+          cat(" /", varnames[v], "\n", file = codefile, append = TRUE)
+          levs <- levels(df[[v]])
+          for (u in 1:length(levs)) 
+            cat(paste("  ",seq_along(levs)[u], adQuote(levs)[u], sep = " "), 
+                file = codefile, append = TRUE, fill=60)
         }
         cat(" .\n", file = codefile, append = TRUE)
+      }
+      cat("\nEXECUTE.\n", file = codefile, append = TRUE)
+      cat("SORT CASES by Imputation_.\n",  file = codefile, append = TRUE)
+      cat("SPLIT FILE layered by Imputation_.\n",  file = codefile, append=TRUE)
     }
-    cat("\nEXECUTE.\n", file = codefile, append = TRUE)
-    cat("SORT CASES by Imputation_.\n",  file = codefile, append = TRUE)
-    cat("SPLIT FILE layered by Imputation_.\n",  file = codefile, append=TRUE)
-}
-
+  
   if(!is.mids(imp)) stop("Exports only objects of class 'mids'.")
   imputed <- complete(imp, "long", include=TRUE)[,-2]
   names(imputed)[1] <- "Imputation_"
@@ -2486,4 +2532,33 @@ mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps", path=
   }
 }
 
+mdc <- function(r="observed", s="symbol", transparent=TRUE,
+               cso = ifelse(transparent, hcl(240,100,40,0.7), hcl(240,100,40,1)),
+               csi = ifelse(transparent, hcl(0,100,40,0.7), hcl(0,100,40,1)),
+               csc = ifelse(transparent, "gray40", "black"),
+               clo = ifelse(transparent, hcl(240,100,40,0.8), hcl(240,100,40,1)),
+               cli = ifelse(transparent, hcl(0,100,40,0.8), hcl(0,100,40,1)),
+               clc = ifelse(transparent, "gray40", "black"))
+{
+  ## cso: blue symbol color for observed data
+  ## csi: red symbol color for imputations
+  ## csc: symbol color for combined data
+  ## clo: blue line color for observed data
+  ## cli: red line color for observed data
+  ## clc: line color for combined data
+  
+  fallback <- palette()[1]
+  if(is.numeric(r)){
+    idx <- floor(r)
+    idx[r<1 | r>6] <- 7
+    myc <- c(cso, csi, csc, clo, cli, clc, fallback)[idx]
+    return(myc)
+  }
+  rc <- pmatch(r, c("observed", "missing", "both"))
+  sc <- pmatch(s, c("symbol", "line"))
+  idx <- rc + (sc-1)*3
+  idx[is.na(idx)] <- 7
+  myc <- c(cso, csi, csc, clo, cli, clc, fallback)[idx]
+  return(myc)      
+}
 

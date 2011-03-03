@@ -5,9 +5,9 @@
 
 \title{Imputation by a Two-Level Normal Model}
 \usage{
-mice.impute.2L.norm(y, ry, x, type, intercept=TRUE)
-mice.impute.2l.norm(y, ry, x, type, intercept=TRUE)
-mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE)
+mice.impute.2L.norm(y, ry, x, type, intercept=TRUE, ...)
+mice.impute.2l.norm(y, ry, x, type, intercept=TRUE, ...)
+mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE, ...)
 
 }
 \description{Imputes univariate missing data using a two-level normal model}
@@ -21,6 +21,8 @@ mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE)
       effect.}
   \item{intercept}{Logical determining whether the intercept is
       automatically added.}
+  \item{...}{Other named arguments.}
+
 }
 
 \value{A vector of length \code{nmis} with imputations.

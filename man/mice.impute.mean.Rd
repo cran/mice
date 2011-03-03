@@ -6,12 +6,14 @@
   Imputes the arithmetic mean of the observed data
 }
 \usage{
-    mice.impute.mean(y, ry, x=NULL)
+    mice.impute.mean(y, ry, x=NULL, ...)
 }
 \arguments{
   \item{y}{Incomplete data vector of length \code{n}}
   \item{ry}{Vector of missing data pattern (\code{FALSE}=missing, \code{TRUE}=observed)}
   \item{x}{Matrix (\code{n} x \code{p}) of complete covariates.}
+  \item{...}{Other named arguments.}
+
 }
 
 \value{

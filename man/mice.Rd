@@ -17,8 +17,9 @@ mice(data, m = 5,
     printFlag = TRUE,
     seed = NA,
     imputationMethod = NULL,
-    defaultImputationMethod = NULL
-    )
+    defaultImputationMethod = NULL,
+    ...
+)
 }
 
 \arguments{
@@ -89,7 +90,8 @@ information will be appended to the value of the function. If
    
    \item{imputationMethod}{Same as \code{method} argument. Included for backwards compatibility.}
    \item{defaultImputationMethod}{Same as \code{defaultMethod} argument. Included for backwards compatibility.}
-    
+   \item{...}{Named arguments that are passed down to the elementary imputation
+     functions.} 
 }
 
 

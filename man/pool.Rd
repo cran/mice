@@ -33,10 +33,13 @@ pool(object, method="smallsample")
   \item{ubar}{The mean of the variances, formula (3.1.3), Rubin (1987).}
   \item{b}{The within imputation variance, formula (3.1.4), Rubin (1987).}
   \item{t}{Total variance of the pooled estimates, formula (3.1.5), Rubin (1987).}
-  \item{r}{Relative increase in variance due to nonresponse, formula (3.1.7), Rubin (1987).}
+  \item{r}{Relative increase in variance due to nonresponse, formula
+      (3.1.7), Rubin (1987).}
+  \item{dfcom}{Degrees of freedom for estimates in the complete data analysis.}
   \item{df}{Degrees of freedom for t reference distribution, calculated  according to the 
   article of Barnard and Rubin (1999).}
-  \item{f}{Fraction missing information due to nonresponse, formula (3.1.10), Rubin (1987).}
+  \item{fmi}{Fraction missing information due to nonresponse, formula (3.1.10), Rubin (1987).}
+  \item{gamma}{Proportion of the total variance explained by the imputations.}
 }
 
 

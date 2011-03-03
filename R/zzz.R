@@ -15,6 +15,7 @@
 
   require(MASS, quietly=TRUE)
   require(nnet, quietly=TRUE)
+  require(lattice, quietly=TRUE)
 }
 
 version <- function(pkg="mice"){
