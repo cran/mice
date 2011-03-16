@@ -7,7 +7,7 @@ incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
 
 
-The current version is MICE V2.6, which is described in
+The current version is MICE V2.7, which is described in
 
   Van Buuren S, Groothuis-Oudshoorn K (2011).
   MICE: Multivariate Imputation by Chained Equations in R.
@@ -46,7 +46,12 @@ or
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
 
-V2.6 -03-03-2011 / SvB
+V2.7 - 16-03-2011 / SvB
+CHANGED: check.data(), remove.lindep(): fully missing variables are imputed if allow.na=TRUE (Alexander Robitzsch)
+FIXED:   bug in check.data(). Now checks collinearity in predictors only (Alexander Robitzsch)
+CHANGED: abbreviations of arguments eliminated to evade linux warnings
+
+V2.6 - 03-03-2011 / SvB
 ADDED:   bwplot(), stripplot(), densityplot() and xyplot() for creating Trellis graphs
 ADDED:   function mdc() and mice.theme() for graphical parameters
 ADDED:   argument passing from mice() to lower-level functions (requested by Juned Siddique)

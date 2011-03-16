@@ -64,7 +64,7 @@ xyplot.mids <- function(x,
   formula <- data
 
   ## unpack data and response indicator
-  cd <- data.frame(complete(x, "long", inc=TRUE))
+  cd <- data.frame(complete(x, "long", include=TRUE))
   r <- as.data.frame(is.na(x$data))
 
   ## evaluate na.group in response indicator 
@@ -152,7 +152,7 @@ stripplot.mids <- function(x,
   if (!is.mids(x)) stop("Argument 'x' must be a 'mids' object")
 
   ## unpack data and response indicator
-  cd <- data.frame(complete(x, "long", inc=TRUE))
+  cd <- data.frame(complete(x, "long", include=TRUE))
   r <- as.data.frame(is.na(x$data))
 
   ## evaluate na.group in response indicator 
@@ -267,7 +267,7 @@ bwplot.mids <- function(x,
   if (!is.mids(x)) stop("Argument 'x' must be a 'mids' object")
 
   ## unpack data and response indicator
-  cd <- data.frame(complete(x, "long", inc=TRUE))
+  cd <- data.frame(complete(x, "long", include=TRUE))
   r <- as.data.frame(is.na(x$data))
 
   ## evaluate na.group in response indicator 
@@ -398,7 +398,7 @@ densityplot.mids <- function(x,
   if (!is.mids(x)) stop("Argument 'x' must be a 'mids' object")
 
   ## unpack data and response indicator
-  cd <- data.frame(complete(x, "long", inc=TRUE))
+  cd <- data.frame(complete(x, "long", include=TRUE))
   r <- as.data.frame(is.na(x$data))
 
   ## evaluate na.group in response indicator 

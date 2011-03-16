@@ -1,5 +1,5 @@
 #
-# MICE V2.6 (feb2011)
+# MICE V2.7 (mar2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -199,7 +199,7 @@ mice <- function(data,
   }
   ##------------------------------CHECK.data-------------------------------
   
-  check.data <- function(setup, data, ...){
+  check.data <- function(setup, data, allow.na=FALSE, ...){
     
     pred <- setup$predictorMatrix
     nvar <- setup$nvar
@@ -212,7 +212,10 @@ mice <- function(data,
     for(j in 1:nvar) {
       if (!is.passive(meth[j])){
         v <- var(data[,j], na.rm=TRUE)
-        constant <- is.na(v) | v < 1000 * .Machine$double.eps
+        if (allow.na) {
+          constant <- FALSE                                            # SvB 10/3/2011
+          if (!is.na(v)) constant <- (v < 1000 * .Machine$double.eps)  # SvB 10/3/2011
+        } else constant <- is.na(v) | v < 1000 * .Machine$double.eps
         didlog <- FALSE
         if (constant & any(pred[,j]!=0)) {
           out <- varnames[j]
@@ -232,7 +235,9 @@ mice <- function(data,
     }
 
     ## remove collinear variables
-    droplist <- find.collinear(data, ...)
+    ispredictor <- apply(pred!=0, 2, any)     # SvB 16/3/11
+    if (any(ispredictor)) droplist <- find.collinear(data[,ispredictor,drop=FALSE], ...)
+    else droplist <- NULL
     if (length(droplist)>0) {
       for (k in 1:length(droplist)) {
         j <- which(varnames %in% droplist[k])
@@ -637,11 +642,17 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag, ...)
 
 
 remove.lindep <- function(x, y, ry, eps = 0.0001, 
-    maxcor = 0.99, ...) {
+    maxcor = 0.99, allow.na=FALSE, ...) {
   if (ncol(x)==0) return(NULL) 
   if (eps <= 0) 
     stop("\n Argument 'eps' must be positive.")
   xobs <- x[ry, , drop=FALSE]
+  if (allow.na){
+    if (sum(ry)==0) {  # escape for columns with only missing data  SvB 10/3/2011
+      updateLog(out="No observed cases, predictor removal skipped", frame=3)
+      return(rep(TRUE,ncol(x)))   
+    }
+  }
   yobs <- as.numeric(y[ry])
   keep <- unlist(apply(xobs, 2, var) > eps)
   keep[is.na(keep)] <- FALSE
@@ -830,7 +841,7 @@ mice.impute.pmm <- function (y, ry, x, ...)
 ### Finds the three cases for which abs(yhat-z) is minimal,
 ### and makes a random draw from these.
     d <- abs(yhat-z)
-    m <- sample( y[rank(d, ties="ran") <= donors], 1)
+    m <- sample( y[rank(d, ties.method="ran") <= donors], 1)
     return(m)
 }
 
@@ -905,12 +916,12 @@ augment <- function(y, ry, x, maxcat=50, ...){
     minx <- apply(x,2,min)
     maxx <- apply(x,2,max)
     nr <- 2 * p * k
-    a <- matrix(mean, nr=nr, nc=p, byrow=TRUE)
-    b <- matrix(rep(c(rep(c(0.5,-0.5),k),rep(0,nr)),length=nr*p), nr=nr, nc=p, byrow=FALSE)
-    c <- matrix(sd, nr=nr, nc=p, byrow=TRUE)
+    a <- matrix(mean, nrow=nr, ncol=p, byrow=TRUE)
+    b <- matrix(rep(c(rep(c(0.5,-0.5),k),rep(0,nr)),length=nr*p), nrow=nr, ncol=p, byrow=FALSE)
+    c <- matrix(sd, nrow=nr, ncol=p, byrow=TRUE)
     d <- a + b * c
-    d <- pmax(matrix(minx,nr=nr,nc=p, byrow=TRUE), d)
-    d <- pmin(matrix(maxx,nr=nr,nc=p, byrow=TRUE), d)
+    d <- pmax(matrix(minx,nrow=nr,ncol=p, byrow=TRUE), d)
+    d <- pmin(matrix(maxx,nrow=nr,ncol=p, byrow=TRUE), d)
     e <- rep(rep(icod, each=2), p)
 
     dimnames(d) <- list(paste("AUG",1:nrow(d),sep=""),dimnames(x)[[2]])
@@ -958,12 +969,12 @@ mice.impute.polyreg <- function(y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet
                     weights=w[ry],
                     maxit=nnet.maxit, trace=nnet.trace, maxNWts=nnet.maxNWts, ...)
     post <- predict(fit, xy[!ry,], type = "probs")
-    if (sum(!ry)==1) post <- matrix(post, nr=1, nc=length(post))   # SvB 14 sept 2009
+    if (sum(!ry)==1) post <- matrix(post, nrow=1, ncol=length(post))   # SvB 14 sept 2009
     fy <- as.factor(y)
     nc <- length(levels(fy))
     un <- rep(runif(sum(!ry)),each=nc)
 
-    if (is.vector(post)) post <- matrix(c(1-post,post),nc=2)
+    if (is.vector(post)) post <- matrix(c(1-post,post),ncol=2)
     draws <- un>apply(post,1,cumsum)
     idx <- 1+apply(draws,2,sum)
     return(levels(fy)[idx])
@@ -992,12 +1003,12 @@ mice.impute.polr <- function (y, ry, x, nnet.maxit=100, nnet.trace=FALSE, nnet.m
   }
   post <- predict(fit, xy[!ry, ], type = "probs")
   if (sum(!ry) == 1) 
-    post <- matrix(post, nr = 1, nc = length(post))
+    post <- matrix(post, nrow = 1, ncol = length(post))
   fy <- as.factor(y)
   nc <- length(levels(fy))
   un <- rep(runif(sum(!ry)), each = nc)
   if (is.vector(post)) 
-    post <- matrix(c(1 - post, post), nc = 2)
+    post <- matrix(c(1 - post, post), ncol = 2)
   draws <- un > apply(post, 1, cumsum)
   idx <- 1 + apply(draws, 2, sum)
   return(levels(fy)[idx])
@@ -1347,7 +1358,7 @@ quickpred <- function(data, mincor=0.1, minpuc=0, include="", exclude="", method
     if ((nvar <- ncol(data)) < 2) stop ("Data should contain at least two columns")
 
     # initialize
-    predictorMatrix <- matrix(0, nr=nvar, nc=nvar, dimnames = list(names(data),names(data)))
+    predictorMatrix <- matrix(0, nrow=nvar, ncol=nvar, dimnames = list(names(data),names(data)))
     x <- data.matrix(data)
     r <- !is.na(x)
     
@@ -2470,7 +2481,7 @@ mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps",
       adQuote <- function (x) paste("\"", x, "\"", sep = "")
       dfn <- lapply(df, function(x) if (is.factor(x)) as.numeric(x) else x)
       eol <- paste(sep,"\n",sep="")
-      write.table(dfn, file = datafile, row = FALSE, col = FALSE, 
+      write.table(dfn, file = datafile, row.names = FALSE, col.names = FALSE, 
                   sep = sep, dec = dec, quote = FALSE, na = "", eol=eol)
       varlabels <- names(df)
       if (is.null(varnames)) {

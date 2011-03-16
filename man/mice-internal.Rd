@@ -35,7 +35,7 @@ sampler(p, data, m, imp, r, visitSequence, fromto, printFlag,...)
 squeeze(x, bounds = c(min(x[r]), max(x[r])), r = rep(TRUE, 
  length(x)), ...)
 augment(y, ry, x, maxcat=50, ...)
-remove.lindep(x, y, ry, eps = 0.0001, maxcor = 0.99, ...) 
+remove.lindep(x, y, ry, eps = 0.0001, maxcor = 0.99, allow.na=FALSE,...) 
 find.collinear(x, threshold=0.999, ...)
 updateLog(out=NULL, meth=NULL, frame=2)
 mice.df(m, lambda, dfcom)
@@ -71,6 +71,7 @@ df.residual.default(object, q=1.3, ...)
     \item{nam}{}
     \item{eps}{}
     \item{maxcor}{}
+    \item{allow.na}{}	
     \item{threshold}{}	
     \item{out}{}
     \item{frame}{}
