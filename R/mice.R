@@ -1,5 +1,5 @@
 #
-# MICE V2.7 (mar2011)
+# MICE V2.8 (mar2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -685,7 +685,7 @@ find.collinear <- function(x, threshold=0.999, ...) {
   r <- !is.na(x)
   nr <- apply(r, 2, sum, na.rm=TRUE)
   ord <- order(nr, decreasing=TRUE)
-  xo <- x[,ord]
+  xo <- x[, ord, drop=FALSE]     ## SvB 24mar2011
   varnames <- dimnames(xo)[[2]]
   z <- suppressWarnings(cor(xo, use="pairwise.complete.obs"))
   hit <- outer(1:nvar,1:nvar,"<") & (abs(z) >= threshold)
