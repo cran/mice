@@ -43,6 +43,7 @@ df.residual.mira(object, ...)
 df.residual.lme(object, ...)
 df.residual.mer(object, ...)
 df.residual.default(object, q=1.3, ...)
+supports.transparent(dev=.Device)
 }
 
 \arguments{
@@ -80,6 +81,7 @@ df.residual.default(object, q=1.3, ...)
     \item{dfcom}{}
     \item{object}{}
     \item{q}{}
+    \item{dev}{}
 }
 
 \author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2011} 

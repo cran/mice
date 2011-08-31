@@ -1,5 +1,6 @@
 \name{mice.impute.norm.nob}
 \alias{mice.impute.norm.nob}
+\alias{norm.nob}
 \title{Imputation by Linear Regression (non Bayesian)}
 \usage{
     mice.impute.norm.nob(y, ry, x, ...)

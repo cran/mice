@@ -1,5 +1,5 @@
 #
-# MICE V2.8 (mar2011)
+# MICE V2.9 (aug2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -172,8 +172,8 @@ mice <- function(data,
       mj <- method[j]
       mlist <- list(
         m1 = c("logreg","polyreg","lda","polr"),
-        m2 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm","2L.norm.noint"),
-        m3 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm","2L.norm.noint","logreg")
+        m2 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm"),
+        m3 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm","logreg")
       )
       
       if(is.numeric(y) & (mj %in% mlist$m1))
@@ -715,8 +715,7 @@ updateLog <- function(out=NULL, meth=NULL, frame=2){
 
 
 #
-# Standard collection of elementary imputation functions.
-# Part of Groothuis-Oudshoorn & Van Buuren MICE library V1.12
+# Standard collection of mice univariate imputation functions.
 #
 #--------------------MICE.IMPUTE.NORM----------------------------------
 
@@ -731,6 +730,97 @@ mice.impute.norm <- function(y, ry, x, ...)
     x <- cbind(1, as.matrix(x))
     parm <- .norm.draw(y, ry, x, ...)
     return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
+}
+
+
+#------------------------MICE.IMPUTE.NORM.NOB-----------------------
+mice.impute.norm.nob <- function(y, ry, x, ...)
+{
+# mice.impute.norm.nob
+# Regression imputation of y given x, with a fixed regression
+# line, and with random draws of the residuals around the line.
+# x is complete.
+#
+    x <- cbind(1, as.matrix(x))
+    parm <- .norm.fix(y, ry, x, ...)
+    return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
+}
+
+###------------------------MICE.IMPUTE.NORM.PREDICT--------------------
+
+mice.impute.norm.predict <- function(y, ry, x, ridge=0.00001, ...)
+{
+# mice.impute.norm.predict
+# Regression imputation of y given x, with a fixed regression
+# line, takes imputation from the regression line
+# prediction method
+###
+
+  x <- cbind(1, as.matrix(x))
+  xobs <- x[ry,]
+  yobs <- y[ry]
+  xtx <- t(xobs) %*% xobs
+  pen <- ridge * diag(xtx)
+  if (length(pen)==1) pen <- matrix(pen)
+  v <- solve(xtx + diag(pen))
+  coef <- t(yobs %*% xobs %*% v)
+  return(x[!ry,  ] %*% coef)
+}
+
+
+###------------------------MICE.IMPUTE.NORM.BOOT----------------------
+
+mice.impute.norm.boot <- function(y, ry, x, ridge=0.00001, ...)
+{
+# mice.impute.norm.boot
+# Regression imputations of y given x, with a fixed regression
+# line, and with random draws of the residuals around the line.
+# bootstrap version
+#
+
+  x <- cbind(1, as.matrix(x))
+  xobs <- x[ry,]
+  yobs <- y[ry]
+  n1 <- sum(ry)
+  n0 <- sum(!ry)
+  s <- sample(n1, n1, replace=TRUE)
+  dotxobs <- xobs[s,]
+  dotyobs <- yobs[s]
+  xtx <- t(dotxobs) %*% dotxobs
+  pen <- ridge * diag(xtx)
+  if (length(pen)==1) pen <- matrix(pen)
+  v <- solve(xtx + diag(pen))
+  coef <- t(dotyobs %*% dotxobs %*% v)
+  residuals <- dotyobs - dotxobs %*% coef
+  sigma <- sqrt((sum(residuals^2))/(n1-ncol(x)-1))
+  parm <- list(coef, sigma)
+  names(parm) <- c("beta", "sigma")
+  return(x[!ry,  ] %*% parm$beta + rnorm(n0) * parm$sigma)
+}
+
+
+
+#--------------------------------.NORM.FIX-----------------------------
+.norm.fix <- function(y, ry, x, ridge=0.00001, ...)
+{
+# .norm.fix
+# Calculates regression coefficients + error estimate
+#
+# TNO Quality of Life
+# authors: S. van Buuren and K. Groothuis-Oudshoorn
+#
+  xobs <- x[ry,]
+  yobs <- y[ry]
+  xtx <- t(xobs) %*% xobs
+  pen <- ridge * diag(xtx)
+  if (length(pen)==1) pen <- matrix(pen)
+  v <- solve(xtx + diag(pen))
+  coef <- t(yobs %*% xobs %*% v)
+  residuals <- yobs - xobs %*% coef
+  sigma <- sqrt((sum(residuals^2))/(sum(ry)-ncol(x)-1))
+  parm <- list(coef, sigma)
+  names(parm) <- c("beta", "sigma")
+  return(parm)
 }
 
 #--------------------------------.NORM.DRAW-----------------------------
@@ -758,44 +848,6 @@ mice.impute.norm <- function(y, ry, x, ...)
   beta.star <- coef + (t(chol((v + t(v))/2)) %*% rnorm(ncol(x))) * sigma.star
   parm <- list(coef, beta.star, sigma.star)      # SvB 10/2/2010
   names(parm) <- c("coef","beta", "sigma")       # SvB 10/2/2010
-  return(parm)
-}
-
-
-#------------------------MICE.IMPUTE.NORM.NOB-----------------------
-mice.impute.norm.nob <- function(y, ry, x, ...)
-{
-# mice.impute.norm.nob
-# Regression imputation of y given x, with a fixed regression
-# line, and with random draws of the residuals around the line.
-# x is complete.
-#
-    x <- cbind(1, as.matrix(x))
-    parm <- .norm.fix(y, ry, x, ...)
-    return(x[!ry,  ] %*% parm$beta + rnorm(sum(!ry)) * parm$sigma)
-# 	stop("mice.impute.norm.nob is disabled this release")
-}
-
-#--------------------------------.NORM.FIX-----------------------------
-.norm.fix <- function(y, ry, x, ridge=0.00001, ...)
-{
-# .norm.fix
-# Calculates regression coefficients + error estimate
-#
-# TNO Quality of Life
-# authors: S. van Buuren and K. Groothuis-Oudshoorn
-#
-  xobs <- x[ry,]
-  yobs <- y[ry]
-  xtx <- t(xobs) %*% xobs
-  pen <- ridge * diag(xtx)
-  if (length(pen)==1) pen <- matrix(pen)
-  v <- solve(xtx + diag(pen))
-  coef <- t(yobs %*% xobs %*% v)
-  residuals <- yobs - xobs %*% coef
-  sigma <- sqrt((sum(residuals^2))/(sum(ry)-ncol(x)-1))
-  parm <- list(coef, sigma)
-  names(parm) <- c("beta", "sigma")
   return(parm)
 }
 
@@ -889,10 +941,48 @@ mice.impute.logreg <- function(y, ry, x, ...)
     return(vec)
 }
 
+#-------------------------MICE.IMPUTE.LOGREG.BOOT--------------------
+
+mice.impute.logreg.boot <- function(y, ry, x, ...)
+{
+# mice.impute.logreg.boot 
+#
+# Bootstrap version of mice.impute.logreg.
+#
+# Author: Stef van Buuren, 2011
+#
+  ## draw a bootstrap sample for yobs and xobs
+  xobs <- x[ry,]
+  yobs <- y[ry]
+  n1 <- sum(ry)
+  n0 <- sum(!ry)
+  s <- sample(n1, n1, replace=TRUE)
+  doty <- y
+  doty[ry] <- yobs[s]
+  dotx <- x
+  dotx[ry,] <- xobs[s,]
+
+  x <- dotx
+  y <- doty
+  
+  x <- cbind(1, as.matrix(x))
+  expr <- expression(glm.fit(x[ry, ], y[ry],
+      family = binomial(link = logit)))
+  fit <- suppressWarnings(eval(expr))
+  beta.star <- beta <- coef(fit)
+  p <- 1/(1 + exp(-(x[!ry,] %*% beta.star)))
+  vec <- (runif(nrow(p)) <= p)
+  vec[vec] <- 1
+  if (is.factor(y)) {
+    vec<-factor(vec,c(0,1),levels(y))}
+  return(vec)
+}
+
+
+
 augment <- function(y, ry, x, maxcat=50, ...){
     # define augmented data for stabilizing logreg and polyreg
-    # by the ad hoc procedure of White, Daniel & Royston (forthcoming)
-    # This function is new to V2.0
+    # by the ad hoc procedure of White, Daniel & Royston, CSDA, 2010
     # This function will prevent augmented data beyond the min and
     # the max of the data
     # Input:
@@ -910,6 +1000,10 @@ augment <- function(y, ry, x, maxcat=50, ...){
     # skip augmentation if there are no predictors
     if (p==0) return(list(y=y,ry=ry,x=x,w=rep(1,length(y))))
 
+    ## skip augmentation if there is only 1 missing value  12jul2012
+    ## this need to be fixed 12jul2011
+    if (sum(!ry)==1) return(list(y=y,ry=ry,x=x,w=rep(1,length(y))))
+    
     # calculate values to augment
     mean <- apply(x,2,mean)
     sd <- sqrt(apply(x,2,var))
@@ -1173,95 +1267,6 @@ mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE, ...)
 
 mice.impute.2l.norm <- mice.impute.2L.norm   # for backward compatibility
 
-mice.impute.2L.norm.noint <- function(y, ry, x, type, intercept=FALSE, ...)
-{
-  rwishart <- function(df, p = nrow(SqrtSigma), SqrtSigma = diag(p)) {
-    ## rwishart, written by Bill Venables
-    Z <- matrix(0, p, p)
-    diag(Z) <- sqrt(rchisq(p, df:(df-p+1)))
-    if(p > 1) {
-      pseq <- 1:(p-1)
-      Z[rep(p*pseq, pseq) + unlist(lapply(pseq, seq))] <- rnorm(p*(p-1)/2)
-    }
-    crossprod(Z %*% SqrtSigma)
-  }
-
-  force.chol <- function(x, warn=TRUE) {
-    z <- 0
-	
-    repeat {
-      lambda <- 0.1 * z
-      XT <- x + diag(x=lambda, nrow=nrow(x))
-      s <- try(expr=chol(XT), silent=TRUE)
-      if (class(s) != "try-error") break
-      z <- z+1
-    }
-	
-    attr(s,"forced") <- (z>0)
-    if (warn && z>0) warning("Cholesky decomposition had to be forced", call.=FALSE)
-	
-    return (s)
-  }
-  ## written by Roel de Jong
-
-  ## append intercept
-  if (intercept) {
-    x <- cbind(1, as.matrix(x))
-    type <- c(2, type)
-  }
-    
-  ## Initialize
-  n.iter <- 100
-  nry <- !ry
-  n.class <- length(unique(x[, type==(-2)]))
-  gf.full <- factor(x[,type==(-2)], labels=1:n.class)
-  gf <- gf.full[ry]
-  XG <- split.data.frame(as.matrix(x[ry, type == 2]), gf)
-  X.SS <- lapply(XG, crossprod)
-  yg <- split(as.vector(y[ry]), gf)
-  n.g <- tabulate(gf)
-  n.rc <- ncol(XG[[1]])
-  
-  bees <- matrix(0, nrow=n.class, ncol=n.rc)
-  ss <- vector(mode="numeric", length=n.class)
-  mu <- rep(0, n.rc)
-  inv.psi <- diag(1, n.rc, n.rc)
-  inv.sigma2 <- rep(1, n.class)
-  sigma2.0 <- 1
-  theta <- 1	
-
-  ## Execute Gibbs sampler
-  for (iter in 1:n.iter) {	
-    ## Draw bees	
-    for (class in 1:n.class) { 
-      bees.var <- chol2inv(chol(inv.sigma2[class]*X.SS[[class]] + inv.psi))
-      bees[class,] <- drop(bees.var %*% (crossprod(inv.sigma2[class]*XG[[class]], yg[[class]]) + inv.psi %*% mu)) + drop(rnorm(n=n.rc) %*% chol(bees.var))
-      ss[class] <- crossprod(yg[[class]] - XG[[class]] %*% bees[class,])
-    }
-		
-    ## Draw mu		
-    mu <- colMeans(bees) + drop(rnorm(n=n.rc) %*% chol(chol2inv(chol(inv.psi))/n.class))
-    
-    ## Draw psi
-    inv.psi <- rwishart(df=n.class-n.rc-1, SqrtSigma=chol(chol2inv(chol(crossprod(t(t(bees) - mu))))))	
-    
-    ## Draw sigma2
-    inv.sigma2 <- rgamma(n.class, n.g/2 + 1/(2*theta), scale=2*theta / (ss*theta+sigma2.0))
-    
-    ## Draw sigma2.0
-    H <- 1/mean(inv.sigma2)			# Harmonic mean
-    sigma2.0 <- rgamma(1, n.class/(2*theta) + 1, scale= 2 * theta * H / n.class)
-
-    ## Draw theta
-    G <- exp(mean(log(1/inv.sigma2)))		# Geometric mean
-    theta <- 1/rgamma(1, n.class/2-1, scale=2/(n.class*(sigma2.0/H-log(sigma2.0)+log(G)-1)))
-  }
-	
-
-  ## Generate imputations
-  imps <- rnorm(n=sum(nry), sd=sqrt(1/inv.sigma2[gf.full[nry]])) + rowSums(as.matrix(x[nry,type==2]) * bees[gf.full[nry],])
-  return(imps)
-}
 
 
 
@@ -1574,50 +1579,82 @@ summary.mids<-function(object, ...)
     invisible()
 }
 
-#------------------------------PLOT.MIDS---------------------------------
 
 setMethod("plot",signature(x = "mids", y="ANY"),
-   function( x, y=0, layoutplot=c(3,2), askplot=TRUE, ...) {
+   function( x, y, ...) {
      plot.mids( x, y, ...)
    }
 )
 
-plot.mids <-function(x, y=0, layoutplot=c(3,2), askplot=TRUE, ...){
-
-    eps <- 0.000001
-    names <- dimnames(x$chainVar[,,1])[[1]]
-    s.mat <- sqrt(x$chainVar)
-    m.mat <- x$chainMean
-
-    old.par <- par(mfrow=layoutplot, ask=askplot)
-    suppressWarnings(yli1.min<-apply(m.mat,1,min,na.rm=TRUE))
-    suppressWarnings(yli1.max<-apply(m.mat,1,max,na.rm=TRUE))
-    suppressWarnings(yli2.min<-apply(s.mat,1,min,na.rm=TRUE))
-    suppressWarnings(yli2.max<-apply(s.mat,1,max,na.rm=TRUE))
-    for (m in 1:(dim(m.mat)[1])){
-        if ((yli1.max[m]-yli1.min[m])<eps) {
-          plot(x=1:(dim(m.mat)[2]),xlab="iteration",ylim=c(0,1),ylab="mean",type="n")
-          text(x=dim(m.mat)[2]/2,y=0.5,labels="no data",col="blue",cex=3)
-        } else {
-          plot(1:(dim(m.mat)[2]),m.mat[m,,1],type="n",ylim=c(yli1.min[m],yli1.max[m]),xlab="iteration",ylab="mean")
-          title(names[m])
-          for (i in 1:(dim(m.mat)[3]))
-            lines(1:(dim(m.mat)[2]),m.mat[m,,i],col=i)
-        }
-        if ((yli2.max[m]-yli2.min[m])<eps) {
-          plot(x=1:(dim(s.mat)[2]),xlab="iteration",ylim=c(0,1),ylab="sd",type="n")
-          text(x=dim(s.mat)[2]/2,y=0.5,labels="no data",col="blue",cex=3,adj=0.5)
-        } else {
-          plot(1:(dim(s.mat)[2]),s.mat[m,,1],type="n",ylim=c(yli2.min[m],yli2.max[m]),xlab="iteration",ylab="sd")
-          title(names[m])
-          for (i in 1:(dim(s.mat)[3]))
-            lines(1:(dim(s.mat)[2]),s.mat[m,,i],col=i)
-        }
+plot.mids <- function(x, y=NULL, theme=mice.theme(),
+                        layout=c(2,3), type="l", col=1:10, lty=1,
+                        ...){
+  strip.combined <- function(which.given, which.panel, factor.levels, ...){
+    if (which.given == 1){
+      panel.rect(0,0,1,1,col=theme$strip.background$col,border=1)
+      panel.text(x=0, y=0.5, pos=4,
+                 lab = factor.levels[which.panel[which.given]])
     }
-    par(old.par)
+    if (which.given == 2){
+      panel.text(x=1, y=0.5, pos=2,
+                 lab = factor.levels[which.panel[which.given]])
+    } 
+  }
+  
+  call <- match.call()
+  if (!is.mids(x)) stop("Argument 'x' must be a 'mids' object")
+  
+  mn <- x$chainMean
+  sm <- sqrt(x$chainVar)
+  varlist <- dimnames(mn[,,1])[[1]]
+  
+  ## create formula if not given in y
+  if (missing(y)) {
+    formula <- as.formula(paste(paste(varlist,collapse="+",sep=""),"~.it|.ms",sep=""))
+  } else {
+    formula <- NULL
+    if (is.null(y)) formula <- as.formula(paste(paste(varlist,collapse="+",sep=""),"~.it|.ms",sep=""))
+    if (class(y)=="character") {
+      if (length(y)==1) formula <- as.formula(paste(y,"~.it|.ms",sep=""))
+      else formula <- as.formula(paste(paste(y,collapse="+",sep=""),"~.it|.ms",sep=""))
+    }
+    if (class(y)=="integer" | class(y)=="logical") {
+      vars <- varlist[y]
+      if (length(vars)==1) formula <- as.formula(paste(vars,"~.it|.ms",sep=""))
+      else formula <- as.formula(paste(paste(vars,collapse="+",sep=""),"~.it|.ms",sep=""))
+    }
+    if(is.null(formula)) formula <- as.formula(y)
+  }
+  
+  m <- x$m
+  it <- x$iteration
+  mn <- matrix(aperm(mn,c(2,3,1)), nrow=m*it)
+  sm <- matrix(aperm(sm,c(2,3,1)), nrow=m*it)
+  
+  adm <- expand.grid(1:it, 1:m, c("mean","sd"))
+  data <- cbind(adm,rbind(mn, sm))
+  colnames(data) <- c(".it",".m",".ms",varlist)
+  .m <- NULL; rm(.m)  ## Dummy to trick R CMD check 
+  
+  tp <- xyplot(x=formula,
+               data=data,
+               groups=.m,
+               type=type,
+               lty=lty,
+               col=col,
+               layout = layout,
+               scales=list(y=list(relation="free"),
+                 x=list(alternating=FALSE)),
+               as.table=TRUE,
+               xlab="Iteration",
+               ylab="",
+               strip=strip.combined,
+               par.strip.text = list(lines=0.5),
+               ...)
+
+  tp <- update(tp, par.settings = theme)
+  return(tp)
 }
-
-
 
 #------------------------------cbind.mids--------------------------------
 #setMethod("cbind",signature(x = "mids", y="ANY"),
@@ -1628,10 +1665,10 @@ plot.mids <-function(x, y=0, layoutplot=c(3,2), askplot=TRUE, ...){
 
 
 cbind.mids<-function(x,y,...){
-  # This function combines x and y columnwise into a single midsobject.
+  # This function combines x and y columnwise into a single mids object.
   # x must be a midsobject
-  # y can be a vector, matrix, factor, dataframe or also a midsobject.
-  # It is allowed to combine more than two objects when y is not a midsobject.
+  # y can be a vector, matrix, factor, dataframe or also a mids object.
+  # It is allowed to combine more than two objects when y is not a mids object.
   # KO 08/09.
   
   call<-match.call()
@@ -2543,13 +2580,20 @@ mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps",
   }
 }
 
+supports.transparent <- function(dev=.Device){
+  semi.list <- c('pdf','windows', 'quartz', 'jpeg', 'png', 'bmp', 'tiff', 'bitmap')
+  if (dev == "X11" & capabilities("cairo")) return(TRUE)
+  return(dev %in% semi.list)    
+}
+
+
 mdc <- function(r="observed", s="symbol", transparent=TRUE,
-               cso = ifelse(transparent, hcl(240,100,40,0.7), hcl(240,100,40,1)),
-               csi = ifelse(transparent, hcl(0,100,40,0.7), hcl(0,100,40,1)),
-               csc = ifelse(transparent, "gray40", "black"),
-               clo = ifelse(transparent, hcl(240,100,40,0.8), hcl(240,100,40,1)),
-               cli = ifelse(transparent, hcl(0,100,40,0.8), hcl(0,100,40,1)),
-               clc = ifelse(transparent, "gray40", "black"))
+               cso = hcl(240,100,40,0.7),
+               csi = hcl(0,100,40,0.7),
+               csc = "gray50",
+               clo = hcl(240,100,40,0.8),
+               cli = hcl(0,100,40,0.8), 
+               clc = "gray50")
 {
   ## cso: blue symbol color for observed data
   ## csi: red symbol color for imputations
@@ -2557,7 +2601,18 @@ mdc <- function(r="observed", s="symbol", transparent=TRUE,
   ## clo: blue line color for observed data
   ## cli: red line color for observed data
   ## clc: line color for combined data
-  
+
+  if (missing(transparent)) {
+    if (!supports.transparent()) {
+      cso <- hcl(240,100,40)
+      csi <- hcl(0,100,40)
+      csc <- "black"
+      clo <- hcl(240,100,40)
+      cli <- hcl(0,100,40)
+      clc <- "black"
+    }
+  }
+    
   fallback <- palette()[1]
   if(is.numeric(r)){
     idx <- floor(r)

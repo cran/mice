@@ -1,0 +1,2575 @@
+
+R version 2.13.0 (2011-04-13)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> .help.ESS <- help
+> options(STERM='iESS', editor='emacsclient')
+> ## This file contains the R code used in  
+> 
+> ## Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
+> ## mice: Multivariate Imputation by Chained Equations in R. 
+> ## Journal of Statistical Software.
+> 
+> ## Compiles with R 2.13.0
+> ## Assumes that subdirectory "figures" is part of working directory 
+> ## Requires R packages: mice (>2.9), VIM, mitools, Zelig (+dependencies)
+> 
+> ## SvB 31AUG2011
+> 
+> 
+> ###################################################
+> ### chunk number 1: init1
+> ###################################################
+> options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+R> if (as.numeric(packageDescription("mice")$Version)<2.9) warning("mice 2.9 or higher needed")
+R> 
+R> ###
+R> ###   2.4 Simple example
+R> ###
+R>  
+R> ###################################################
+R> ### chunk number 4: example1
+R> ###################################################
+R> library("mice")
+Loading required package: MASS
+Loading required package: nnet
+Loading required package: lattice
+Loading required package: stringr
+mice 2.9 2011-08-31
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 5: example2 eval=FALSE
+R> ###################################################
+R> nhanes
+   age  bmi hyp chl
+1    1   NA  NA  NA
+2    2 22.7   1 187
+3    1   NA   1 187
+4    3   NA  NA  NA
+5    1 20.4   1 113
+6    3   NA  NA 184
+7    1 22.5   1 118
+8    1 30.1   1 187
+9    2 22.0   1 238
+10   2   NA  NA  NA
+11   1   NA  NA  NA
+12   2   NA  NA  NA
+13   3 21.7   1 206
+14   2 28.7   2 204
+15   1 29.6   1  NA
+16   1   NA  NA  NA
+17   3 27.2   2 284
+18   2 26.3   2 199
+19   1 35.3   1 218
+20   3 25.5   2  NA
+21   1   NA  NA  NA
+22   1 33.2   1 229
+23   1 27.5   1 131
+24   3 24.9   1  NA
+25   2 27.4   1 186
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 6: example3
+R> ###################################################
+R> md.pattern(nhanes)
+   age hyp bmi chl   
+13   1   1   1   1  0
+ 1   1   1   0   1  1
+ 3   1   1   1   0  1
+ 1   1   0   0   1  2
+ 7   1   0   0   0  3
+     0   8   9  10 27
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 7: example4
+R> ###################################################
+R> p <- md.pairs(nhanes)
+R> p
+$rr
+    age bmi hyp chl
+age  25  16  17  15
+bmi  16  16  16  13
+hyp  17  16  17  14
+chl  15  13  14  15
+
+$rm
+    age bmi hyp chl
+age   0   9   8  10
+bmi   0   0   0   3
+hyp   0   1   0   3
+chl   0   2   1   0
+
+$mr
+    age bmi hyp chl
+age   0   0   0   0
+bmi   9   0   1   2
+hyp   8   0   0   1
+chl  10   3   3   0
+
+$mm
+    age bmi hyp chl
+age   0   0   0   0
+bmi   0   9   8   7
+hyp   0   8   8   7
+chl   0   7   7  10
+
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 9: marginplot
+R> ###################################################
+R> library("VIM")
+Loading required package: e1071
+Loading required package: class
+Loading required package: car
+Loading required package: survival
+Loading required package: splines
+Loading required package: colorspace
+Loading required package: robustbase
+
+Attaching package: 'robustbase'
+
+The following object(s) are masked from 'package:survival':
+
+    heart
+
+Loading required package: tcltk
+Loading Tcl/Tk interface ... done
+Loading required package: tkrplot
+Loading required package: sp
+Loading required package: vcd
+Loading required package: grid
+Loading required package: Rcpp
+VIM is ready to use. 
+ Enter vmGUImenu() to start the graphical user interface.
+Warning messages:
+1: package 'VIM' was built under R version 2.13.1 
+2: package 'e1071' was built under R version 2.13.1 
+3: package 'tkrplot' was built under R version 2.13.1 
+4: package 'sp' was built under R version 2.13.1 
+5: package 'Rcpp' was built under R version 2.13.1 
+R> marginplot(nhanes[,c("chl","bmi")], col=mdc(1:2), cex=1.2, cex.lab=1.2, cex.numbers=1.3, pch=19)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 10: example1
+R> ###################################################
+R> imp <- mice(nhanes, seed=23109)
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 11: example2
+R> ###################################################
+R> print(imp)
+Multiply imputed data set
+Call:
+mice(data = nhanes, seed = 23109)
+Number of multiple imputations:  5
+Missing cells per column:
+age bmi hyp chl 
+  0   9   8  10 
+Imputation methods:
+  age   bmi   hyp   chl 
+   "" "pmm" "pmm" "pmm" 
+VisitSequence:
+bmi hyp chl 
+  2   3   4 
+PredictorMatrix:
+    age bmi hyp chl
+age   0   0   0   0
+bmi   1   0   1   1
+hyp   1   1   0   1
+chl   1   1   1   0
+Random generator seed value:  23109 
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 12: example3
+R> ###################################################
+R> imp$imp$bmi
+      1    2    3    4    5
+1  29.6 27.2 29.6 27.5 29.6
+3  29.6 26.3 29.6 30.1 28.7
+4  20.4 29.6 27.2 24.9 21.7
+6  21.7 25.5 27.4 21.7 21.7
+10 20.4 22.0 28.7 29.6 22.5
+11 22.0 35.3 35.3 30.1 29.6
+12 20.4 28.7 27.2 27.5 25.5
+16 22.0 35.3 30.1 29.6 28.7
+21 27.5 33.2 22.0 35.3 22.0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 13: example4 eval=FALSE
+R> ###################################################
+R> complete(imp)
+   age  bmi hyp chl
+1    1 29.6   1 238
+2    2 22.7   1 187
+3    1 29.6   1 187
+4    3 20.4   1 186
+5    1 20.4   1 113
+6    3 21.7   2 184
+7    1 22.5   1 118
+8    1 30.1   1 187
+9    2 22.0   1 238
+10   2 20.4   1 199
+11   1 22.0   1 238
+12   2 20.4   1 187
+13   3 21.7   1 206
+14   2 28.7   2 204
+15   1 29.6   1 238
+16   1 22.0   1 131
+17   3 27.2   2 284
+18   2 26.3   2 199
+19   1 35.3   1 218
+20   3 25.5   2 186
+21   1 27.5   1 187
+22   1 33.2   1 229
+23   1 27.5   1 131
+24   3 24.9   1 186
+25   2 27.4   1 186
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 14: stripplotcmd eval=FALSE
+R> ###################################################
+R> stripplot(imp, pch=20, cex=1.2)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 16: xyplotcmd eval=FALSE
+R> ###################################################
+R> xyplot(imp, bmi~chl|.imp, pch=20, cex=1.4)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 18: example6
+R> ###################################################
+R> fit <- with(imp, lm(chl~age+bmi))
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 19: example7
+R> ###################################################
+R> print(pool(fit))
+Call: pool(object = fit)
+
+Pooled coefficients:
+(Intercept)         age         bmi 
+ -34.158914   34.330666    6.212025 
+
+Fraction of information about the coefficients missing due to nonresponse: 
+(Intercept)         age         bmi 
+  0.5747265   0.7501284   0.4795427 
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 20: example8
+R> ###################################################
+R> round(summary(pool(fit)),2)
+               est    se     t   df Pr(>|t|)   lo 95  hi 95 nmis  fmi
+(Intercept) -34.16 76.07 -0.45 6.81     0.67 -215.05 146.73   NA 0.57
+age          34.33 14.86  2.31 4.04     0.08   -6.76  75.42    0 0.75
+bmi           6.21  2.21  2.81 8.80     0.02    1.20  11.23    9 0.48
+            lambda
+(Intercept)   0.47
+age           0.65
+bmi           0.37
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 21: example9
+R> ###################################################
+R> imp50 <- mice(nhanes, m=50, seed=23109)
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  1   6  bmi  hyp  chl
+  1   7  bmi  hyp  chl
+  1   8  bmi  hyp  chl
+  1   9  bmi  hyp  chl
+  1   10  bmi  hyp  chl
+  1   11  bmi  hyp  chl
+  1   12  bmi  hyp  chl
+  1   13  bmi  hyp  chl
+  1   14  bmi  hyp  chl
+  1   15  bmi  hyp  chl
+  1   16  bmi  hyp  chl
+  1   17  bmi  hyp  chl
+  1   18  bmi  hyp  chl
+  1   19  bmi  hyp  chl
+  1   20  bmi  hyp  chl
+  1   21  bmi  hyp  chl
+  1   22  bmi  hyp  chl
+  1   23  bmi  hyp  chl
+  1   24  bmi  hyp  chl
+  1   25  bmi  hyp  chl
+  1   26  bmi  hyp  chl
+  1   27  bmi  hyp  chl
+  1   28  bmi  hyp  chl
+  1   29  bmi  hyp  chl
+  1   30  bmi  hyp  chl
+  1   31  bmi  hyp  chl
+  1   32  bmi  hyp  chl
+  1   33  bmi  hyp  chl
+  1   34  bmi  hyp  chl
+  1   35  bmi  hyp  chl
+  1   36  bmi  hyp  chl
+  1   37  bmi  hyp  chl
+  1   38  bmi  hyp  chl
+  1   39  bmi  hyp  chl
+  1   40  bmi  hyp  chl
+  1   41  bmi  hyp  chl
+  1   42  bmi  hyp  chl
+  1   43  bmi  hyp  chl
+  1   44  bmi  hyp  chl
+  1   45  bmi  hyp  chl
+  1   46  bmi  hyp  chl
+  1   47  bmi  hyp  chl
+  1   48  bmi  hyp  chl
+  1   49  bmi  hyp  chl
+  1   50  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  2   6  bmi  hyp  chl
+  2   7  bmi  hyp  chl
+  2   8  bmi  hyp  chl
+  2   9  bmi  hyp  chl
+  2   10  bmi  hyp  chl
+  2   11  bmi  hyp  chl
+  2   12  bmi  hyp  chl
+  2   13  bmi  hyp  chl
+  2   14  bmi  hyp  chl
+  2   15  bmi  hyp  chl
+  2   16  bmi  hyp  chl
+  2   17  bmi  hyp  chl
+  2   18  bmi  hyp  chl
+  2   19  bmi  hyp  chl
+  2   20  bmi  hyp  chl
+  2   21  bmi  hyp  chl
+  2   22  bmi  hyp  chl
+  2   23  bmi  hyp  chl
+  2   24  bmi  hyp  chl
+  2   25  bmi  hyp  chl
+  2   26  bmi  hyp  chl
+  2   27  bmi  hyp  chl
+  2   28  bmi  hyp  chl
+  2   29  bmi  hyp  chl
+  2   30  bmi  hyp  chl
+  2   31  bmi  hyp  chl
+  2   32  bmi  hyp  chl
+  2   33  bmi  hyp  chl
+  2   34  bmi  hyp  chl
+  2   35  bmi  hyp  chl
+  2   36  bmi  hyp  chl
+  2   37  bmi  hyp  chl
+  2   38  bmi  hyp  chl
+  2   39  bmi  hyp  chl
+  2   40  bmi  hyp  chl
+  2   41  bmi  hyp  chl
+  2   42  bmi  hyp  chl
+  2   43  bmi  hyp  chl
+  2   44  bmi  hyp  chl
+  2   45  bmi  hyp  chl
+  2   46  bmi  hyp  chl
+  2   47  bmi  hyp  chl
+  2   48  bmi  hyp  chl
+  2   49  bmi  hyp  chl
+  2   50  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  3   6  bmi  hyp  chl
+  3   7  bmi  hyp  chl
+  3   8  bmi  hyp  chl
+  3   9  bmi  hyp  chl
+  3   10  bmi  hyp  chl
+  3   11  bmi  hyp  chl
+  3   12  bmi  hyp  chl
+  3   13  bmi  hyp  chl
+  3   14  bmi  hyp  chl
+  3   15  bmi  hyp  chl
+  3   16  bmi  hyp  chl
+  3   17  bmi  hyp  chl
+  3   18  bmi  hyp  chl
+  3   19  bmi  hyp  chl
+  3   20  bmi  hyp  chl
+  3   21  bmi  hyp  chl
+  3   22  bmi  hyp  chl
+  3   23  bmi  hyp  chl
+  3   24  bmi  hyp  chl
+  3   25  bmi  hyp  chl
+  3   26  bmi  hyp  chl
+  3   27  bmi  hyp  chl
+  3   28  bmi  hyp  chl
+  3   29  bmi  hyp  chl
+  3   30  bmi  hyp  chl
+  3   31  bmi  hyp  chl
+  3   32  bmi  hyp  chl
+  3   33  bmi  hyp  chl
+  3   34  bmi  hyp  chl
+  3   35  bmi  hyp  chl
+  3   36  bmi  hyp  chl
+  3   37  bmi  hyp  chl
+  3   38  bmi  hyp  chl
+  3   39  bmi  hyp  chl
+  3   40  bmi  hyp  chl
+  3   41  bmi  hyp  chl
+  3   42  bmi  hyp  chl
+  3   43  bmi  hyp  chl
+  3   44  bmi  hyp  chl
+  3   45  bmi  hyp  chl
+  3   46  bmi  hyp  chl
+  3   47  bmi  hyp  chl
+  3   48  bmi  hyp  chl
+  3   49  bmi  hyp  chl
+  3   50  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  4   6  bmi  hyp  chl
+  4   7  bmi  hyp  chl
+  4   8  bmi  hyp  chl
+  4   9  bmi  hyp  chl
+  4   10  bmi  hyp  chl
+  4   11  bmi  hyp  chl
+  4   12  bmi  hyp  chl
+  4   13  bmi  hyp  chl
+  4   14  bmi  hyp  chl
+  4   15  bmi  hyp  chl
+  4   16  bmi  hyp  chl
+  4   17  bmi  hyp  chl
+  4   18  bmi  hyp  chl
+  4   19  bmi  hyp  chl
+  4   20  bmi  hyp  chl
+  4   21  bmi  hyp  chl
+  4   22  bmi  hyp  chl
+  4   23  bmi  hyp  chl
+  4   24  bmi  hyp  chl
+  4   25  bmi  hyp  chl
+  4   26  bmi  hyp  chl
+  4   27  bmi  hyp  chl
+  4   28  bmi  hyp  chl
+  4   29  bmi  hyp  chl
+  4   30  bmi  hyp  chl
+  4   31  bmi  hyp  chl
+  4   32  bmi  hyp  chl
+  4   33  bmi  hyp  chl
+  4   34  bmi  hyp  chl
+  4   35  bmi  hyp  chl
+  4   36  bmi  hyp  chl
+  4   37  bmi  hyp  chl
+  4   38  bmi  hyp  chl
+  4   39  bmi  hyp  chl
+  4   40  bmi  hyp  chl
+  4   41  bmi  hyp  chl
+  4   42  bmi  hyp  chl
+  4   43  bmi  hyp  chl
+  4   44  bmi  hyp  chl
+  4   45  bmi  hyp  chl
+  4   46  bmi  hyp  chl
+  4   47  bmi  hyp  chl
+  4   48  bmi  hyp  chl
+  4   49  bmi  hyp  chl
+  4   50  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+  5   6  bmi  hyp  chl
+  5   7  bmi  hyp  chl
+  5   8  bmi  hyp  chl
+  5   9  bmi  hyp  chl
+  5   10  bmi  hyp  chl
+  5   11  bmi  hyp  chl
+  5   12  bmi  hyp  chl
+  5   13  bmi  hyp  chl
+  5   14  bmi  hyp  chl
+  5   15  bmi  hyp  chl
+  5   16  bmi  hyp  chl
+  5   17  bmi  hyp  chl
+  5   18  bmi  hyp  chl
+  5   19  bmi  hyp  chl
+  5   20  bmi  hyp  chl
+  5   21  bmi  hyp  chl
+  5   22  bmi  hyp  chl
+  5   23  bmi  hyp  chl
+  5   24  bmi  hyp  chl
+  5   25  bmi  hyp  chl
+  5   26  bmi  hyp  chl
+  5   27  bmi  hyp  chl
+  5   28  bmi  hyp  chl
+  5   29  bmi  hyp  chl
+  5   30  bmi  hyp  chl
+  5   31  bmi  hyp  chl
+  5   32  bmi  hyp  chl
+  5   33  bmi  hyp  chl
+  5   34  bmi  hyp  chl
+  5   35  bmi  hyp  chl
+  5   36  bmi  hyp  chl
+  5   37  bmi  hyp  chl
+  5   38  bmi  hyp  chl
+  5   39  bmi  hyp  chl
+  5   40  bmi  hyp  chl
+  5   41  bmi  hyp  chl
+  5   42  bmi  hyp  chl
+  5   43  bmi  hyp  chl
+  5   44  bmi  hyp  chl
+  5   45  bmi  hyp  chl
+  5   46  bmi  hyp  chl
+  5   47  bmi  hyp  chl
+  5   48  bmi  hyp  chl
+  5   49  bmi  hyp  chl
+  5   50  bmi  hyp  chl
+R> fit <- with(imp50, lm(chl~age+bmi))
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 22: example10
+R> ###################################################
+R> round(summary(pool(fit)),2)
+               est    se     t    df Pr(>|t|)   lo 95  hi 95 nmis
+(Intercept) -35.53 63.61 -0.56 14.46     0.58 -171.55 100.49   NA
+age          35.90 10.48  3.42 12.76     0.00   13.21  58.58    0
+bmi           6.15  1.97  3.13 15.13     0.01    1.96  10.35    9
+             fmi lambda
+(Intercept) 0.35   0.27
+age         0.43   0.35
+bmi         0.32   0.24
+R> 
+R> ###
+R> ###  3.2 Univariate imputation methods
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 23: models1 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes, method = "norm")
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 24: models2 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes, meth = c("", "norm", "pmm", "mean"))
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 25: models3
+R> ###################################################
+R> str(nhanes2)
+'data.frame':	25 obs. of  4 variables:
+ $ age: Factor w/ 3 levels "20-39","40-59",..: 1 2 1 3 1 3 1 1 2 2 ...
+ $ bmi: num  NA 22.7 NA NA 20.4 NA 22.5 30.1 22 NA ...
+ $ hyp: Factor w/ 2 levels "no","yes": NA 1 1 NA 1 NA 1 1 1 NA ...
+ $ chl: num  NA 187 187 NA 113 184 118 187 238 NA ...
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 26: models4 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes2, me=c("polyreg","pmm","logreg","norm"))
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 27: models5 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes2, meth=c("","","logreg","norm"))
+
+ iter imp variable
+  1   1  hyp  chl
+  1   2  hyp  chl
+  1   3  hyp  chl
+  1   4  hyp  chl
+  1   5  hyp  chl
+  2   1  hyp  chl
+  2   2  hyp  chl
+  2   3  hyp  chl
+  2   4  hyp  chl
+  2   5  hyp  chl
+  3   1  hyp  chl
+  3   2  hyp  chl
+  3   3  hyp  chl
+  3   4  hyp  chl
+  3   5  hyp  chl
+  4   1  hyp  chl
+  4   2  hyp  chl
+  4   3  hyp  chl
+  4   4  hyp  chl
+  4   5  hyp  chl
+  5   1  hyp  chl
+  5   2  hyp  chl
+  5   3  hyp  chl
+  5   4  hyp  chl
+  5   5  hyp  chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 28: models6 eval=FALSE
+R> ###################################################
+R> mice(nhanes2, defaultMethod = c("norm","logreg","polyreg","polr"))
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+Multiply imputed data set
+Call:
+mice(data = nhanes2, defaultMethod = c("norm", "logreg", "polyreg", 
+    "polr"))
+Number of multiple imputations:  5
+Missing cells per column:
+age bmi hyp chl 
+  0   9   8  10 
+Imputation methods:
+     age      bmi      hyp      chl 
+      ""   "norm" "logreg"   "norm" 
+VisitSequence:
+bmi hyp chl 
+  2   3   4 
+PredictorMatrix:
+    age bmi hyp chl
+age   0   0   0   0
+bmi   1   0   1   1
+hyp   1   1   0   1
+chl   1   1   1   0
+Random generator seed value:  NA 
+R> 
+R> ###
+R> ###   3.3 Predictor selection
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 29: predictor1
+R> ###################################################
+R> imp <- mice(nhanes, print=FALSE)
+R> imp$predictorMatrix
+    age bmi hyp chl
+age   0   0   0   0
+bmi   1   0   1   1
+hyp   1   1   0   1
+chl   1   1   1   0
+R> 
+R> 
+R> ### removing a predictor
+R> ###################################################
+R> ### chunk number 30: predictor2
+R> ###################################################
+R> pred <- imp$predictorMatrix
+R> pred[,"bmi"] <- 0
+R> pred
+    age bmi hyp chl
+age   0   0   0   0
+bmi   1   0   1   1
+hyp   1   0   0   1
+chl   1   0   1   0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 31: predictor3
+R> ###################################################
+R> imp <- mice(nhanes, pred=pred, pri=FALSE)
+R> 
+R> 
+R> ### skipping imputation
+R> ###################################################
+R> ### chunk number 32: predictor4
+R> ###################################################
+R> ini <- mice(nhanes2, maxit=0, pri=FALSE)
+R> pred <- ini$pred
+R> pred[,"bmi"] <- 0
+R> meth <- ini$meth
+R> meth["bmi"] <- ""
+R> imp <- mice(nhanes2, meth=meth, pred=pred, pri=FALSE)
+R> imp$imp$bmi
+    1  2  3  4  5
+1  NA NA NA NA NA
+3  NA NA NA NA NA
+4  NA NA NA NA NA
+6  NA NA NA NA NA
+10 NA NA NA NA NA
+11 NA NA NA NA NA
+12 NA NA NA NA NA
+16 NA NA NA NA NA
+21 NA NA NA NA NA
+R> 
+R> 
+R> ### intercept imputation
+R> ###################################################
+R> ### chunk number 33: predictor5
+R> ###################################################
+R> pred <- ini$pred
+R> pred["bmi",] <- 0
+R> imp <- mice(nhanes2, pred=pred, pri=FALSE, seed=51162)
+R> imp$imp$bmi
+      1    2    3    4    5
+1  20.4 27.2 22.0 25.5 27.4
+3  27.4 22.5 24.9 22.7 33.2
+4  20.4 20.4 24.9 27.2 27.5
+6  22.5 27.5 26.3 20.4 24.9
+10 27.2 20.4 27.2 26.3 22.7
+11 22.7 22.5 22.7 29.6 25.5
+12 29.6 28.7 22.5 33.2 27.4
+16 27.4 22.5 35.3 22.7 20.4
+21 30.1 27.4 24.9 20.4 27.2
+R> 
+R> ### multilevel imputation
+R> ###################################################
+R> ### chunk number 34: multilevel1
+R> ###################################################
+R> popmis[1:3,]
+  pupil school popular sex texp const teachpop
+1     1      1      NA   1   24     1        7
+2     2      1      NA   0   24     1        7
+3     3      1       7   1   24     1        6
+R> ini <- mice(popmis, maxit=0)
+R> pred <- ini$pred
+R> pred["popular",] <- c(0, -2, 0, 2, 1, 2, 0)
+R> imp <- mice(popmis, meth=c("","","2l.norm","","","",""), pred=pred, maxit=1, seed=71152)
+
+ iter imp variable
+  1   1  popular
+  1   2  popular
+  1   3  popular
+  1   4  popular
+  1   5  popular
+R> 
+R> ###
+R> ###   quick predictor selection
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 35: quickpred1
+R> ###################################################
+R> round(cor(nhanes, use="pair"),3)
+       age    bmi   hyp   chl
+age  1.000 -0.372 0.506 0.507
+bmi -0.372  1.000 0.051 0.373
+hyp  0.506  0.051 1.000 0.429
+chl  0.507  0.373 0.429 1.000
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 36: quickpred2
+R> ###################################################
+R> round(cor(y=nhanes, x=!is.na(nhanes), use="pair"),3)
+       age    bmi    hyp   chl
+age     NA     NA     NA    NA
+bmi  0.086     NA  0.139 0.053
+hyp  0.008     NA     NA 0.045
+chl -0.040 -0.012 -0.107    NA
+Warning message:
+In cor(y = nhanes, x = !is.na(nhanes), use = "pair") :
+  the standard deviation is zero
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 37: quickpred3
+R> ###################################################
+R> p <- md.pairs(nhanes)
+R> round(p$mr/(p$mr+p$mm), 3)
+    age bmi   hyp   chl
+age NaN NaN   NaN   NaN
+bmi   1 0.0 0.111 0.222
+hyp   1 0.0 0.000 0.125
+chl   1 0.3 0.300 0.000
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 38: quickpred4
+R> ###################################################
+R> quickpred(nhanes)
+    age bmi hyp chl
+age   0   0   0   0
+bmi   1   0   1   1
+hyp   1   0   0   1
+chl   1   1   1   0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 39: quickpred5 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes, pred=quickpred(nhanes, minpuc=0.25, include="age"))
+
+ iter imp variable
+  1   1  bmi  hyp  chl
+  1   2  bmi  hyp  chl
+  1   3  bmi  hyp  chl
+  1   4  bmi  hyp  chl
+  1   5  bmi  hyp  chl
+  2   1  bmi  hyp  chl
+  2   2  bmi  hyp  chl
+  2   3  bmi  hyp  chl
+  2   4  bmi  hyp  chl
+  2   5  bmi  hyp  chl
+  3   1  bmi  hyp  chl
+  3   2  bmi  hyp  chl
+  3   3  bmi  hyp  chl
+  3   4  bmi  hyp  chl
+  3   5  bmi  hyp  chl
+  4   1  bmi  hyp  chl
+  4   2  bmi  hyp  chl
+  4   3  bmi  hyp  chl
+  4   4  bmi  hyp  chl
+  4   5  bmi  hyp  chl
+  5   1  bmi  hyp  chl
+  5   2  bmi  hyp  chl
+  5   3  bmi  hyp  chl
+  5   4  bmi  hyp  chl
+  5   5  bmi  hyp  chl
+R> 
+R> ###
+R> ###   3.4 Passive imputation
+R> ###
+R> 
+R> ### Preserving a transformation
+R> ###################################################
+R> ### chunk number 40: transform1
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, lchl=log(nhanes2$chl))
+R> ini <- mice(nhanes2.ext, max=0, print=FALSE)
+R> meth <- ini$meth
+R> meth["lchl"] <- "~log(chl)"
+R> pred <- ini$pred
+R> pred[c("hyp","chl"),"lchl"] <- 0
+R> pred["bmi","chl"] <- 0
+R> pred
+     age bmi hyp chl lchl
+age    0   0   0   0    0
+bmi    1   0   1   0    1
+hyp    1   1   0   1    0
+chl    1   1   1   0    0
+lchl   1   1   1   1    0
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=38788, print=FALSE)
+R> head(complete(imp))
+    age  bmi hyp chl     lchl
+1 20-39 35.3  no 218 5.384495
+2 40-59 22.7  no 187 5.231109
+3 20-39 30.1  no 187 5.231109
+4 60-99 22.5 yes 218 5.384495
+5 20-39 20.4  no 113 4.727388
+6 60-99 22.7  no 184 5.214936
+R> 
+R> 
+R> ### index of two variables
+R> ###################################################
+R> ### chunk number 41: transform2
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, lchl=NA)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 42: index1
+R> ###################################################
+R> md.pattern(boys[,c("hgt","wgt","bmi")])
+    wgt hgt bmi   
+727   1   1   1  0
+ 17   1   0   0  2
+  1   0   1   0  2
+  3   0   0   0  3
+      4  20  21 45
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 43: index2
+R> ###################################################
+R> ini <- mice(boys,max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
+R> pred <- ini$pred
+R> pred[c("wgt","hgt","hc","reg"),"bmi"] <- 0
+R> pred[c("gen","phb","tv"),c("hgt","wgt","hc")] <- 0
+R> pred
+    age hgt wgt bmi hc gen phb tv reg
+age   0   0   0   0  0   0   0  0   0
+hgt   1   0   1   0  1   1   1  1   1
+wgt   1   1   0   0  1   1   1  1   1
+bmi   1   1   1   0  1   1   1  1   1
+hc    1   1   1   0  0   1   1  1   1
+gen   1   0   0   1  0   0   1  1   1
+phb   1   0   0   1  0   1   0  1   1
+tv    1   0   0   1  0   1   1  0   1
+reg   1   1   1   0  1   1   1  1   0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 44: index3
+R> ###################################################
+R> imp.idx <- mice(boys, pred=pred, meth=meth, maxit=20, seed=09212, print=FALSE)
+R> head(complete(imp.idx)[is.na(boys$bmi),],3)
+       age  hgt   wgt      bmi   hc gen phb tv   reg
+103  0.087 60.0  4.54 12.61111 39.0  G1  P1  3  west
+366  0.177 57.5  4.20 12.70321 40.4  G1  P1  1  west
+1617 1.481 85.5 12.04 16.47002 47.5  G1  P1  1 north
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 45: index4
+R> ###################################################
+R> meth["bmi"] <- "~round(wgt/(hgt/100)^2,dig=2)"
+R> 
+R> 
+R> ### sum scores
+R> ###################################################
+R> ### chunk number 46: sumscore1
+R> ###################################################
+R> ini <- mice(cbind(boys,mat=NA),max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth["mat"] <- "~I(as.integer(gen) + as.integer(phb) +
++   + as.integer(cut(tv,breaks=c(0,3,6,10,15,20,25))))"
+R> meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
+R> pred <- ini$pred
+R> pred[c("bmi","gen","phb","tv"),"mat"] <- 0
+R> pred[c("hgt","wgt","hc","reg"),"mat"] <- 1
+R> pred[c("hgt","wgt","hc","reg"),c("gen","phb","tv")] <- 0
+R> pred[c("wgt","hgt","hc","reg"),"bmi"] <- 0
+R> pred[c("gen","phb","tv"),c("hgt","wgt","hc")] <- 0
+R> pred
+    age hgt wgt bmi hc gen phb tv reg mat
+age   0   0   0   0  0   0   0  0   0   0
+hgt   1   0   1   0  1   0   0  0   1   1
+wgt   1   1   0   0  1   0   0  0   1   1
+bmi   1   1   1   0  1   1   1  1   1   0
+hc    1   1   1   0  0   0   0  0   1   1
+gen   1   0   0   1  0   0   1  1   1   0
+phb   1   0   0   1  0   1   0  1   1   0
+tv    1   0   0   1  0   1   1  0   1   0
+reg   1   1   1   0  1   0   0  0   0   1
+mat   0   0   0   0  0   0   0  0   0   0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 47: sumscore2
+R> ###################################################
+R> #line 705 "/Users/stefvanbuuren/Documents/Sync/Impute/JSS/ArtikelV5/mice.Rnw"
+R> imp.sum <- mice(cbind(boys,mat=NA), pred=pred, meth=meth, maxit=20, seed=10948, print=FALSE)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 48: sumscore3 eval=FALSE
+R> ###################################################
+R> xyplot(imp.sum, mat~age|.imp, na=gen|phb|tv, subset=.imp==1,
++          ylab="Maturation score", xlab="Age (years)")
+R> 
+R> 
+R> ### interactions continuous variables
+R> ###################################################
+R> ### chunk number 50: interaction1
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, bmi.chl=NA)
+R> ini <- mice(nhanes2.ext, max=0, print=FALSE)
+R> meth <- ini$meth
+R> meth["bmi.chl"] <- "~I((bmi-25)*(chl-200))"
+R> pred <- ini$pred
+R> pred[c("bmi","chl"),"bmi.chl"] <- 0
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=51600, print=FALSE)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 51: interaction2
+R> ###################################################
+R> head(ini$pad$data,3)
+    age  bmi  hyp chl bmi.chl age.1 age.2 hyp.1
+1 20-39   NA <NA>  NA      NA     0     0    NA
+2 40-59 22.7   no 187      NA     1     0     0
+3 20-39   NA   no 187      NA     0     0     0
+R> 
+R> 
+R> ### interaction categorical variables
+R> ###################################################
+R> ### chunk number 52: interaction3 eval=FALSE
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2,age.1.bmi=NA,age.2.bmi=NA)
+R> ini <- mice(nhanes2.ext, max=0, print=FALSE)
+R> meth <- ini$meth
+R> meth["age.1.bmi"] <- "~I(age.1*(bmi-25))"
+R> meth["age.2.bmi"] <- "~I(age.2*(bmi-25))"
+R> pred <- ini$pred
+R> pred[c("age","bmi"),c("age.1.bmi","age.2.bmi")] <- 0
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, maxit=10)
+
+ iter imp variable
+  1   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  1   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  1   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  1   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  1   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  2   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  2   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  2   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  2   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  2   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  3   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  3   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  3   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  3   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  3   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  4   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  4   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  4   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  4   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  4   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  5   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  5   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  5   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  5   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  5   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  6   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  6   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  6   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  6   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  6   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  7   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  7   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  7   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  7   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  7   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  8   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  8   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  8   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  8   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  8   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  9   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  9   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  9   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  9   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  9   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  10   1  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  10   2  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  10   3  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  10   4  bmi  hyp  chl  age.1.bmi  age.2.bmi
+  10   5  bmi  hyp  chl  age.1.bmi  age.2.bmi
+R> 
+R> 
+R> ### squeeze
+R> ###################################################
+R> ### chunk number 53: squeeze1 eval=FALSE
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, lchl=NA)
+R> ini <- mice(nhanes2.ext,max=0,pri=FALSE)
+R> meth <- ini$meth
+R> meth[c("lchl","chl")] <- c("~log(chl)","norm")
+R> pred <- ini$pred
+R> pred[c("hyp","chl"),"lchl"] <- 0
+R> pred["bmi","chl"] <- 0
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=1, maxit=100)
+
+ iter imp variable
+  1   1  bmi  hyp  chl  lchl
+  1   2  bmi  hyp  chl  lchl
+  1   3  bmi  hyp  chl  lchl
+  1   4  bmi  hyp  chl  lchl
+  1   5  bmi  hyp  chl  lchl
+  2   1  bmi  hyp  chl  lchl
+  2   2  bmi  hyp  chl  lchl
+  2   3  bmi  hyp  chl  lchl
+  2   4  bmi  hyp  chl  lchl
+  2   5  bmi  hyp  chl  lchl
+  3   1  bmi  hyp  chl  lchl
+  3   2  bmi  hyp  chl  lchl
+  3   3  bmi  hyp  chl  lchl
+  3   4  bmi  hyp  chl  lchl
+  3   5  bmi  hyp  chl  lchl
+  4   1  bmi  hyp  chl  lchl
+  4   2  bmi  hyp  chl  lchl
+  4   3  bmi  hyp  chl  lchl
+  4   4  bmi  hyp  chl  lchl
+  4   5  bmi  hyp  chl  lchl
+  5   1  bmi  hyp  chl  lchl
+  5   2  bmi  hyp  chl  lchl
+  5   3  bmi  hyp  chl  lchl
+  5   4  bmi  hyp  chl  lchl
+  5   5  bmi  hyp  chl  lchl
+  6   1  bmi  hyp  chl  lchl
+  6   2  bmi  hyp  chl  lchl
+  6   3  bmi  hyp  chl  lchl
+  6   4  bmi  hyp  chl  lchl
+  6   5  bmi  hyp  chl  lchl
+  7   1  bmi  hyp  chl  lchl
+  7   2  bmi  hyp  chl  lchl
+  7   3  bmi  hyp  chl  lchl
+  7   4  bmi  hyp  chl  lchl
+  7   5  bmi  hyp  chl  lchl
+  8   1  bmi  hyp  chl  lchl
+  8   2  bmi  hyp  chl  lchl
+  8   3  bmi  hyp  chl  lchl
+  8   4  bmi  hyp  chl  lchl
+  8   5  bmi  hyp  chl  lchl
+  9   1  bmi  hyp  chl  lchl
+  9   2  bmi  hyp  chl  lchl
+  9   3  bmi  hyp  chl  lchl
+  9   4  bmi  hyp  chl  lchl
+  9   5  bmi  hyp  chl  lchl
+  10   1  bmi  hyp  chl  lchl
+  10   2  bmi  hyp  chl  lchl
+  10   3  bmi  hyp  chl  lchl
+  10   4  bmi  hyp  chl  lchl
+  10   5  bmi  hyp  chl  lchl
+  11   1  bmi  hyp  chl  lchl
+  11   2  bmi  hyp  chl  lchl
+  11   3  bmi  hyp  chl  lchl
+  11   4  bmi  hyp  chl  lchl
+  11   5  bmi  hyp  chl  lchl
+  12   1  bmi  hyp  chl  lchl
+  12   2  bmi  hyp  chl  lchl
+  12   3  bmi  hyp  chl  lchl
+  12   4  bmi  hyp  chl  lchl
+  12   5  bmi  hyp  chl  lchl
+  13   1  bmi  hyp  chl  lchl
+  13   2  bmi  hyp  chl  lchl
+  13   3  bmi  hyp  chl  lchl
+  13   4  bmi  hyp  chl  lchl
+  13   5  bmi  hyp  chl  lchl
+  14   1  bmi  hyp  chl  lchl
+  14   2  bmi  hyp  chl  lchl
+  14   3  bmi  hyp  chl  lchl
+  14   4  bmi  hyp  chl  lchl
+  14   5  bmi  hyp  chl  lchl
+  15   1  bmi  hyp  chl  lchl
+  15   2  bmi  hyp  chl  lchl
+  15   3  bmi  hyp  chl  lchl
+  15   4  bmi  hyp  chl  lchl
+  15   5  bmi  hyp  chl  lchl
+  16   1  bmi  hyp  chl  lchl
+  16   2  bmi  hyp  chl  lchl
+  16   3  bmi  hyp  chl  lchl
+  16   4  bmi  hyp  chl  lchl
+  16   5  bmi  hyp  chl  lchl
+  17   1  bmi  hyp  chl  lchl
+  17   2  bmi  hyp  chl  lchl
+  17   3  bmi  hyp  chl  lchl
+  17   4  bmi  hyp  chl  lchl
+  17   5  bmi  hyp  chl  lchl
+  18   1  bmi  hyp  chl  lchl
+  18   2  bmi  hyp  chl  lchl
+  18   3  bmi  hyp  chl  lchl
+  18   4  bmi  hyp  chl  lchl
+  18   5  bmi  hyp  chl  lchl
+  19   1  bmi  hyp  chl  lchl
+  19   2  bmi  hyp  chl  lchl
+  19   3  bmi  hyp  chl  lchl
+  19   4  bmi  hyp  chl  lchl
+  19   5  bmi  hyp  chl  lchl
+  20   1  bmi  hyp  chl  lchl
+  20   2  bmi  hyp  chl  lchl
+  20   3  bmi  hyp  chl  lchl
+  20   4  bmi  hyp  chl  lchl
+  20   5  bmi  hyp  chl  lchl
+  21   1  bmi  hyp  chl  lchl
+  21   2  bmi  hyp  chl  lchl
+  21   3  bmi  hyp  chl  lchl
+  21   4  bmi  hyp  chl  lchl
+  21   5  bmi  hyp  chl  lchl
+  22   1  bmi  hyp  chl  lchl
+  22   2  bmi  hyp  chl  lchl
+  22   3  bmi  hyp  chl  lchl
+  22   4  bmi  hyp  chl  lchl
+  22   5  bmi  hyp  chl  lchl
+  23   1  bmi  hyp  chl  lchl
+  23   2  bmi  hyp  chl  lchl
+  23   3  bmi  hyp  chl  lchl
+  23   4  bmi  hyp  chl  lchl
+  23   5  bmi  hyp  chl  lchl
+  24   1  bmi  hyp  chl  lchl
+  24   2  bmi  hyp  chl  lchl
+  24   3  bmi  hyp  chl  lchl
+  24   4  bmi  hyp  chl  lchl
+  24   5  bmi  hyp  chl  lchl
+  25   1  bmi  hyp  chl  lchl
+  25   2  bmi  hyp  chl  lchl
+  25   3  bmi  hyp  chl  lchl
+  25   4  bmi  hyp  chl  lchl
+  25   5  bmi  hyp  chl  lchl
+  26   1  bmi  hyp  chl  lchl
+  26   2  bmi  hyp  chl  lchl
+  26   3  bmi  hyp  chl  lchl
+  26   4  bmi  hyp  chl  lchl
+  26   5  bmi  hyp  chl  lchl
+  27   1  bmi  hyp  chl  lchl
+  27   2  bmi  hyp  chl  lchl
+  27   3  bmi  hyp  chl  lchl
+  27   4  bmi  hyp  chl  lchlError in `[<-.data.frame`(`*tmp*`, , i, value = list(`log(chl)` = c(4.09912613113127,  : 
+  replacement element 1 has 24 rows, need 25
+In addition: Warning message:
+In log(chl) : NaNs produced
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 54: squeeze2 eval=FALSE
+R> ###################################################
+R> meth["lchl"] <- "~log(squeeze(chl, bounds=c(100,300)))"
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=1, maxit=100)
+
+ iter imp variable
+  1   1  bmi  hyp  chl  lchl
+  1   2  bmi  hyp  chl  lchl
+  1   3  bmi  hyp  chl  lchl
+  1   4  bmi  hyp  chl  lchl
+  1   5  bmi  hyp  chl  lchl
+  2   1  bmi  hyp  chl  lchl
+  2   2  bmi  hyp  chl  lchl
+  2   3  bmi  hyp  chl  lchl
+  2   4  bmi  hyp  chl  lchl
+  2   5  bmi  hyp  chl  lchl
+  3   1  bmi  hyp  chl  lchl
+  3   2  bmi  hyp  chl  lchl
+  3   3  bmi  hyp  chl  lchl
+  3   4  bmi  hyp  chl  lchl
+  3   5  bmi  hyp  chl  lchl
+  4   1  bmi  hyp  chl  lchl
+  4   2  bmi  hyp  chl  lchl
+  4   3  bmi  hyp  chl  lchl
+  4   4  bmi  hyp  chl  lchl
+  4   5  bmi  hyp  chl  lchl
+  5   1  bmi  hyp  chl  lchl
+  5   2  bmi  hyp  chl  lchl
+  5   3  bmi  hyp  chl  lchl
+  5   4  bmi  hyp  chl  lchl
+  5   5  bmi  hyp  chl  lchl
+  6   1  bmi  hyp  chl  lchl
+  6   2  bmi  hyp  chl  lchl
+  6   3  bmi  hyp  chl  lchl
+  6   4  bmi  hyp  chl  lchl
+  6   5  bmi  hyp  chl  lchl
+  7   1  bmi  hyp  chl  lchl
+  7   2  bmi  hyp  chl  lchl
+  7   3  bmi  hyp  chl  lchl
+  7   4  bmi  hyp  chl  lchl
+  7   5  bmi  hyp  chl  lchl
+  8   1  bmi  hyp  chl  lchl
+  8   2  bmi  hyp  chl  lchl
+  8   3  bmi  hyp  chl  lchl
+  8   4  bmi  hyp  chl  lchl
+  8   5  bmi  hyp  chl  lchl
+  9   1  bmi  hyp  chl  lchl
+  9   2  bmi  hyp  chl  lchl
+  9   3  bmi  hyp  chl  lchl
+  9   4  bmi  hyp  chl  lchl
+  9   5  bmi  hyp  chl  lchl
+  10   1  bmi  hyp  chl  lchl
+  10   2  bmi  hyp  chl  lchl
+  10   3  bmi  hyp  chl  lchl
+  10   4  bmi  hyp  chl  lchl
+  10   5  bmi  hyp  chl  lchl
+  11   1  bmi  hyp  chl  lchl
+  11   2  bmi  hyp  chl  lchl
+  11   3  bmi  hyp  chl  lchl
+  11   4  bmi  hyp  chl  lchl
+  11   5  bmi  hyp  chl  lchl
+  12   1  bmi  hyp  chl  lchl
+  12   2  bmi  hyp  chl  lchl
+  12   3  bmi  hyp  chl  lchl
+  12   4  bmi  hyp  chl  lchl
+  12   5  bmi  hyp  chl  lchl
+  13   1  bmi  hyp  chl  lchl
+  13   2  bmi  hyp  chl  lchl
+  13   3  bmi  hyp  chl  lchl
+  13   4  bmi  hyp  chl  lchl
+  13   5  bmi  hyp  chl  lchl
+  14   1  bmi  hyp  chl  lchl
+  14   2  bmi  hyp  chl  lchl
+  14   3  bmi  hyp  chl  lchl
+  14   4  bmi  hyp  chl  lchl
+  14   5  bmi  hyp  chl  lchl
+  15   1  bmi  hyp  chl  lchl
+  15   2  bmi  hyp  chl  lchl
+  15   3  bmi  hyp  chl  lchl
+  15   4  bmi  hyp  chl  lchl
+  15   5  bmi  hyp  chl  lchl
+  16   1  bmi  hyp  chl  lchl
+  16   2  bmi  hyp  chl  lchl
+  16   3  bmi  hyp  chl  lchl
+  16   4  bmi  hyp  chl  lchl
+  16   5  bmi  hyp  chl  lchl
+  17   1  bmi  hyp  chl  lchl
+  17   2  bmi  hyp  chl  lchl
+  17   3  bmi  hyp  chl  lchl
+  17   4  bmi  hyp  chl  lchl
+  17   5  bmi  hyp  chl  lchl
+  18   1  bmi  hyp  chl  lchl
+  18   2  bmi  hyp  chl  lchl
+  18   3  bmi  hyp  chl  lchl
+  18   4  bmi  hyp  chl  lchl
+  18   5  bmi  hyp  chl  lchl
+  19   1  bmi  hyp  chl  lchl
+  19   2  bmi  hyp  chl  lchl
+  19   3  bmi  hyp  chl  lchl
+  19   4  bmi  hyp  chl  lchl
+  19   5  bmi  hyp  chl  lchl
+  20   1  bmi  hyp  chl  lchl
+  20   2  bmi  hyp  chl  lchl
+  20   3  bmi  hyp  chl  lchl
+  20   4  bmi  hyp  chl  lchl
+  20   5  bmi  hyp  chl  lchl
+  21   1  bmi  hyp  chl  lchl
+  21   2  bmi  hyp  chl  lchl
+  21   3  bmi  hyp  chl  lchl
+  21   4  bmi  hyp  chl  lchl
+  21   5  bmi  hyp  chl  lchl
+  22   1  bmi  hyp  chl  lchl
+  22   2  bmi  hyp  chl  lchl
+  22   3  bmi  hyp  chl  lchl
+  22   4  bmi  hyp  chl  lchl
+  22   5  bmi  hyp  chl  lchl
+  23   1  bmi  hyp  chl  lchl
+  23   2  bmi  hyp  chl  lchl
+  23   3  bmi  hyp  chl  lchl
+  23   4  bmi  hyp  chl  lchl
+  23   5  bmi  hyp  chl  lchl
+  24   1  bmi  hyp  chl  lchl
+  24   2  bmi  hyp  chl  lchl
+  24   3  bmi  hyp  chl  lchl
+  24   4  bmi  hyp  chl  lchl
+  24   5  bmi  hyp  chl  lchl
+  25   1  bmi  hyp  chl  lchl
+  25   2  bmi  hyp  chl  lchl
+  25   3  bmi  hyp  chl  lchl
+  25   4  bmi  hyp  chl  lchl
+  25   5  bmi  hyp  chl  lchl
+  26   1  bmi  hyp  chl  lchl
+  26   2  bmi  hyp  chl  lchl
+  26   3  bmi  hyp  chl  lchl
+  26   4  bmi  hyp  chl  lchl
+  26   5  bmi  hyp  chl  lchl
+  27   1  bmi  hyp  chl  lchl
+  27   2  bmi  hyp  chl  lchl
+  27   3  bmi  hyp  chl  lchl
+  27   4  bmi  hyp  chl  lchl
+  27   5  bmi  hyp  chl  lchl
+  28   1  bmi  hyp  chl  lchl
+  28   2  bmi  hyp  chl  lchl
+  28   3  bmi  hyp  chl  lchl
+  28   4  bmi  hyp  chl  lchl
+  28   5  bmi  hyp  chl  lchl
+  29   1  bmi  hyp  chl  lchl
+  29   2  bmi  hyp  chl  lchl
+  29   3  bmi  hyp  chl  lchl
+  29   4  bmi  hyp  chl  lchl
+  29   5  bmi  hyp  chl  lchl
+  30   1  bmi  hyp  chl  lchl
+  30   2  bmi  hyp  chl  lchl
+  30   3  bmi  hyp  chl  lchl
+  30   4  bmi  hyp  chl  lchl
+  30   5  bmi  hyp  chl  lchl
+  31   1  bmi  hyp  chl  lchl
+  31   2  bmi  hyp  chl  lchl
+  31   3  bmi  hyp  chl  lchl
+  31   4  bmi  hyp  chl  lchl
+  31   5  bmi  hyp  chl  lchl
+  32   1  bmi  hyp  chl  lchl
+  32   2  bmi  hyp  chl  lchl
+  32   3  bmi  hyp  chl  lchl
+  32   4  bmi  hyp  chl  lchl
+  32   5  bmi  hyp  chl  lchl
+  33   1  bmi  hyp  chl  lchl
+  33   2  bmi  hyp  chl  lchl
+  33   3  bmi  hyp  chl  lchl
+  33   4  bmi  hyp  chl  lchl
+  33   5  bmi  hyp  chl  lchl
+  34   1  bmi  hyp  chl  lchl
+  34   2  bmi  hyp  chl  lchl
+  34   3  bmi  hyp  chl  lchl
+  34   4  bmi  hyp  chl  lchl
+  34   5  bmi  hyp  chl  lchl
+  35   1  bmi  hyp  chl  lchl
+  35   2  bmi  hyp  chl  lchl
+  35   3  bmi  hyp  chl  lchl
+  35   4  bmi  hyp  chl  lchl
+  35   5  bmi  hyp  chl  lchl
+  36   1  bmi  hyp  chl  lchl
+  36   2  bmi  hyp  chl  lchl
+  36   3  bmi  hyp  chl  lchl
+  36   4  bmi  hyp  chl  lchl
+  36   5  bmi  hyp  chl  lchl
+  37   1  bmi  hyp  chl  lchl
+  37   2  bmi  hyp  chl  lchl
+  37   3  bmi  hyp  chl  lchl
+  37   4  bmi  hyp  chl  lchl
+  37   5  bmi  hyp  chl  lchl
+  38   1  bmi  hyp  chl  lchl
+  38   2  bmi  hyp  chl  lchl
+  38   3  bmi  hyp  chl  lchl
+  38   4  bmi  hyp  chl  lchl
+  38   5  bmi  hyp  chl  lchl
+  39   1  bmi  hyp  chl  lchl
+  39   2  bmi  hyp  chl  lchl
+  39   3  bmi  hyp  chl  lchl
+  39   4  bmi  hyp  chl  lchl
+  39   5  bmi  hyp  chl  lchl
+  40   1  bmi  hyp  chl  lchl
+  40   2  bmi  hyp  chl  lchl
+  40   3  bmi  hyp  chl  lchl
+  40   4  bmi  hyp  chl  lchl
+  40   5  bmi  hyp  chl  lchl
+  41   1  bmi  hyp  chl  lchl
+  41   2  bmi  hyp  chl  lchl
+  41   3  bmi  hyp  chl  lchl
+  41   4  bmi  hyp  chl  lchl
+  41   5  bmi  hyp  chl  lchl
+  42   1  bmi  hyp  chl  lchl
+  42   2  bmi  hyp  chl  lchl
+  42   3  bmi  hyp  chl  lchl
+  42   4  bmi  hyp  chl  lchl
+  42   5  bmi  hyp  chl  lchl
+  43   1  bmi  hyp  chl  lchl
+  43   2  bmi  hyp  chl  lchl
+  43   3  bmi  hyp  chl  lchl
+  43   4  bmi  hyp  chl  lchl
+  43   5  bmi  hyp  chl  lchl
+  44   1  bmi  hyp  chl  lchl
+  44   2  bmi  hyp  chl  lchl
+  44   3  bmi  hyp  chl  lchl
+  44   4  bmi  hyp  chl  lchl
+  44   5  bmi  hyp  chl  lchl
+  45   1  bmi  hyp  chl  lchl
+  45   2  bmi  hyp  chl  lchl
+  45   3  bmi  hyp  chl  lchl
+  45   4  bmi  hyp  chl  lchl
+  45   5  bmi  hyp  chl  lchl
+  46   1  bmi  hyp  chl  lchl
+  46   2  bmi  hyp  chl  lchl
+  46   3  bmi  hyp  chl  lchl
+  46   4  bmi  hyp  chl  lchl
+  46   5  bmi  hyp  chl  lchl
+  47   1  bmi  hyp  chl  lchl
+  47   2  bmi  hyp  chl  lchl
+  47   3  bmi  hyp  chl  lchl
+  47   4  bmi  hyp  chl  lchl
+  47   5  bmi  hyp  chl  lchl
+  48   1  bmi  hyp  chl  lchl
+  48   2  bmi  hyp  chl  lchl
+  48   3  bmi  hyp  chl  lchl
+  48   4  bmi  hyp  chl  lchl
+  48   5  bmi  hyp  chl  lchl
+  49   1  bmi  hyp  chl  lchl
+  49   2  bmi  hyp  chl  lchl
+  49   3  bmi  hyp  chl  lchl
+  49   4  bmi  hyp  chl  lchl
+  49   5  bmi  hyp  chl  lchl
+  50   1  bmi  hyp  chl  lchl
+  50   2  bmi  hyp  chl  lchl
+  50   3  bmi  hyp  chl  lchl
+  50   4  bmi  hyp  chl  lchl
+  50   5  bmi  hyp  chl  lchl
+  51   1  bmi  hyp  chl  lchl
+  51   2  bmi  hyp  chl  lchl
+  51   3  bmi  hyp  chl  lchl
+  51   4  bmi  hyp  chl  lchl
+  51   5  bmi  hyp  chl  lchl
+  52   1  bmi  hyp  chl  lchl
+  52   2  bmi  hyp  chl  lchl
+  52   3  bmi  hyp  chl  lchl
+  52   4  bmi  hyp  chl  lchl
+  52   5  bmi  hyp  chl  lchl
+  53   1  bmi  hyp  chl  lchl
+  53   2  bmi  hyp  chl  lchl
+  53   3  bmi  hyp  chl  lchl
+  53   4  bmi  hyp  chl  lchl
+  53   5  bmi  hyp  chl  lchl
+  54   1  bmi  hyp  chl  lchl
+  54   2  bmi  hyp  chl  lchl
+  54   3  bmi  hyp  chl  lchl
+  54   4  bmi  hyp  chl  lchl
+  54   5  bmi  hyp  chl  lchl
+  55   1  bmi  hyp  chl  lchl
+  55   2  bmi  hyp  chl  lchl
+  55   3  bmi  hyp  chl  lchl
+  55   4  bmi  hyp  chl  lchl
+  55   5  bmi  hyp  chl  lchl
+  56   1  bmi  hyp  chl  lchl
+  56   2  bmi  hyp  chl  lchl
+  56   3  bmi  hyp  chl  lchl
+  56   4  bmi  hyp  chl  lchl
+  56   5  bmi  hyp  chl  lchl
+  57   1  bmi  hyp  chl  lchl
+  57   2  bmi  hyp  chl  lchl
+  57   3  bmi  hyp  chl  lchl
+  57   4  bmi  hyp  chl  lchl
+  57   5  bmi  hyp  chl  lchl
+  58   1  bmi  hyp  chl  lchl
+  58   2  bmi  hyp  chl  lchl
+  58   3  bmi  hyp  chl  lchl
+  58   4  bmi  hyp  chl  lchl
+  58   5  bmi  hyp  chl  lchl
+  59   1  bmi  hyp  chl  lchl
+  59   2  bmi  hyp  chl  lchl
+  59   3  bmi  hyp  chl  lchl
+  59   4  bmi  hyp  chl  lchl
+  59   5  bmi  hyp  chl  lchl
+  60   1  bmi  hyp  chl  lchl
+  60   2  bmi  hyp  chl  lchl
+  60   3  bmi  hyp  chl  lchl
+  60   4  bmi  hyp  chl  lchl
+  60   5  bmi  hyp  chl  lchl
+  61   1  bmi  hyp  chl  lchl
+  61   2  bmi  hyp  chl  lchl
+  61   3  bmi  hyp  chl  lchl
+  61   4  bmi  hyp  chl  lchl
+  61   5  bmi  hyp  chl  lchl
+  62   1  bmi  hyp  chl  lchl
+  62   2  bmi  hyp  chl  lchl
+  62   3  bmi  hyp  chl  lchl
+  62   4  bmi  hyp  chl  lchl
+  62   5  bmi  hyp  chl  lchl
+  63   1  bmi  hyp  chl  lchl
+  63   2  bmi  hyp  chl  lchl
+  63   3  bmi  hyp  chl  lchl
+  63   4  bmi  hyp  chl  lchl
+  63   5  bmi  hyp  chl  lchl
+  64   1  bmi  hyp  chl  lchl
+  64   2  bmi  hyp  chl  lchl
+  64   3  bmi  hyp  chl  lchl
+  64   4  bmi  hyp  chl  lchl
+  64   5  bmi  hyp  chl  lchl
+  65   1  bmi  hyp  chl  lchl
+  65   2  bmi  hyp  chl  lchl
+  65   3  bmi  hyp  chl  lchl
+  65   4  bmi  hyp  chl  lchl
+  65   5  bmi  hyp  chl  lchl
+  66   1  bmi  hyp  chl  lchl
+  66   2  bmi  hyp  chl  lchl
+  66   3  bmi  hyp  chl  lchl
+  66   4  bmi  hyp  chl  lchl
+  66   5  bmi  hyp  chl  lchl
+  67   1  bmi  hyp  chl  lchl
+  67   2  bmi  hyp  chl  lchl
+  67   3  bmi  hyp  chl  lchl
+  67   4  bmi  hyp  chl  lchl
+  67   5  bmi  hyp  chl  lchl
+  68   1  bmi  hyp  chl  lchl
+  68   2  bmi  hyp  chl  lchl
+  68   3  bmi  hyp  chl  lchl
+  68   4  bmi  hyp  chl  lchl
+  68   5  bmi  hyp  chl  lchl
+  69   1  bmi  hyp  chl  lchl
+  69   2  bmi  hyp  chl  lchl
+  69   3  bmi  hyp  chl  lchl
+  69   4  bmi  hyp  chl  lchl
+  69   5  bmi  hyp  chl  lchl
+  70   1  bmi  hyp  chl  lchl
+  70   2  bmi  hyp  chl  lchl
+  70   3  bmi  hyp  chl  lchl
+  70   4  bmi  hyp  chl  lchl
+  70   5  bmi  hyp  chl  lchl
+  71   1  bmi  hyp  chl  lchl
+  71   2  bmi  hyp  chl  lchl
+  71   3  bmi  hyp  chl  lchl
+  71   4  bmi  hyp  chl  lchl
+  71   5  bmi  hyp  chl  lchl
+  72   1  bmi  hyp  chl  lchl
+  72   2  bmi  hyp  chl  lchl
+  72   3  bmi  hyp  chl  lchl
+  72   4  bmi  hyp  chl  lchl
+  72   5  bmi  hyp  chl  lchl
+  73   1  bmi  hyp  chl  lchl
+  73   2  bmi  hyp  chl  lchl
+  73   3  bmi  hyp  chl  lchl
+  73   4  bmi  hyp  chl  lchl
+  73   5  bmi  hyp  chl  lchl
+  74   1  bmi  hyp  chl  lchl
+  74   2  bmi  hyp  chl  lchl
+  74   3  bmi  hyp  chl  lchl
+  74   4  bmi  hyp  chl  lchl
+  74   5  bmi  hyp  chl  lchl
+  75   1  bmi  hyp  chl  lchl
+  75   2  bmi  hyp  chl  lchl
+  75   3  bmi  hyp  chl  lchl
+  75   4  bmi  hyp  chl  lchl
+  75   5  bmi  hyp  chl  lchl
+  76   1  bmi  hyp  chl  lchl
+  76   2  bmi  hyp  chl  lchl
+  76   3  bmi  hyp  chl  lchl
+  76   4  bmi  hyp  chl  lchl
+  76   5  bmi  hyp  chl  lchl
+  77   1  bmi  hyp  chl  lchl
+  77   2  bmi  hyp  chl  lchl
+  77   3  bmi  hyp  chl  lchl
+  77   4  bmi  hyp  chl  lchl
+  77   5  bmi  hyp  chl  lchl
+  78   1  bmi  hyp  chl  lchl
+  78   2  bmi  hyp  chl  lchl
+  78   3  bmi  hyp  chl  lchl
+  78   4  bmi  hyp  chl  lchl
+  78   5  bmi  hyp  chl  lchl
+  79   1  bmi  hyp  chl  lchl
+  79   2  bmi  hyp  chl  lchl
+  79   3  bmi  hyp  chl  lchl
+  79   4  bmi  hyp  chl  lchl
+  79   5  bmi  hyp  chl  lchl
+  80   1  bmi  hyp  chl  lchl
+  80   2  bmi  hyp  chl  lchl
+  80   3  bmi  hyp  chl  lchl
+  80   4  bmi  hyp  chl  lchl
+  80   5  bmi  hyp  chl  lchl
+  81   1  bmi  hyp  chl  lchl
+  81   2  bmi  hyp  chl  lchl
+  81   3  bmi  hyp  chl  lchl
+  81   4  bmi  hyp  chl  lchl
+  81   5  bmi  hyp  chl  lchl
+  82   1  bmi  hyp  chl  lchl
+  82   2  bmi  hyp  chl  lchl
+  82   3  bmi  hyp  chl  lchl
+  82   4  bmi  hyp  chl  lchl
+  82   5  bmi  hyp  chl  lchl
+  83   1  bmi  hyp  chl  lchl
+  83   2  bmi  hyp  chl  lchl
+  83   3  bmi  hyp  chl  lchl
+  83   4  bmi  hyp  chl  lchl
+  83   5  bmi  hyp  chl  lchl
+  84   1  bmi  hyp  chl  lchl
+  84   2  bmi  hyp  chl  lchl
+  84   3  bmi  hyp  chl  lchl
+  84   4  bmi  hyp  chl  lchl
+  84   5  bmi  hyp  chl  lchl
+  85   1  bmi  hyp  chl  lchl
+  85   2  bmi  hyp  chl  lchl
+  85   3  bmi  hyp  chl  lchl
+  85   4  bmi  hyp  chl  lchl
+  85   5  bmi  hyp  chl  lchl
+  86   1  bmi  hyp  chl  lchl
+  86   2  bmi  hyp  chl  lchl
+  86   3  bmi  hyp  chl  lchl
+  86   4  bmi  hyp  chl  lchl
+  86   5  bmi  hyp  chl  lchl
+  87   1  bmi  hyp  chl  lchl
+  87   2  bmi  hyp  chl  lchl
+  87   3  bmi  hyp  chl  lchl
+  87   4  bmi  hyp  chl  lchl
+  87   5  bmi  hyp  chl  lchl
+  88   1  bmi  hyp  chl  lchl
+  88   2  bmi  hyp  chl  lchl
+  88   3  bmi  hyp  chl  lchl
+  88   4  bmi  hyp  chl  lchl
+  88   5  bmi  hyp  chl  lchl
+  89   1  bmi  hyp  chl  lchl
+  89   2  bmi  hyp  chl  lchl
+  89   3  bmi  hyp  chl  lchl
+  89   4  bmi  hyp  chl  lchl
+  89   5  bmi  hyp  chl  lchl
+  90   1  bmi  hyp  chl  lchl
+  90   2  bmi  hyp  chl  lchl
+  90   3  bmi  hyp  chl  lchl
+  90   4  bmi  hyp  chl  lchl
+  90   5  bmi  hyp  chl  lchl
+  91   1  bmi  hyp  chl  lchl
+  91   2  bmi  hyp  chl  lchl
+  91   3  bmi  hyp  chl  lchl
+  91   4  bmi  hyp  chl  lchl
+  91   5  bmi  hyp  chl  lchl
+  92   1  bmi  hyp  chl  lchl
+  92   2  bmi  hyp  chl  lchl
+  92   3  bmi  hyp  chl  lchl
+  92   4  bmi  hyp  chl  lchl
+  92   5  bmi  hyp  chl  lchl
+  93   1  bmi  hyp  chl  lchl
+  93   2  bmi  hyp  chl  lchl
+  93   3  bmi  hyp  chl  lchl
+  93   4  bmi  hyp  chl  lchl
+  93   5  bmi  hyp  chl  lchl
+  94   1  bmi  hyp  chl  lchl
+  94   2  bmi  hyp  chl  lchl
+  94   3  bmi  hyp  chl  lchl
+  94   4  bmi  hyp  chl  lchl
+  94   5  bmi  hyp  chl  lchl
+  95   1  bmi  hyp  chl  lchl
+  95   2  bmi  hyp  chl  lchl
+  95   3  bmi  hyp  chl  lchl
+  95   4  bmi  hyp  chl  lchl
+  95   5  bmi  hyp  chl  lchl
+  96   1  bmi  hyp  chl  lchl
+  96   2  bmi  hyp  chl  lchl
+  96   3  bmi  hyp  chl  lchl
+  96   4  bmi  hyp  chl  lchl
+  96   5  bmi  hyp  chl  lchl
+  97   1  bmi  hyp  chl  lchl
+  97   2  bmi  hyp  chl  lchl
+  97   3  bmi  hyp  chl  lchl
+  97   4  bmi  hyp  chl  lchl
+  97   5  bmi  hyp  chl  lchl
+  98   1  bmi  hyp  chl  lchl
+  98   2  bmi  hyp  chl  lchl
+  98   3  bmi  hyp  chl  lchl
+  98   4  bmi  hyp  chl  lchl
+  98   5  bmi  hyp  chl  lchl
+  99   1  bmi  hyp  chl  lchl
+  99   2  bmi  hyp  chl  lchl
+  99   3  bmi  hyp  chl  lchl
+  99   4  bmi  hyp  chl  lchl
+  99   5  bmi  hyp  chl  lchl
+  100   1  bmi  hyp  chl  lchl
+  100   2  bmi  hyp  chl  lchl
+  100   3  bmi  hyp  chl  lchl
+  100   4  bmi  hyp  chl  lchl
+  100   5  bmi  hyp  chl  lchl
+R> 
+R> 
+R> ### post-processing: prevent negative chl
+R> ###################################################
+R> ### chunk number 55: post1
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, lchl=NA)
+R> ini <- mice(nhanes2.ext,max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth[c("lchl","chl")] <- c("~log(chl)","norm")
+R> pred <- ini$pred
+R> pred[c("hyp","chl"),"lchl"] <- 0
+R> pred["bmi","chl"] <- 0
+R> post <- ini$post
+R> post["chl"] <- "imp[[j]][,i] <- squeeze(imp[[j]][,i],c(100,300))"
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, post=post, 
++              seed=30031, maxit=10, print=FALSE)
+R> imp$imp$chl
+          1        2        3        4        5
+1  141.9775 100.0000 215.5944 167.4770 132.2074
+4  175.9424 197.7750 252.6138 270.0522 162.9603
+10 203.5916 138.0413 190.6631 188.8077 160.8818
+11 232.7851 100.0000 100.0000 171.7716 151.0727
+12 210.0065 139.1416 199.3788 238.3034 128.7681
+15 215.4298 160.8284 148.6562 197.7282 178.2769
+16 172.3431 168.2527 161.2586 207.1777 140.7590
+20 212.0838 226.3953 258.8964 213.4481 160.4901
+21 203.1200 184.1227 123.5391 175.1849 126.5748
+24 231.2208 255.7083 137.7759 260.2423 222.0734
+R> 
+R> ### post-processing: constrain maturation scores below age 5 yrs
+R> ###################################################
+R> ### chunk number 56: post2
+R> ###################################################
+R> ini <- mice(cbind(boys,mat=NA),max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth["mat"] <- "~I(as.integer(gen) + as.integer(phb) +
++   + as.integer(cut(tv,breaks=c(0,3,6,10,15,20,25))))"
+R> meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
+R> pred <- ini$pred
+R> pred[c("bmi","gen","phb","tv"),"mat"] <- 0
+R> pred[c("hgt","wgt","hc","reg"),"mat"] <- 1
+R> pred[c("hgt","wgt","hc","reg"),c("gen","phb","tv")] <- 0
+R> pred[c("wgt","hgt","hc","reg"),"bmi"] <- 0
+R> pred[c("gen","phb","tv"),c("hgt","wgt","hc")] <- 0
+R> pred
+    age hgt wgt bmi hc gen phb tv reg mat
+age   0   0   0   0  0   0   0  0   0   0
+hgt   1   0   1   0  1   0   0  0   1   1
+wgt   1   1   0   0  1   0   0  0   1   1
+bmi   1   1   1   0  1   1   1  1   1   0
+hc    1   1   1   0  0   0   0  0   1   1
+gen   1   0   0   1  0   0   1  1   1   0
+phb   1   0   0   1  0   1   0  1   1   0
+tv    1   0   0   1  0   1   1  0   1   0
+reg   1   1   1   0  1   0   0  0   0   1
+mat   0   0   0   0  0   0   0  0   0   0
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 57: post3
+R> ###################################################
+R> post <- ini$post
+R> post["gen"] <- "imp[[j]][p$data$age[!r[,j]]<5,i] <- levels(boys$gen)[1]"
+R> post["phb"] <- "imp[[j]][p$data$age[!r[,j]]<5,i] <- levels(boys$phb)[1]"
+R> post["tv"]  <- "imp[[j]][p$data$age[!r[,j]]<5,i] <- 1"
+R> imp <- mice(cbind(boys,mat=NA), pred=pred, meth=meth, post=post, maxit=10, print=FALSE)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 58: post4 eval=FALSE
+R> ###################################################
+R> xyplot(imp,mat~age|.imp, na=gen|phb|tv, subset=.imp==1,ylab="Maturation score", xlab="Age (years)")
+R> 
+R> 
+R> ###
+R> ###   3.6 Visiting scheme
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 60: visit1
+R> ###################################################
+R> nhanes2.ext <- cbind(nhanes2, bmi.chl=NA)
+R> ini <- mice(nhanes2.ext, max=0, print=FALSE)
+R> meth <- ini$meth
+R> meth["bmi.chl"] <- "~I((bmi-25)*(chl-200))"
+R> pred <- ini$pred
+R> pred[c("bmi","chl"),"bmi.chl"] <- 0
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, seed=51600, print=FALSE)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 61: visit2
+R> ###################################################
+R> imp$vis
+    bmi     hyp     chl bmi.chl 
+      2       3       4       5 
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 62: visit3 eval=FALSE
+R> ###################################################
+R> vis<-imp$vis
+R> vis<-append(vis,vis[4],1)
+R> vis
+    bmi bmi.chl     hyp     chl bmi.chl 
+      2       5       3       4       5 
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, vis=vis)
+
+ iter imp variable
+  1   1  bmi  bmi.chl  hyp  chl  bmi.chl
+  1   2  bmi  bmi.chl  hyp  chl  bmi.chl
+  1   3  bmi  bmi.chl  hyp  chl  bmi.chl
+  1   4  bmi  bmi.chl  hyp  chl  bmi.chl
+  1   5  bmi  bmi.chl  hyp  chl  bmi.chl
+  2   1  bmi  bmi.chl  hyp  chl  bmi.chl
+  2   2  bmi  bmi.chl  hyp  chl  bmi.chl
+  2   3  bmi  bmi.chl  hyp  chl  bmi.chl
+  2   4  bmi  bmi.chl  hyp  chl  bmi.chl
+  2   5  bmi  bmi.chl  hyp  chl  bmi.chl
+  3   1  bmi  bmi.chl  hyp  chl  bmi.chl
+  3   2  bmi  bmi.chl  hyp  chl  bmi.chl
+  3   3  bmi  bmi.chl  hyp  chl  bmi.chl
+  3   4  bmi  bmi.chl  hyp  chl  bmi.chl
+  3   5  bmi  bmi.chl  hyp  chl  bmi.chl
+  4   1  bmi  bmi.chl  hyp  chl  bmi.chl
+  4   2  bmi  bmi.chl  hyp  chl  bmi.chl
+  4   3  bmi  bmi.chl  hyp  chl  bmi.chl
+  4   4  bmi  bmi.chl  hyp  chl  bmi.chl
+  4   5  bmi  bmi.chl  hyp  chl  bmi.chl
+  5   1  bmi  bmi.chl  hyp  chl  bmi.chl
+  5   2  bmi  bmi.chl  hyp  chl  bmi.chl
+  5   3  bmi  bmi.chl  hyp  chl  bmi.chl
+  5   4  bmi  bmi.chl  hyp  chl  bmi.chl
+  5   5  bmi  bmi.chl  hyp  chl  bmi.chl
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 63: visit4 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, vis=c(2,4,5,3))
+
+ iter imp variable
+  1   1  bmi  chl  bmi.chl  hyp
+  1   2  bmi  chl  bmi.chl  hyp
+  1   3  bmi  chl  bmi.chl  hyp
+  1   4  bmi  chl  bmi.chl  hyp
+  1   5  bmi  chl  bmi.chl  hyp
+  2   1  bmi  chl  bmi.chl  hyp
+  2   2  bmi  chl  bmi.chl  hyp
+  2   3  bmi  chl  bmi.chl  hyp
+  2   4  bmi  chl  bmi.chl  hyp
+  2   5  bmi  chl  bmi.chl  hyp
+  3   1  bmi  chl  bmi.chl  hyp
+  3   2  bmi  chl  bmi.chl  hyp
+  3   3  bmi  chl  bmi.chl  hyp
+  3   4  bmi  chl  bmi.chl  hyp
+  3   5  bmi  chl  bmi.chl  hyp
+  4   1  bmi  chl  bmi.chl  hyp
+  4   2  bmi  chl  bmi.chl  hyp
+  4   3  bmi  chl  bmi.chl  hyp
+  4   4  bmi  chl  bmi.chl  hyp
+  4   5  bmi  chl  bmi.chl  hyp
+  5   1  bmi  chl  bmi.chl  hyp
+  5   2  bmi  chl  bmi.chl  hyp
+  5   3  bmi  chl  bmi.chl  hyp
+  5   4  bmi  chl  bmi.chl  hyp
+  5   5  bmi  chl  bmi.chl  hyp
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 64: visit5 eval=FALSE
+R> ###################################################
+R> imp <- mice(nhanes2.ext, meth=meth, pred=pred, vis="monotone")
+
+ iter imp variable
+  1   1  hyp  bmi  chl  bmi.chl
+  1   2  hyp  bmi  chl  bmi.chl
+  1   3  hyp  bmi  chl  bmi.chl
+  1   4  hyp  bmi  chl  bmi.chl
+  1   5  hyp  bmi  chl  bmi.chl
+  2   1  hyp  bmi  chl  bmi.chl
+  2   2  hyp  bmi  chl  bmi.chl
+  2   3  hyp  bmi  chl  bmi.chl
+  2   4  hyp  bmi  chl  bmi.chl
+  2   5  hyp  bmi  chl  bmi.chl
+  3   1  hyp  bmi  chl  bmi.chl
+  3   2  hyp  bmi  chl  bmi.chl
+  3   3  hyp  bmi  chl  bmi.chl
+  3   4  hyp  bmi  chl  bmi.chl
+  3   5  hyp  bmi  chl  bmi.chl
+  4   1  hyp  bmi  chl  bmi.chl
+  4   2  hyp  bmi  chl  bmi.chl
+  4   3  hyp  bmi  chl  bmi.chl
+  4   4  hyp  bmi  chl  bmi.chl
+  4   5  hyp  bmi  chl  bmi.chl
+  5   1  hyp  bmi  chl  bmi.chl
+  5   2  hyp  bmi  chl  bmi.chl
+  5   3  hyp  bmi  chl  bmi.chl
+  5   4  hyp  bmi  chl  bmi.chl
+  5   5  hyp  bmi  chl  bmi.chl
+R> 
+R> 
+R> ###
+R> ###   4.1 Dry run
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 65: dryrun1
+R> ###################################################
+R> ini <- mice(nhanes2, maxit=0)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 66: dryrun2
+R> ###################################################
+R> import <- matrix(c(30,30,30,29,25,21,25,25,22,33,27,22,27,35,27,20,27,30), byrow=TRUE,nr=9)
+R> imp <- mice(nhanes, print=FALSE, seed=77172)
+R> imp$imp$bmi[,1:2] <- import
+R> imp$imp$bmi
+    1  2    3    4    5
+1  30 30 22.0 33.2 29.6
+3  30 29 28.7 22.0 27.4
+4  25 21 22.5 24.9 22.0
+6  25 25 24.9 24.9 24.9
+10 22 33 27.2 28.7 24.9
+11 27 22 35.3 29.6 22.5
+12 27 35 27.4 26.3 30.1
+16 27 20 35.3 22.0 25.5
+21 27 30 33.2 29.6 20.4
+R> 
+R> 
+R> ###
+R> ###   4.2 Step by Step
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 67: step1
+R> ###################################################
+R> imp <- mice(nhanes, maxit=4, seed=44612, print=FALSE)
+R> imp1 <- mice(nhanes, maxit=1, seed=44612, print=FALSE)
+R> a <- runif(10)
+R> imp2 <- mice.mids(imp1, maxit=3, print=FALSE)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 68: step2
+R> ###################################################
+R> all(imp$imp$bmi==imp2$imp$bmi)
+[1] TRUE
+R> 
+R> 
+R> ###
+R> ###   4.3 Assessing convergence
+R> ###
+R> 
+R> ### first pathological example
+R> ###################################################
+R> ### chunk number 69: convergence1
+R> ###################################################
+R> ini <- mice(boys,max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
+R> meth["wgt"] <- "~I(bmi*(hgt/100)^2)"
+R> meth["hgt"] <- "~I(100*sqrt(wgt/bmi))"
+R> imp1 <- mice(boys, meth=meth, maxit=20, print=FALSE, seed=09212)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 70: convergence1plotcmd eval=FALSE
+R> ###################################################
+R> plot(imp1, c("hgt","wgt","bmi"))
+R> 
+R> 
+R> ### second pathological example
+R> ###################################################
+R> ### chunk number 72: convergence2
+R> ###################################################
+R> ini <- mice(boys,max=0,print=FALSE)
+R> meth <- ini$meth
+R> meth["bmi"] <- "~I(wgt/(hgt/100)^2)"
+R> imp2 <- mice(boys, meth=meth, maxit=20, print=FALSE, seed=09212)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 73: convergence2plotcmd eval=FALSE
+R> ###################################################
+R> plot(imp2, c("hgt","wgt","bmi"))
+R> 
+R> 
+R> # solution from section 3.3, sum scores - healthy convergenc
+R> ###################################################
+R> ### chunk number 75: convergence3plotcmd eval=FALSE
+R> ###################################################
+R> plot(imp.idx, c("hgt","wgt","bmi"))
+R> 
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 77: convergence4plotcmd eval=FALSE
+R> ###################################################
+R> plot(imp.idx, c("hc","gen","phb"), tick.number=3)
+R> 
+R> 
+R> ### monitor Kendall's tau between gen and phb
+R> ###################################################
+R> ### chunk number 79: convergence5
+R> ###################################################
+R> m <- 5
+R> T <- 20
+R> imp.kendall <- mice(boys, m=m, meth=imp.idx$meth, pred=imp.idx$pred, maxit=0, print=FALSE)
+R> tau <- matrix(NA,nrow=T,ncol=m)
+R> for (i in 1:T) {
++    if(i==1) set.seed(09212)
++    imp.kendall <- mice.mids(imp.kendall, maxit=1, print=FALSE)
++    x <- complete(imp.kendall,"repeated")[,paste("gen",1:m,sep=".")]
++    y <- complete(imp.kendall,"repeated")[,paste("phb",1:m,sep=".")]
++    xn <- as.data.frame(lapply(x,as.numeric))
++    yn <- as.data.frame(lapply(y,as.numeric))
++    tau[i,] <- diag(cor(xn,yn,method="kendall"))
++  }
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 80: convergence5plotcmd
+R> ###################################################
+R> matplot(x=1:T,y=tau,xlab="Iteration",type="l")
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 81: convergence5plot
+R> ###################################################
+R> matplot(x=1:T,y=tau,xlab="Iteration",type="l")
+R> 
+R> ###
+R> ###   4.5 Checking your imputations
+R> ### 
+R> 
+R> ### density plot
+R> ###################################################
+R> ### chunk number 82: densityplotcmd eval=FALSE
+R> ###################################################
+R> densityplot(imp.kendall, scales=list(x=list(relation="free")), layout=c(5,1))
+R> 
+R> 
+R> ### conditional propensity score plot
+R> ###################################################
+R> ### chunk number 84: propensity
+R> ###################################################
+R> hc.na <- is.na(boys$hc)
+R> fit.hc <- with(imp.kendall, glm(hc.na~age+wgt+hgt+reg,family=binomial))
+R> ps <- rep(rowMeans(sapply(fit.hc$analyses, fitted.values)),6)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 85: propensityplotcmd eval=FALSE
+R> ###################################################
+R> xyplot(imp.kendall, hc~ps|.imp, pch=c(1,20), cex=c(0.8,1.2), 
++           xlab="Probability that head circumference is missing", 
++           ylab="Head circumference (cm)",scales=list(tick.number=3))
+R> 
+R> 
+R> ### calculate model and residuals
+R> ###################################################
+R> ### chunk number 87: residuals1
+R> ###################################################
+R> hc <- complete(imp.kendall,"long",TRUE)$hc
+R> fit <- lm(hc ~ poly(ps,4))
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 88: residuals2 eval=FALSE
+R> ###################################################
+R> densityplot(~ residuals(fit), group = hc.na, plot.points = FALSE, ref = TRUE, scales = list(y=list(draw=FALSE)), par.settings = simpleTheme(col.line = rep(mdc(1:2))), xlab = "Residuals of regression of hc on propensity score", lwd=2)
+R> 
+R> 
+R> ###
+R> ###   5.1 Repeated data analysis
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 90: repeated1
+R> ###################################################
+R> imp <- mice(nhanes2, seed=99210, print=FALSE)
+R> fit <- with(imp, lm(chl~age+bmi))
+R> summary(pool(fit))
+                   est        se          t       df    Pr(>|t|)
+(Intercept) -19.671875 54.092442 -0.3636714 16.14412 0.720822014
+age2         50.381076 17.928842  2.8100575 16.83937 0.012127888
+age3         68.702368 19.868766  3.4578076 13.61617 0.003988504
+bmi           6.777794  1.927845  3.5157357 14.26303 0.003340391
+                 lo 95     hi 95 nmis       fmi     lambda
+(Intercept) -134.25959  94.91584   NA 0.2070037 0.11449428
+age2          12.52702  88.23513   NA 0.1840057 0.09252328
+age3          25.97513 111.42961   NA 0.2889235 0.19162353
+bmi            2.65012  10.90547    9 0.2677970 0.17185238
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 91: repeated2
+R> ###################################################
+R> expr <- expression(ov<-cut(bmi,c(10,25,50)),table(age,ov))
+R> fit <- with(imp, eval(expr))
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 92: repeated3
+R> ###################################################
+R> fit$an[c(2,5)]
+[[1]]
+       ov
+age     (10,25] (25,50]
+  20-39       4       8
+  40-59       2       5
+  60-99       2       4
+
+[[2]]
+       ov
+age     (10,25] (25,50]
+  20-39       3       9
+  40-59       3       4
+  60-99       2       4
+
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 93: extract1
+R> ###################################################
+R> com <- complete(imp, 3)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 94: extract2
+R> ###################################################
+R> com <- complete(imp, "long")
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 95: extract3
+R> ###################################################
+R> com <- complete(imp, "long", include=TRUE)
+R> by(cbind(age=com$age,ov=cut(com$bmi,c(10,25,50))), com$.imp, table)
+INDICES: 0
+   ov
+age 1 2
+  1 2 5
+  2 2 3
+  3 2 2
+---------------------------------------------------- 
+INDICES: 1
+   ov
+age 1 2
+  1 3 9
+  2 4 3
+  3 2 4
+---------------------------------------------------- 
+INDICES: 2
+   ov
+age 1 2
+  1 4 8
+  2 2 5
+  3 2 4
+---------------------------------------------------- 
+INDICES: 3
+   ov
+age 1 2
+  1 3 9
+  2 2 5
+  3 3 3
+---------------------------------------------------- 
+INDICES: 4
+   ov
+age 1 2
+  1 4 8
+  2 2 5
+  3 3 3
+---------------------------------------------------- 
+INDICES: 5
+   ov
+age 1 2
+  1 3 9
+  2 3 4
+  3 2 4
+R> 
+R> 
+R> ###
+R> ###   6.1 Adding your own imputation functions
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 96: pool1
+R> ###################################################
+R> fit <- with(imp, lm(chl~age+bmi))
+R> est <- pool(fit)
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 97: pool2
+R> ###################################################
+R> methods(coef)
+ [1] coef.Arima*          coef.aov*            coef.default*       
+ [4] coef.fitdistr*       coef.lda*            coef.listof*        
+ [7] coef.loglm*          coef.multinom*       coef.nls*           
+[10] coef.nnet*           coef.powerTransform* coef.ridgelm*       
+
+   Non-visible functions are asterisked
+R> methods(vcov)
+ [1] vcov.Arima*          vcov.cch*            vcov.coxph*         
+ [4] vcov.fitdistr*       vcov.glm*            vcov.glmrob*        
+ [7] vcov.lm*             vcov.lmrob*          vcov.mlm*           
+[10] vcov.multinom*       vcov.negbin*         vcov.nls*           
+[13] vcov.polr*           vcov.powerTransform* vcov.rlm*           
+[16] vcov.survreg*       
+
+   Non-visible functions are asterisked
+R> 
+R> ### Model testing - Wald method
+R> ###################################################
+R> ### chunk number 98: pool3
+R> ###################################################
+R> imp <- mice(nhanes2, print=FALSE, m=50, seed=00219)
+R> fit0 <- with(data=imp,expr=lm(bmi~age+hyp))
+R> fit1 <- with(data=imp,expr=lm(bmi~age+hyp+chl))
+R> stat <- pool.compare(fit1, fit0, method="Wald")
+R> stat$p
+            [,1]
+[1,] 0.005015501
+R> 
+R> 
+R> ### Model testing - LLR method
+R> ###################################################
+R> ### chunk number 99: pool4
+R> ###################################################
+R> imp <- mice(boys, print=FALSE, seed=60019)
+R> fit0 <- with(data=imp, expr=glm(I(gen>levels(gen)[1])~hgt+hc, family=binomial))
+R> fit1 <- with(data=imp, expr=glm(I(gen>levels(gen)[1])~hgt+hc+reg, family=binomial))
+R> stat <- pool.compare(fit1, fit0, method="likelihood", data=imp)
+R> stat$p
+[1] 0.2022771
+R> 
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 100: ownfunction eval=FALSE
+R> ###################################################
+R> mice(nhanes, method="myfunc")
+Error in check.method(setup, data) : 
+  The following functions were not found: mice.impute.myfunc, mice.impute.myfunc, mice.impute.myfunc
+R> 
+R> ###
+R> ###   6.2 Sensitivity analysis under MNAR
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 101: sensitivity
+R> ###################################################
+R> ini <- mice(nhanes2,maxit=0,print=FALSE)
+R> post <- ini$post
+R> k <- seq(1,1.5,0.1)
+R> est <- vector("list",length(k))
+R> for (i in 1:length(k)) {
++     post["chl"] <- paste("imp[[j]][,i] <-",k[i],"* imp[[j]][,i]")
++     imp <- mice(nhanes2, post=post, seed=00010, print=FALSE, maxit=20)
++     fit <- with(imp, lm(bmi~age+chl))
++     est[[i]] <- summary(pool(fit))
++   }
+R> 
+R> 
+R> ###
+R> ###   7.2 SPSS
+R> ###
+R> 
+R> # The code below should not be run from R, but from SPSS.
+R> # Remove one (1) # sign per line, and run.
+R> # 
+R> # BEGIN PROGRAM R.
+R> # Instruct R to import the data and the dictionary from SPSS.
+R> #dict <- spssdictionary.GetDictionaryFromSPSS()
+R> #data <- spssdata.GetDataFromSPSS()
+R> ## Load mice, impute and get the original + imputed data.
+R> #library(mice)
+R> #imp <- mice(data,maxit=10)
+R> #com <- complete(imp,"long",inc=TRUE)
+R> #com <- cbind(com, Imputation_ = as.integer(com$.imp)-1)
+R> ## Export imputed data and dictionary from R to SPSS.
+R> #spssdictionary.SetDictionaryToSPSS("com", dict)
+R> #spssdata.SetDataToSPSS("com", com)
+R> #spssdictionary.EndDataStep()
+R> #END PROGRAM.
+R> 
+R> ###
+R> ###   7.3 MItools
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 102: mitools1
+R> ###################################################
+R> library("mitools")
+R> mydata <- imputationList(lapply(1:5, complete, x=imp))
+R> 
+R> 
+R> ###################################################
+R> ### chunk number 103: mitools2 eval=FALSE
+R> ###################################################
+R> fit <- with(mydata, expr=lm(chl~age + bmi))
+R> 
+R> ###
+R> ###   7.3 Zelig
+R> ###
+R> 
+R> ###################################################
+R> ### chunk number 104: zelig1
+R> ###################################################
+R> library("Zelig")
+Loading required package: boot
+
+Attaching package: 'boot'
+
+The following object(s) are masked _by_ '.GlobalEnv':
+
+    tau
+
+The following object(s) are masked from 'package:robustbase':
+
+    salinity
+
+The following object(s) are masked from 'package:car':
+
+    logit
+
+The following object(s) are masked from 'package:survival':
+
+    aml
+
+The following object(s) are masked from 'package:lattice':
+
+    melanoma
+
+## 
+##  Zelig (Version 3.5, built: 2010-01-20)
+##  Please refer to http://gking.harvard.edu/zelig for full
+##  documentation or help.zelig() for help with commands and
+##  models supported by Zelig.
+##
+
+##  Zelig project citations:
+##    Kosuke Imai, Gary King, and Olivia Lau. (2009).
+##    ``Zelig: Everyone's Statistical Software,''
+##    http://gking.harvard.edu/zelig.
+##  and
+##    Kosuke Imai, Gary King, and Olivia Lau. (2008).
+##    ``Toward A Common Framework for Statistical Analysis
+##    and Development,'' Journal of Computational and
+##    Graphical Statistics, Vol. 17, No. 4 (December)
+##    pp. 892-913. 
+
+##  To cite individual Zelig models, please use the citation format printed with
+##  each model run and in the documentation.
+##
+
+Attaching package: 'Zelig'
+
+The following object(s) are masked from 'package:vcd':
+
+    ternaryplot
+
+R> imp <- cbind.mids(imp.idx,data.frame(r.hc=is.na(boys$hc)))
+R> mydata2 <- mi(complete(imp,1), complete(imp,2), complete(imp,3), complete(imp,4),complete(imp,5))
+R> fit <- zelig(r.hc~age+wgt+hgt+bmi+gen+phb+tv+reg, model="logit", data=mydata2)
+How to cite this model in Zelig:
+Kosuke Imai, Gary King, and Oliva Lau. 2008. "logit: Logistic Regression for Dichotomous Dependent Variables" in Kosuke Imai, Gary King, and Olivia Lau, "Zelig: Everyone's Statistical Software," http://gking.harvard.edu/zelig
+R> summary(fit)
+
+  Model: logit
+  Number of multiply imputed data sets: 5 
+
+Combined results:
+
+Call:
+zelig(formula = r.hc ~ age + wgt + hgt + bmi + gen + phb + tv + 
+    reg, model = "logit", data = mydata2)
+
+Coefficients:
+                   Value Std. Error      t-stat    p-value
+(Intercept) -4.166824779 3.61385156 -1.15301492 0.24971471
+age          0.075074606 0.15218856  0.49329992 0.62512416
+wgt         -0.007125900 0.04740758 -0.15031140 0.88064148
+hgt         -0.006256348 0.02584972 -0.24202772 0.80906828
+bmi          0.038670031 0.15815562  0.24450620 0.80716550
+gen2         0.182228610 0.73683186  0.24731369 0.80486919
+gen3        -0.331639556 1.40493196 -0.23605382 0.81370691
+gen4        -0.177042598 1.91223028 -0.09258435 0.92732486
+gen5        -0.493108764 2.08866817 -0.23608765 0.81619764
+phb2        -0.001018175 0.99331326 -0.00102503 0.99918376
+phb3         0.659160453 1.55320632  0.42438692 0.67624332
+phb4         1.036949926 2.15497319  0.48118925 0.63860411
+phb5         0.832418076 2.51553020  0.33091158 0.74702648
+phb6         1.161684234 2.59526081  0.44761753 0.66310569
+tv           0.026570133 0.08161958  0.32553625 0.75132516
+reg2         0.271048402 0.72987677  0.37136187 0.71073601
+reg3         0.919869358 0.66157279  1.39042803 0.16569573
+reg4        -2.093500395 1.19585996 -1.75062338 0.08032714
+reg5         1.335767092 0.74099759  1.80266050 0.07293278
+
+For combined results from datasets i to j, use summary(x, subset = i:j).
+For separate results, use print(summary(x), subset = i:j).
+
+R> 
+R> 
+R> 
+R> 

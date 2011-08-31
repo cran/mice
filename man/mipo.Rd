@@ -40,9 +40,11 @@ is.mipo(x)
   \item{ubar}{The average of the variance-covariance matrix of the complete data estimes.}
   \item{b}{The between imputation variance-covariance matrix.}
   \item{t}{The total variance-covariance matrix.}
-  \item{r}{Relative increases in variance due to missing data}
+  \item{r}{Relative increases in variance due to missing data.}
+  \item{dfcom}{Degrees of freedom in the hypothetically complete data: the sample size minus the number of free parameters.}
   \item{df}{Degrees of freedom associated with the t-statistics.}
-  \item{f}{Fraction of missing information.}
+  \item{fmi}{Fraction of missing information.}
+  \item{lambda}{Proportion of the variation attributable to the missing data: (b+b/m)/t.}
 }
 
 \references{

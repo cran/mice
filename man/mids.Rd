@@ -7,9 +7,12 @@
 \alias{is.mids}
 
 %methods
+\alias{plot}
+\alias{plot.mids}
 \alias{print,mids-method}
 \alias{summary,mids-method}
 \alias{plot,mids-method}
+\alias{plot,mids,ANY-method}
 
 \title{Multiply Imputed Data Set}
 
@@ -17,7 +20,11 @@
 is.mids(x)
 \S4method{print}{mids}(x,\dots)
 \S4method{summary}{mids}(object,\dots)
-\S4method{plot}{mids}(x, y = 0, layoutplot = c(3, 2), askplot = TRUE, \dots)
+\S4method{plot}{mids,ANY}(x, y, \dots)
+
+plot.mids(x, y=NULL, theme=mice.theme(),
+                        layout=c(2,3), type="l", col=1:10, lty=1,
+                        ...)
 }
 
 \description{An object containing a multiply imputed data set. The
@@ -27,10 +34,13 @@ is.mids(x)
 }
 \arguments{
   \item{x, object}{A object of class \code{mids}.}
-  \item{y}{Not used.}
-  \item{layoutplot}{Vector of two integers specifying the number of panel per row 
-  and column respectively.}
-  \item{askplot}{\code{TRUE} if the user needs to be asked before drawing a new page}
+  \item{y}{A character vector containing variable names, an integer vector of indices of imputed variables, a logical vector of 
+ \code{length(dimnames(x$chainMean[,,1])[[1]])}, or a formula. The result of the evaluation will be plotted in the trace plot.}
+  \item{theme}{List of settings with selected graphical parameters to control the \pkg{lattice} function \code{xyplot()}.}
+  \item{layout}{Vector of two numbers controlling the number of panels in horizontal and vertical direction, respectively.}
+  \item{type}{Plot type parameter.}
+  \item{col}{Color parameter.}
+  \item{lty}{Line type parameter.} 
   \item{\dots}{Currently not used.}
 }
 \value{

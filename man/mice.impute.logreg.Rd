@@ -1,12 +1,16 @@
 \name{mice.impute.logreg}
 \alias{mice.impute.logreg}
-\title{Imputation by Logistic Regression}
+\alias{mice.impute.logreg.boot}
+\alias{logreg}
+\alias{logreg.boot}
+\title{Multiple Imputation by Logistic Regression}
 
 \description{
   Imputes univariate missing data using logistic regression.
 }
 \usage{
     mice.impute.logreg(y, ry, x, ...)
+    mice.impute.logreg.boot(y, ry, x, ...)
 }
 \arguments{
   
@@ -23,15 +27,17 @@
 
 \details{
   Imputation for binary response variables by the Bayesian 
-  logistic regression model. See Rubin (1987, p. 169-170) for
-  a description of the method.
-  The method consists of the following steps:
+  logistic regression model (Rubin 1987, p. 169-170) or bootstrap 
+  logistic regression model. 
+  The Bayesian method consists of the following steps:
   \enumerate{
     \item Fit a logit, and find (bhat, V(bhat))
     \item Draw BETA from N(bhat, V(bhat))
     \item Compute predicted scores for m.d., i.e. logit-1(X BETA)
     \item Compare the score to a random (0,1) deviate, and impute.}
-  The method relies on the standard \code{glm.fit} function.
+  The method relies on the standard \code{glm.fit} function. Warnings from \code{glm.fit} are suppressed.
+  The bootstrap method draws a bootstrap sample from \code{y[ry]} and \code{x[ry,]}. 
+  Perfect prediction is handled by the data augmentation method.
 }
 \references{
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011) 
@@ -45,9 +51,11 @@ MICE: Multivariate Imputation by Chained Equations in R.
   
   Venables, W.N. & Ripley, B.D. (1997). Modern applied statistics with S-Plus (2nd ed). Springer, Berlin.
 
+  White, I., Daniel, R. and Royston, P (2010). Avoiding bias due to perfect prediction in multiple imputation of incomplete categorical variables. 
+  Computational Statistics and Data Analysis, 54:22672275.
 }
 \seealso{\code{\link{mice}}, \code{\link{glm}}, \code{\link{glm.fit}}}
 
-\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000, 2011} 
 
 \keyword{datagen}

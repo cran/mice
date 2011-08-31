@@ -9,17 +9,18 @@
 
 #------------------------------.onLoad-------------------------------
 .onLoad <- function(...){
-  lib <- dirname(system.file(package = "mice"))
-  d <- packageDescription("mice", lib.loc = lib)
-  cat(paste(d$Package,d$Version,d$Date,"\n"))
-
   require(MASS, quietly=TRUE)
   require(nnet, quietly=TRUE)
   require(lattice, quietly=TRUE)
+  require(stringr, quietly=TRUE)
+
+  d <- packageDescription("mice")
+  packageStartupMessage(paste(d$Package,d$Version,d$Date))
+  return()
 }
 
 version <- function(pkg="mice"){
   lib <- dirname(system.file(package = pkg))
-  d <- packageDescription(pkg, lib.loc = lib)
+  d <- packageDescription(pkg)
   return(paste(d$Package,d$Version,d$Date,lib))
 }

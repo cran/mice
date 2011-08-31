@@ -5,46 +5,27 @@ MICE: Multivariate Imputation by Chained Equations
 MICE is an R package implementing multiple imputation of
 incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
-
-
-The current version is MICE V2.7, which is described in
-
-  Van Buuren S, Groothuis-Oudshoorn K (2011).
-  MICE: Multivariate Imputation by Chained Equations in R.
-  Journal of Statistical Software, forthcoming.
-  http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf
-
-
-For more background on FCS see:
-
-1)  Van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB (2006).
-    Fully conditional specification in multivariate imputation,
-    Journal of Statistical Computation and Simulation, 76(12),1049--1064.
-    http://www.stefvanbuuren.nl/publications/FCS%20in%20multivariate%20imputation%20-%20JSCS%202006.pdf
-
-2)  Van Buuren S (2007).
-    Multiple imputation of discrete and continuous data by fully conditional specification
-    Statistical Methods in Medical Research, 16(3), 219--242.
-    http://www.stefvanbuuren.nl/publications/MI%20by%20FCS%20-%20SMMR%202007.pdf
-
-
-More information and papers about MICE can be found in
-
-http://www.multiple-imputation.com/
-
-
 Question or suggestions about MICE can be send to
 
    stef.vanbuuren@tno.nl
-or
    c.g.m.oudshoorn@utwente.nl
-
-
----------------------------------------------------------------------
 
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+
+V2.9 - 31-08-2011 / SvB
+FIXED:   appropriate trimming of ynames and xnames in Trellis plots
+FIXED:   exported: spss2mids(), mice.impute.2L.norm()
+ADDED:   mice.impute.norm.predict(), mice.impute.norm.boot(), mice.impute.logreg.boot()
+ADDED:   supports.transparent() to detect whether .Device can do semi-transparent colors
+FIXED:   stringr package is now properly loaded
+ADDED:   trellis version of plot.mids()
+ADDED:   automatic semi-transparancy detection in mdc()
+FIXED:   documentation of mira class (thanks Sandro Tsang)
+
+V2.8 - 24-03-2011 / SvB
+FIXED:   bug fixed in find.collinear() that bombed when only one variable was left
 
 V2.7 - 16-03-2011 / SvB
 CHANGED: check.data(), remove.lindep(): fully missing variables are imputed if allow.na=TRUE (Alexander Robitzsch)

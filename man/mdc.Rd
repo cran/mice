@@ -13,14 +13,14 @@ named objects that can be used as a theme in \code{stripplot},
 
 \usage{
 mdc(r="observed", s="symbol", transparent=TRUE,
-   cso = ifelse(transparent, hcl(240,100,40,0.7), hcl(240,100,40,1)),
-   csi = ifelse(transparent, hcl(0,100,40,0.7), hcl(0,100,40,1)),
-   csc = ifelse(transparent, "gray40", "black"),
-   clo = ifelse(transparent, hcl(240,100,40,0.8), hcl(240,100,40,1)),
-   cli = ifelse(transparent, hcl(0,100,40,0.8), hcl(0,100,40,1)),
-   clc = ifelse(transparent, "gray40", "black"))
+   cso = hcl(240,100,40,0.7),
+   csi = hcl(0,100,40,0.7),
+   csc = "gray50",
+   clo = hcl(240,100,40,0.8),
+   cli = hcl(0,100,40,0.8), 
+   clc = "gray50")
 
-mice.theme()
+mice.theme(transparent=TRUE, alpha.fill=0.3)
 
 }
 \arguments{
@@ -34,6 +34,8 @@ mice.theme()
     "\code{line}", or abbreviations thereof.}   
     \item{transparent}{A logical indicating whether alpha-transparancy is
     	allowed. The default is \code{TRUE}.}
+    \item{alpha.fill}{A numerical values between 0 and 1 that indicates the default 
+        alpha value for fills.}
 \item{cso}{The symbol color for the observed data. The default is a
     transparent blue.}
 \item{csi}{The symbol color for the missing or imputed data. The default is a
@@ -49,7 +51,7 @@ mice.theme()
 }
 \details{
 This function eases consistent use of colors in plots. The default  
-follows the Abayomi-convention, which uses blue for observed data, red
+follows the Abayomi convention, which uses blue for observed data, red
 for missing or imputed data, and black for combined data. 
 }
 \value{
@@ -57,10 +59,12 @@ for missing or imputed data, and black for combined data.
 calculate from the length of \code{r} and \code{s}. Elements of the
 input vectors are
 repeated if needed. \code{mice.theme} return a named list that can be
-used as a theme in the functions in \pkg{lattice}.
+used as a theme in the functions in \pkg{lattice}. By default, 
+the \code{mice.theme()} function sets \code{transparent <- TRUE} if the current device
+\code{.Device} supports semi-transparent colors.
 }
 \author{
-Stef van Buuren, feb 2012.
+Stef van Buuren, sept 2012.
 }
 
 \references{

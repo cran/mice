@@ -7,10 +7,17 @@
 ###
 ### SvB, Feb 2011.
 
-mice.theme <- function(){
+
+mice.theme <- function(transparent=TRUE, alpha.fill=0.3){
+  filler <- function(transparent, alpha){
+    if(transparent) return(c(hcl(240,100,40,alpha),hcl(0,100,40,alpha)))
+    return(c(hcl(240,100,40),hcl(0,100,40)))
+  }
+  if (missing(transparent)) transparent <- supports.transparent()
+  if (missing(alpha.fill)) alpha.fill <- ifelse(transparent, 0.3, 0)
   list(superpose.symbol = list(
          col = mdc(1:2),
-         fill = c(hcl(240,100,40,0.3),hcl(0,100,40,0.3)),
+         fill = filler(transparent, alpha.fill),
          pch = 1),
        superpose.line = list(
          col = mdc(4:5),
@@ -27,14 +34,14 @@ mice.theme <- function(){
          ),
        plot.symbol = list(
          col = mdc(1:2),
-         fill = c(hcl(240,100,40,0.3),hcl(0,100,40,0.3)),
+         fill = filler(transparent, alpha.fill),
          pch = 1
          ),
        plot.line = list(
          col = mdc(4:5)
          ),
        superpose.polygon = list(
-         col = c(hcl(240,100,40,0.3),hcl(0,100,40,0.3))
+         col = filler(transparent, alpha.fill)
        ),
        strip.background = list(
          col = "grey95"
@@ -94,7 +101,7 @@ xyplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(strsplit(form$left.name," \\+ "))
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))   ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)
@@ -203,8 +210,8 @@ stripplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(strsplit(form$left.name," \\+ "))
-  xnames <- unlist(strsplit(form$right.name," \\+ "))
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))  ## Jul2011
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)
@@ -314,8 +321,8 @@ bwplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(strsplit(form$left.name," \\+ "))
-  xnames <- unlist(strsplit(form$right.name," \\+ "))
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))  ## Jul2011
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
 
   ## groups is not useful in bwplot
   ## in order to force subgroup analysis,
@@ -439,7 +446,7 @@ densityplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  xnames <- unlist(strsplit(form$right.name," \\+ "))
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)

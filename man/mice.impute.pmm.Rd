@@ -1,5 +1,6 @@
 \name{mice.impute.pmm}
 \alias{mice.impute.pmm}
+\alias{pmm}
 \title{Imputation by Predictive Mean Matching}
 \usage{
 mice.impute.pmm(y, ry, x, ...)

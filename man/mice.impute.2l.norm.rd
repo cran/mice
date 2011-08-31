@@ -1,14 +1,12 @@
 \name{mice.impute.2L.norm}
 \alias{mice.impute.2L.norm}
 \alias{mice.impute.2l.norm}
-\alias{mice.impute.2L.norm.noint}
+\alias{2L.norm}
 
 \title{Imputation by a Two-Level Normal Model}
 \usage{
 mice.impute.2L.norm(y, ry, x, type, intercept=TRUE, ...)
 mice.impute.2l.norm(y, ry, x, type, intercept=TRUE, ...)
-mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE, ...)
-
 }
 \description{Imputes univariate missing data using a two-level normal model}
 \arguments{
@@ -34,8 +32,7 @@ mice.impute.2L.norm.noint(y, ry, x, type, intercept=FALSE, ...)
     Buuren (2011). 
 
     The random intercept is automatically added in
-    \code{mice.impute.2L.norm()}. Use \code{mice.impute.2L.norm.noint()}
-    if you do not want the random intercept.
+    \code{mice.impute.2L.norm()}. 
 }
 \references{
 
