@@ -1,8 +1,8 @@
-8f665ae9bdfd9d3310f2fdc8014c52db *DESCRIPTION
+4a6f4ad9956bc5c78003b94f9d51c12e *DESCRIPTION
 c410c5928f6d297ccf26984a69211d20 *NAMESPACE
 35d53a240c772da8a01f05964e1ad6f0 *R/cc.R
 0e1a823d756ee49560e953399cb3f50e *R/classes.R
-c72e058eeee3b91771c2ea4611dc9a2c *R/mice.R
+d1c1e16723e475c24fc7726e252c51ae *R/mice.R
 10794852b84441ef0f03d9436a3d584a *R/trellis.r
 7493203dbc74ffca07cf2251b249f516 *R/zzz.R
 3ff776606b092cd09fd5eee9912ee02f *data/boys.rda
@@ -11,7 +11,7 @@ c6d2ed7a7a93d115546138c62bb42ece *data/nhanes2.rda
 c13e9b51ec6fa1b8620e6997209fbcc3 *data/popmis.rda
 59c193dd9b9953000711f6fb89ee8839 *data/windspeed.rda
 3dce17d684eb45200fb7a123bbe9649a *inst/CITATION
-d274221887c949471b3041eada8c0f31 *inst/NEWS
+fe7a9dff33aae74d1e6fea6dad63688c *inst/NEWS
 e14983a5b6d2063eac7c63271b7cbe26 *inst/doc/JSScode.R
 addb38e42ac9ee2d8abb812b080d44ef *inst/doc/JSScode.Rout
 1e5f65614f461585ddea2f0c00de1765 *man/boys.rd

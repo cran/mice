@@ -14,6 +14,10 @@ Question or suggestions about MICE can be send to
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
 
+V2.10 - xx-09-2011 / SvB
+FIXED:  arguments dec and sep in mids2spss (thanks Nicole Haag)
+FIXED:  bug in keyword "monotone" in mice() (thanks Alain D)
+
 V2.9 - 31-08-2011 / SvB
 FIXED:   appropriate trimming of ynames and xnames in Trellis plots
 FIXED:   exported: spss2mids(), mice.impute.2L.norm()

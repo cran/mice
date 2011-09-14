@@ -1,5 +1,5 @@
 #
-# MICE V2.9 (aug2011)
+# MICE V2.10 (sept2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -66,8 +66,8 @@ mice <- function(data,
       code <- pmatch(visitSequence,c("roman","arabic","monotone","revmonotone"))
       if(!is.na(code) && code==1) visitSequence <- (1:nvar)[nmis>0]
       if(!is.na(code) && code==2) visitSequence <- rev((1:nvar)[nmis>0])
-      if(!is.na(code) && code==3) visitSequence <- order(nmis)[nmis>0]
-      if(!is.na(code) && code==4) visitSequence <- rev(order(nmis)[nmis>0])
+      if(!is.na(code) && code==3) visitSequence <- order(nmis)[(sum(nmis==0)+1):length(nmis)]  # SvB sept 2011
+      if(!is.na(code) && code==4) visitSequence <- rev(order(nmis)[(sum(nmis==0)+1):length(nmis)])
       if(is.na(code)) stop("Argument visitSequence not recognized.\n")
     }
     if(all(nmis[visitSequence] == 0)) stop(paste("No missing values found."))
@@ -2573,7 +2573,7 @@ mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps",
     filedat <- file.path(path,filedat)
     filesps <- file.path(path,filesps)
   }
-  miceWriteForeignSPSS(imputed, filedat, filesps, varnames=names(imputed))
+  miceWriteForeignSPSS(imputed, filedat, filesps, varnames=names(imputed),sep=sep,dec=dec)
   if (!silent) {
     cat("Data values written to",filedat,"\n")
     cat("Syntax file written to",filesps,"\n")
