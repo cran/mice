@@ -9,11 +9,6 @@
 
 #------------------------------.onLoad-------------------------------
 .onLoad <- function(...){
-  require(MASS, quietly=TRUE)
-  require(nnet, quietly=TRUE)
-  require(lattice, quietly=TRUE)
-  require(stringr, quietly=TRUE)
-
   d <- packageDescription("mice")
   packageStartupMessage(paste(d$Package,d$Version,d$Date))
   return()

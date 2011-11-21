@@ -8,7 +8,6 @@ importFrom("lattice",bwplot)
 importFrom("lattice",stripplot)
 importFrom("lattice",densityplot)
 importFrom("lattice",xyplot)
-importFrom("stringr",str_trim)
 
 exportClasses("mids",
               "mira",
@@ -45,6 +44,7 @@ export("mice",
        "md.pattern",
        "md.pairs",
        "mids2spss",
+       "mids2mplus",
        "cc",
        "ic",
        "cci",

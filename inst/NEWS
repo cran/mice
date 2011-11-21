@@ -13,8 +13,15 @@ Question or suggestions about MICE can be send to
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+V2.11 - 21-11-2011 / SvB
+UPDATED  definite reference to JSS paper
+ADDED    rm.whitespace() to do string manipulation (thanks Gerko Vink)
+ADDED    function mids2mplus() to export data to Mplus (thanks Gerko Vink)
+CHANGED  plot.mids() changed into trellis version
+ADDED    code used in JSS-paper
+FIXED    bug in check.method() (thanks Gerko Vink)
 
-V2.10 - xx-09-2011 / SvB
+V2.10 - 14-09-2011 / SvB
 FIXED:  arguments dec and sep in mids2spss (thanks Nicole Haag)
 FIXED:  bug in keyword "monotone" in mice() (thanks Alain D)
 

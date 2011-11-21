@@ -1,5 +1,5 @@
 #
-# MICE V2.10 (sept2011)
+# MICE V2.11 (nov2011)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
@@ -158,7 +158,12 @@ mice <- function(data,
     ##   check whether the elementary imputation methods are actually available on the search path
     ##
     active <- !is.passive(method) & nmis > 0 & !(method=="")
-    fullNames <- paste("mice.impute", method[active], sep=".")
+    ## BEGIN patch by Gerko Vink, 22sep2011
+    passive.check <- is.passive(method) & nmis > 0 & !(method == "")     
+    check <- all(active==FALSE) & any(passive.check!=FALSE)                
+    if (check) fullNames <- rep("mice.impute.passive", length(method[passive.check]))
+    else fullNames <- paste("mice.impute", method[active], sep = ".")
+    ## END patch
     notFound <- !sapply(fullNames, exists, mode="function", inherit=TRUE) ## SVB 6 Feb 2004
     if (any(notFound)) stop(paste("The following functions were not found:",
                                   paste(fullNames[notFound],collapse=", ")))

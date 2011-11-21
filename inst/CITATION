@@ -1,19 +1,18 @@
-citHeader("To cite package 'mice' in publications use:")
+citHeader("To cite mice in publications use:")
 
-  desc <- packageDescription("mice")
-  year <- 2011
-  vers <- paste("R package version", desc$Version)
+citEntry(entry = "Article",
+  title        = "{mice}: Multivariate Imputation by Chained Equations in R",
+  author       = personList(person("Stef", "van Buuren"),
+                   as.person("Karin Groothuis-Oudshoorn")),
+  journal      = "Journal of Statistical Software",
+  year         = "2011",
+  volume       = "45",
+  number       = "3",
+  pages        = "1--67",
+  url          = "http://www.jstatsoft.org/v45/i03/",
 
-citEntry(entry="article",
-  author = personList(as.person("Stef van Buuren"),
-                      as.person("Karin Groothuis-Oudshoorn")),
-  title = "MICE: Multivariate Imputation by Chained Equations in R",
-  journal = "Journal of Statistical Software, forthcoming",
-  year = 2011,
-  volume = "0",
-  pages = "00--00",
-  textVersion =
-  paste("Stef van Buuren, Karin Groothuis-Oudshoorn(2011)." ,
-      "MICE: Multivariate Imputation by Chained Equations in R." ,
-      "Journal of Statistical Software, forthcoming.", sep=" ")
-  )
+  textVersion  =
+  paste("Stef van Buuren, Karin Groothuis-Oudshoorn (2011).",
+        "mice: Multivariate Imputation by Chained Equations in R.",
+        "Journal of Statistical Software, 45(3), 1-67.",
+        "URL http://www.jstatsoft.org/v45/i03/."))

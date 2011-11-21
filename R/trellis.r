@@ -101,7 +101,7 @@ xyplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))   ## Jul2011
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), rm.whitespace))   ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)
@@ -210,8 +210,8 @@ stripplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))  ## Jul2011
-  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), rm.whitespace))  ## Jul2011
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), rm.whitespace))  ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)
@@ -321,8 +321,8 @@ bwplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), str_trim))  ## Jul2011
-  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
+  ynames <- unlist(lapply(strsplit(form$left.name," \\+ "), rm.whitespace))  ## Jul2011
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), rm.whitespace))  ## Jul2011
 
   ## groups is not useful in bwplot
   ## in order to force subgroup analysis,
@@ -446,7 +446,7 @@ densityplot.mids <- function(x,
                                groups = groups, multiple = allow.multiple,
                                outer = outer, subscripts = TRUE,
                                drop = drop.unused.levels)
-  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), str_trim))  ## Jul2011
+  xnames <- unlist(lapply(strsplit(form$right.name," \\+ "), rm.whitespace))  ## Jul2011
 
   ## calculate selection vector gp
   nona <- is.null(call$na.groups)

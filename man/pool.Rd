@@ -67,10 +67,10 @@ pool(object, method="smallsample")
   \emph{Multiple Imputation for Nonresponse in Surveys}. 
   New York: John Wiley and Sons.
   
-  Van Buuren, S., Groothuis-Oudshoorn, K. (2009) 
-MICE: Multivariate Imputation by Chained Equations in R. 
-\emph{Journal of Statistical Software}, forthcoming.
-\url{http://www.stefvanbuuren.nl/publications/MICE in R - Draft.pdf}
+van Buuren S and Groothuis-Oudshoorn K (2011).
+\code{mice}: Multivariate Imputation by Chained Equations in \code{R}.
+\emph{Journal of Statistical Software}, \bold{45}(3), 1-67.
+\url{http://www.jstatsoft.org/v45/i03/}
 
  Pinheiro, J.C. and Bates, D.M. (2000).
  \emph{Mixed-Effects Models in S and S-PLUS}.
