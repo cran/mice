@@ -7,12 +7,28 @@ incomplete multivariate data according the principle of
 Fully Conditional Specification (FCS).
 Question or suggestions about MICE can be send to
 
-   stef.vanbuuren@tno.nl
-   c.g.m.oudshoorn@utwente.nl
+   stef.vanbuuren at tno.nl
+   c.g.m.oudshoorn at utwente.nl
 
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+V2.12 - 25-03-2012 / SvB
+UPDATE   version for launch of Flexible Imputation of Missing Data (FIMD)
+ADDED    code fimd1.r-fim9.r to inst/doc for calculating solutions in FIMD  
+FIXED    more robust version of supports.transparent() (thanks Brian Ripley)
+ADDED    auxiliary functions ifdo(), long2mids(), appendbreak(), extractBS(), wp.twin()
+ADDED    getfit() function
+ADDED    datasets: tbc, potthoffroy, selfreport, walking, fdd, fdgs, pattern1-pattern4, mammalsleep
+FIXED    as.mira() added to namespace
+ADDED 	 functions flux(), fluxplot() and fico() for missing data patterns
+ADDED    function nelsonaalen() for imputing survival data
+CHANGED  rm.whitespace() shortened
+FIXED    bug in pool() that crashed on nonstandard behavior of survreg() (thanks Erich Studerus) 
+CHANGED  pool() streamlined, warnings about incompatibility in lengths of coef() and vcov() 
+FIXED    mdc() bug that ignored transparent=FALSE argument, now made visible
+FIXED    bug in md.pattern() for >32 variables (thanks Sascha Vieweg, Joshua Wiley)
+
 V2.11 - 21-11-2011 / SvB
 UPDATED  definite reference to JSS paper
 ADDED    rm.whitespace() to do string manipulation (thanks Gerko Vink)

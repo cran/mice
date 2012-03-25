@@ -1,8 +1,8 @@
 #
-# MICE V2.11 (nov2011)
+# MICE V2.12 (mar2012)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
-#    Copyright (c) 1999-2011 TNO Quality of Life, Leiden
+#    Copyright (c) 1999-2012 TNO, Leiden
 #	
 #	 This file is part of the R package MICE.
 #
@@ -173,7 +173,7 @@ mice <- function(data,
     
     for(j in visitSequence) {
       y <- data[,j]
-      vname <- dimnames(data)[[2]][j]
+      vname <- dimnames(?data)[[2]][j]
       mj <- method[j]
       mlist <- list(
         m1 = c("logreg","polyreg","lda","polr"),
@@ -1297,6 +1297,7 @@ md.pattern <- function(x)
 # NA's indicate missing data
 # based on Schafer's prelim.norm function
 # SvB, 13-7-99
+# SvB, 32 columns bug removed - 8mar2012
 #
     if(!(is.matrix(x) | is.data.frame(x)))
         stop("Data should be a matrix or dataframe")
@@ -1309,7 +1310,7 @@ md.pattern <- function(x)
     r <- 1 * is.na(x)
     nmis <- as.integer(apply(r, 2, sum))
     names(nmis) <- dimnames(x)[[2]] # index the missing data patterns
-    mdp <- as.integer((r %*% (2^((1:ncol(x)) - 1))) + 1)    # do row sort
+    mdp <- (r %*% (2^((1:ncol(x)) - 1))) + 1    # do row sort  SvB 8mar2012
     ro <- order(mdp)
     x <- matrix(x[ro,  ], n, p) ##pm 04/02
     mdp <- mdp[ro]
@@ -1401,6 +1402,21 @@ quickpred <- function(data, mincor=0.1, minpuc=0, include="", exclude="", method
     predictorMatrix[colSums(!r)==0,] <- 0
     
     return(predictorMatrix)
+}
+
+#-----------------------------NELSONAALEN-------------------------------------
+
+nelsonaalen <- function(data, timevar, statusvar){
+  require(survival)
+  if (!is.data.frame(data)) stop("Data must be a data frame")
+  timevar <- as.character(substitute(timevar))
+  statusvar <- as.character(substitute(statusvar))
+  time <- data[,timevar]
+  status <- data[,statusvar]
+  
+  hazard <- basehaz(coxph(Surv(time,status)~1,data=data))
+  idx <- match(time, hazard[,"time"])
+  return(hazard[idx,"hazard"])
 }
 
 
@@ -2182,7 +2198,16 @@ glm.mids <- function(formula, family = gaussian, data, ...)
     return(object)
 }
 
-#
+#----------------------------getfit-------------------------------
+
+getfit <- function(x, i= -1, simplify=FALSE) {
+  if (!is.mira(x)) return(NULL)
+  ra <- x$analyses
+  if (i != -1) return(ra[[i]])
+  if (simplify) ra <- unlist(ra)
+  return(ra)
+}
+
 
 #------------------------------pool-------------------------------
 
@@ -2198,40 +2223,46 @@ pool <- function (object, method = "smallsample")
 ### Updated V2.2 - Jan 13, 2010
 ### Updated V2.4 - Oct 12, 2010
 ### Updated V2.6 - Jan 14, 2011
+### Updated V2.12 - Mar 19, 2012
   
 ### Check the arguments
 
   call <- match.call()
   if (!is.mira(object))
     stop("The object must have class 'mira'")
-  if ((m <- length(object$analyses)) < 2)
-    stop("At least two imputations are needed for pooling.\n" )
-  
-  analyses <- object$analyses
-  if (class(analyses[[1]])[1]=="lme") require(nlme)  # fixed 13/1/2010
-  if (class(analyses[[1]])[1]=="mer") require(lme4)  # fixed 13/1/2010
+  m <- length(object$analyses)
+  fa <- getfit(object, 1)
+  if (m == 1) {
+    warning("Number of multiple imputations m=1. No pooling done.")
+    return(fa)
+  }
+  analyses <- getfit(object)
+
+  if (class(fa)[1]=="lme") require(nlme)  # fixed 13/1/2010
+  if (class(fa)[1]=="mer") require(lme4)  # fixed 13/1/2010
+  if (class(fa)[1]=="survreg") require(survival)  # added 18/5/2012
 
 ###   Set up arrays for object.
   
-  mess <- try(coef(analyses[[1]]), silent=TRUE)
+  mess <- try(coef(fa), silent=TRUE)
   if (inherits(mess,"try-error")) stop("Object has no coef() method.")
-  mess <- try(vcov(analyses[[1]]), silent=TRUE)
+  mess <- try(vcov(fa), silent=TRUE)
   if (inherits(mess,"try-error")) stop("Object has no vcov() method.")
   
-  if (class(analyses[[1]])[1]=="mer")               # fixed 13/1/2010
+  if (class(fa)[1]=="mer")               # fixed 13/1/2010
     { 
-      k <- length(fixef(analyses[[1]]))
-      names <- names(fixef(analyses[[1]]))
+      k <- length(fixef(fa))
+      names <- names(fixef(fa))
     }
-  else if (class(analyses[[1]])[1]=="polr")          # fixed 17/10/2010
+  else if (class(fa)[1]=="polr")          # fixed 17/10/2010
     {
-      k <- length(coef(analyses[[1]]))+length(analyses[[1]]$zeta)
-      names <- c(names(coef(analyses[[1]])),names(analyses[[1]]$zeta))
+      k <- length(coef(fa))+length(fa$zeta)
+      names <- c(names(coef(fa)),names(fa$zeta))
     }
   else
     {
-      k <- length(coef(analyses[[1]]))
-      names <- names(coef(analyses[[1]]))
+      k <- length(coef(fa))
+      names <- names(coef(fa))
     }
   
   qhat <- matrix(NA, nrow = m, ncol = k, dimnames = list(1:m, names))
@@ -2245,22 +2276,42 @@ pool <- function (object, method = "smallsample")
     if (class(fit)[1]=="mer")
       {
         qhat[i,] <- fixef(fit)
-        u[i , ,] <- as.matrix(vcov(fit))
+        ui <- as.matrix(vcov(fit))
+        if (ncol(ui)!=ncol(qhat)) stop("Different number of parameters: class mer, fixef(fit): ",ncol(qhat),", as.matrix(vcov(fit)): ", ncol(ui))
+        u[i , ,] <- ui
       }
     else if (class(fit)[1]=="lme")
       {
         qhat[i,] <- fit$coefficients$fixed
-        u[i, , ] <- vcov(fit)
+        ui <- vcov(fit)
+        if (ncol(ui)!=ncol(qhat)) stop("Different number of parameters: class lme, fit$coefficients$fixef: ",ncol(qhat),", vcov(fit): ", ncol(ui))
+        u[i, , ] <- ui
       }
     else if (class(fit)[1]=="polr")
       {
         qhat[i,] <- c(coef(fit),fit$zeta)
-        u[i, , ] <- vcov(fit)    
+        ui <- vcov(fit)
+        if (ncol(ui)!=ncol(qhat)) stop("Different number of parameters: class polr, c(coef(fit, fit$zeta): ",ncol(qhat),", vcov(fit): ", ncol(ui))
+        u[i, , ] <- ui
+      }
+    else if (class(fit)[1]=="survreg")
+      {
+        qhat[i,] <- coef(fit)
+        ui <- vcov(fit)
+        parnames <- dimnames(ui)[[1]]
+        select <- !(parnames %in% "Log(scale)")  ## do not pool Log(scale) columns SvB 18/3/12
+        ui <- ui[select, select]
+        if (ncol(ui)!=ncol(qhat)) stop("Different number of parameters: class survreg, coef(fit): ",ncol(qhat),", vcov(fit): ", ncol(ui))
+        u[i, , ] <- ui
       }
     else
       {
         qhat[i,] <- coef(fit)
-        u[i, , ] <- vcov(fit)    
+        ui <- vcov(fit)
+        ### add rows and columns to ui if qhat is missing
+        ui <- expandvcov(qhat[i,], ui)
+        if (ncol(ui)!=ncol(qhat)) stop("Different number of parameters: coef(fit): ",ncol(qhat),", vcov(fit): ", ncol(ui))
+        u[i, , ] <- ui
       }
   }
   
@@ -2288,6 +2339,38 @@ pool <- function (object, method = "smallsample")
               fmi = fmi, lambda = lambda)
   oldClass(fit) <- c("mipo", oldClass(object))              ## FEH
   return(fit)
+}
+
+#---------------------------expandvcov--------------------------------
+
+expandvcov <- function(q, u) {
+  err <- is.na(q)
+  return(u)
+  ## if (all(!err)) return(u)
+  ## k <- length(q)
+  ## v <- names(q)
+  ## z <- u
+  ## for (i in 1:ncol(z)){
+  ##   if (err[i]) {
+  ##     rbind(z[,],NA,z[,])
+  ##     j <- j + 1
+  ##     up <- 
+  ##   }
+  ##   j <- j + 1
+  ##   z[i,] <- u[j,]
+  ##   z[,i] <- u[,j]
+  ## }
+
+  ## z <- matrix(NA, ncol=k, nrow=k, dimnames = list(v,v))
+  ## idx <- (is.na())
+  ## j <- 0
+  ## for (i in 1:k){
+  ##   if (err[i]) next
+  ##   j <- j + 1
+  ##   z[i,] <- u[j,]
+  ##   z[,i] <- u[,j]
+  ## }
+  ## return(z)
 }
 
 
@@ -2585,10 +2668,10 @@ mids2spss <- function(imp, filedat="midsdata.txt", filesps="readmids.sps",
   }
 }
 
-supports.transparent <- function(dev=.Device){
-  semi.list <- c('pdf','windows', 'quartz', 'jpeg', 'png', 'bmp', 'tiff', 'bitmap')
-  if (dev == "X11" & capabilities("cairo")) return(TRUE)
-  return(dev %in% semi.list)    
+supports.transparent <- function(){
+  query <- dev.capabilities("semiTransparency")$semiTransparency
+  if (is.na(query)) query <- FALSE
+  return(query)
 }
 
 
@@ -2616,6 +2699,13 @@ mdc <- function(r="observed", s="symbol", transparent=TRUE,
       cli <- hcl(0,100,40)
       clc <- "black"
     }
+  } else if (transparent == FALSE) {
+      cso <- hcl(240,100,40)
+      csi <- hcl(0,100,40)
+      csc <- "black"
+      clo <- hcl(240,100,40)
+      cli <- hcl(0,100,40)
+      clc <- "black"
   }
     
   fallback <- palette()[1]

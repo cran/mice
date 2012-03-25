@@ -83,4 +83,4 @@ Stef van Buuren, dec 2010.
 \seealso{
     \code{\link{mids}}
 }
-\keyword{MANIP}
+\keyword{manip}

@@ -286,7 +286,7 @@ van Buuren S and Groothuis-Oudshoorn K (2011).
 
 \examples{
 
-imp <- mice(boys, maxit=2)
+imp <- mice(boys, maxit=1)
 
 ### box-and-whisker plot per imputation of all numerical variables
 bwplot(imp)
@@ -298,7 +298,7 @@ bwplot(imp, tv~.imp|reg)
 bwplot(imp, tv~reg|.imp, theme=list())
 
 ### stripplot, all numerical variables
-stripplot(imp)
+\donttest{stripplot(imp)}
 
 ### same, but with improved display
 stripplot(imp, col=c("grey",mdc(2)),pch=c(1,20))
@@ -309,8 +309,8 @@ stripplot(imp, hgt+wgt+bmi~.imp, cex=c(2,4), pch=c(1,20),jitter=FALSE,
 layout=c(3,1))
 
 ### same, but labeled with the missingness of wgt (just four cases)
-stripplot(imp, hgt+wgt+bmi~.imp, na=wgt, cex=c(2,4), pch=c(1,20),jitter=FALSE,
-layout=c(3,1))
+\donttest{stripplot(imp, hgt+wgt+bmi~.imp, na=wgt, cex=c(2,4), pch=c(1,20),jitter=FALSE,
+layout=c(3,1))}
 
 ### distribution of age and height, labeled by missingness in height
 ### most height values are missing for those around 
@@ -324,7 +324,7 @@ stripplot(imp, age+hgt~.imp|reg, hgt, col=c(hcl(0,0,40,0.2), mdc(2)),pch=c(1,20)
 stripplot(imp, gen~phb, factor=2, cex=c(8,1), hor=TRUE)
 
 ### circle fun
-stripplot(imp, gen~.imp, factor=2, cex=c(8,6), hor=FALSE, na=wgt,outer=TRUE,scales="free",pch=c(1,19)) 
+\donttest{stripplot(imp, gen~.imp, factor=2, cex=c(8,6), hor=FALSE, na=wgt,outer=TRUE,scales="free",pch=c(1,19))}
 
 ### density plot of head circumference per imputation
 ### blue is observed, red is imputed
@@ -336,7 +336,7 @@ densityplot(imp, ~hc)
 ### The more powerful density plot of all 
 ### numerical variables with at least
 ### two missing values. 
-densityplot(imp)
+\donttest{densityplot(imp)}
 
 
 ### xyplot: scatterplot by imputation number
@@ -345,7 +345,7 @@ densityplot(imp)
 xyplot(imp, hgt~age|.imp, pch=c(1,20),cex=c(1,1.5))
 
 ### same, but label with missingness of wgt (four cases)
-xyplot(imp, hgt~age|.imp, na.group=wgt, pch=c(1,20),cex=c(1,1.5))
+\donttest{xyplot(imp, hgt~age|.imp, na.group=wgt, pch=c(1,20),cex=c(1,1.5))}
 
 }
 \keyword{hplot}

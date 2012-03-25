@@ -505,4 +505,3 @@ densityplot.mids <- function(x,
   tp <- update(tp, par.settings = theme)
   return(tp)
 }
-

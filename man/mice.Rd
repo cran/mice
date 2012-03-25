@@ -251,6 +251,8 @@ Van Buuren, S., Groothuis-Oudshoorn, K. (2011).
 \emph{Journal of Statistical Software}, \bold{45}(3), 1-67.
 \url{http://www.jstatsoft.org/v45/i03/}
 
+van Buuren, S. (2012). \emph{Flexible Imputation of Missing Data.} Boca Raton, FL: Chapman & Hall/CRC Press. 
+
 Van Buuren, S., Brand, J.P.L., Groothuis-Oudshoorn C.G.M., Rubin, D.B. (2006) 
 Fully conditional specification in multivariate imputation. 
 \emph{Journal of Statistical Computation and Simulation}, \bold{76}, 12, 1049--1064. 

@@ -71,7 +71,7 @@ original name is lost and it will be denoted with \code{y} in the \code{mids} ob
 \examples{
 # append 'forgotten' variable bmi to imp
 temp <- boys[,c(1:3,5:9)]
-imp  <- mice(temp,maxit=1)
+imp  <- mice(temp,maxit=1,m=2)
 imp2 <- cbind.mids(imp, data.frame(bmi=boys$bmi))
 
 # append maturation score to imp (numerical)
@@ -89,8 +89,8 @@ temp2 <- data.frame(bmi=boys$bmi,mat=as.factor(mat))
 imp2  <- cbind.mids(imp, temp2)
 
 # combine two mids objects
-impa <- mice(temp, maxit=2)
-impb <- mice(temp2, maxit=3)
+impa <- mice(temp, maxit=1, m=2)
+impb <- mice(temp2, maxit=2, m=2)
 
 # first a then b
 impab <- cbind.mids(impa, impb)

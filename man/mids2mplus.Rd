@@ -47,4 +47,4 @@ Gerko Vink, 2011.
 \seealso{
     \code{\link{mids}}, \code{\link{mids2spss}}
 }
-\keyword{MANIP}
+\keyword{manip}
