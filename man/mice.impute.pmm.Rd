@@ -1,9 +1,12 @@
 \name{mice.impute.pmm}
 \alias{mice.impute.pmm}
+\alias{mice.impute.pmm2}
 \alias{pmm}
+\alias{pmm2}
 \title{Imputation by Predictive Mean Matching}
 \usage{
 mice.impute.pmm(y, ry, x, ...)
+mice.impute.pmm2(y, ry, x, ...)
 }
 \description{Imputes univariate missing data using predictive mean matching}
 \arguments{
@@ -29,6 +32,9 @@ mice.impute.pmm(y, ry, x, ...)
     \item If there is more than one candidate, make a random draw among them.
   Note: The matching is done on predicted \code{y}, NOT on observed \code{y}.
 }
+    \code{mice.impute.pmm2()} is about five times faster than \code{mice.impute.pmm()}, and was added to \code{mice 2.13}. If 
+    \code{pmm2()} holds up after testing, expect it to replace the default function 
+    \code{pmm()} in a future version of \code{mice}. 
 }
 \references{
 Little, R.J.A. (1988), Missing data adjustments in large surveys (with discussion), 
@@ -48,5 +54,5 @@ Van Buuren, S., Groothuis-Oudshoorn, K. (2011).
 
 }
 
-\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000} 
+\author{Stef van Buuren, Karin Groothuis-Oudshoorn, 2000, 2012} 
 \keyword{datagen} 

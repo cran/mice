@@ -1,5 +1,5 @@
 #
-# MICE V2.12 (mar2012)
+# MICE V2.13 (july2012)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
 #    Copyright (c) 1999-2012 TNO, Leiden
@@ -16,7 +16,8 @@
 #           TNO Quality of Life, Leiden
 #           The Netherlands
 #   with contributions of John Fox, Frank E. Harrell, Roel de Jong, 
-#                         Jason Turner, Martijn Heijmans, Peter Malewski
+#                         Jason Turner, Martijn Heijmans, Peter Malewski,
+#                         Gerko Vink, Alexander Robitzsch
 ##
 #   ## SVB: changes by Stef van Buuren
 #   ## FEH: changes by Frank E. Harrell 
@@ -44,6 +45,7 @@ mice <- function(data,
     seed = NA,
     imputationMethod = NULL,
     defaultImputationMethod = NULL,
+    data.init = NULL,
     ...
 )
 
@@ -173,12 +175,16 @@ mice <- function(data,
     
     for(j in visitSequence) {
       y <- data[,j]
-      vname <- dimnames(?data)[[2]][j]
+      vname <- dimnames(data)[[2]][j]
       mj <- method[j]
       mlist <- list(
-        m1 = c("logreg","polyreg","lda","polr"),
-        m2 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm"),
-        m3 = c("pmm","norm","norm.nob","mean","2l.norm","2L.norm","logreg")
+        m1 = c("logreg","logreg.boot","polyreg","lda","polr"),
+        m2 = c("norm","norm.nob","norm.predict","norm.boot","mean",
+               "2l.norm","2L.norm","2l.pan","2L.pan","2lonly.pan",
+               "quadratic"),
+        m3 = c("norm","norm.nob","norm.predict","norm.boot","mean",
+               "2l.norm","2L.norm","2l.pan","2L.pan","2lonly.pan",
+               "quadratic","logreg","logreg.boot")
       )
       
       if(is.numeric(y) & (mj %in% mlist$m1))
@@ -328,9 +334,14 @@ mice <- function(data,
       ry <- r[,j]
       if (method[j]!="") {     # for incomplete variables that are imputed
         for(i in 1:m) {
-          if (nmis[j]<nrow(data)) {
-            ## if (is.passive(method[j])) p$data[ry,j] <- data[ry,j] <- model.frame(method[j],data[ry,])
-            imp[[j]][,i] <- mice.impute.sample(y, ry, ...)
+          if (nmis[j]<nrow(data)) {  
+              # begin 25jun2012
+              if ( is.null(data.init) ){ 
+                  imp[[j]][,i] <- mice.impute.sample(y, ry, ...)
+              } else {
+                  imp[[j]][,i] <- data.init[ ! ry , j ]
+              }
+              # end 25jun2012
           }
           else imp[[j]][,i] <- rnorm(nrow(data))
         }
@@ -878,9 +889,12 @@ mice.impute.pmm <- function (y, ry, x, ...)
 #                    this creates between imputation variability 
 #                    for the one-predictor case
 # Version 06/12/2010 A random draw is made from the closest THREE donors.
+# Version 25/04/2012 Extended to work with factors
 {
     x <- cbind(1, as.matrix(x))
-    parm <- .norm.draw(y, ry, x, ...)
+    ynum <- y
+    if (is.factor(y)) ynum <- as.integer(y)  ## added 25/04/2012
+    parm <- .norm.draw(ynum, ry, x, ...)
     yhatobs <- x[ry,] %*% parm$coef
     yhatmis <- x[!ry,] %*% parm$beta
     return(apply(as.array(yhatmis), 1, .pmm.match, yhat = yhatobs,
@@ -891,16 +905,49 @@ mice.impute.pmm <- function (y, ry, x, ...)
 #-------------------------.PMM.MATCH---------------------------------
 .pmm.match <- function(z, yhat=yhat, y=y, donors=3, ...)
 {
-# Auxilary function for mice.impute.pmm.
-# z    = target predictive value (scalar)
-# yhat = array of fitted values, to be matched against z
-# y    = array of donor data values, same length as yobs.
-### Finds the three cases for which abs(yhat-z) is minimal,
-### and makes a random draw from these.
+    # Auxilary function for mice.impute.pmm.
+    # z    = target predictive value (scalar)
+    # yhat = array of fitted values, to be matched against z
+    # y    = array of donor data values, same length as yobs.
+    ### Finds the three cases for which abs(yhat-z) is minimal,
+    ### and makes a random draw from these.
     d <- abs(yhat-z)
-    m <- sample( y[rank(d, ties.method="ran") <= donors], 1)
+    f <- d > 0
+    a1 <- ifelse(any(f), min(d[f]), 1)
+    d <- d + runif( length(d) , 0 , a1 / 10^10 )
+    if (donors == 1) return(y[which.min(d)])   ## bug fix 24jun2012
+    idx <- rank(d) <= donors
+    m <- sample(y[idx], 1)
     return(m)
 }
+
+###-----------------------------MICE.IMPUTE.PMM2------------------------
+### A faster version of mice.impute.pmm()
+mice.impute.pmm2 <-
+    function (y, ry, x, ...) 
+    {
+        x <- cbind(1, as.matrix(x))
+        parm <- .norm.draw(y, ry, x, ...)
+        yhatobs <- x[ry, ] %*% parm$coef
+        yhatmis <- x[!ry, ] %*% parm$beta
+        return(apply(as.array(yhatmis), 1, .pmm2.match, yhat = yhatobs, 
+                     y = y[ry], ...))
+    }
+
+#-------------------------.PMM2.MATCH--------------------------------
+# This is a faster version of .pmm.match
+.pmm2.match <- function (z, yhat = yhat, y = y, donors = 3, ...) 
+{
+    d <- abs(yhat - z)
+    f <- d > 0
+    a1 <- ifelse(any(f), min(d[f]), 1)
+    d <- d + runif( length(d) , 0 , a1 / 10^10 )
+    if (donors == 1) return(y[which.min(d)])
+    ds <- sort.int(d, partial = donors)
+    m <- sample(y[d <= ds[donors]], 1)
+    return(m)
+}
+
 
 
 #-------------------------MICE.IMPUTE.LOGREG-------------------------
@@ -1166,7 +1213,9 @@ mice.impute.sample<-function(y, ry, x=NULL, ...)
 # Generates random sample from the observed y's
 #
 {   
-    return(sample(y[ry], size=sum(!ry), replace=TRUE))
+    yry <- y[ry]   ## bug fixed 24jun2012
+    if (length(yry) <= 1) return(rnorm(sum(!ry)))
+    return(sample(yry, size = sum(!ry), replace = TRUE))
 }
 #-------------------MICE.IMPUTE.PASSIVE----------------------------
 
@@ -1627,7 +1676,7 @@ plot.mids <- function(x, y=NULL, theme=mice.theme(),
   
   mn <- x$chainMean
   sm <- sqrt(x$chainVar)
-  varlist <- dimnames(mn[,,1])[[1]]
+  varlist <- dimnames(mn[,,1,drop=FALSE])[[1]]   # SvB 25jun2012
   
   ## create formula if not given in y
   if (missing(y)) {

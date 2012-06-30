@@ -4,7 +4,6 @@
 \alias{ifdo}
 \alias{appendbreak}
 \alias{extractBS}
-\alias{wp.twin}
 
 \title{Auxiliary functions used in FIMD}
 
@@ -18,10 +17,6 @@ long2mids(x)
 ifdo(cond, action)
 appendbreak(data, brk, warp.model = warp.model, id=NULL, typ="pred")
 extractBS(fit)
-wp.twin(obj1, obj2=NULL, xvar=NULL, xvar.column=2,
-           n.inter=16, show.given=FALSE, ylim.worm=0.5,
-           line=FALSE, cex=1, col1="black", col2="orange",
-           warnings=FALSE, ...)
 }
 
 \arguments{
@@ -33,19 +28,7 @@ wp.twin(obj1, obj2=NULL, xvar=NULL, xvar.column=2,
     \item{warp.model}{}
     \item{id}{}
     \item{typ}{}
-    \item{obj1}{}
-    \item{obj2}{}
-    \item{xvar}{}
-    \item{xvar.columns}{}
-    \item{n.inter}{}
-    \item{show.given}{}
-    \item{ylim.worm}{}
-    \item{line}{}
-    \item{cex}{}
-    \item{col1}{}
-    \item{col2}{}
-    \item{warnings}{}
-    \item{\dots}{}
+    \item{fit}{}
 }
 
 \author{Stef van Buuren, 2012} 

@@ -32,8 +32,20 @@ mice.impute.2l.norm(y, ry, x, type, intercept=TRUE, ...)
     Buuren (2011). 
 
     The random intercept is automatically added in
-    \code{mice.impute.2L.norm()}. 
+    \code{mice.impute.2L.norm()}. A model within a random intercept can be
+    specified by \code{mice(..., intercept = FALSE)}.
 }
+
+\note{
+Added June 25, 2012: The currently implemented algorithm does not handle 
+predictors that are specified as fixed effects (type=1). When using 
+\code{mice.impute.2l.norm()}, 
+the current advice is to specify all predictors as random effects (type=2). 
+
+Warning: The assumption of heterogeneous variances requires that in every class at least 
+one observation has a response in \code{y}.
+}
+
 \references{
 
 Kasim RM, Raudenbush SW. (1998). Application of Gibbs sampling to nested variance 

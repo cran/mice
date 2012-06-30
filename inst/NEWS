@@ -13,6 +13,19 @@ Question or suggestions about MICE can be send to
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+V2.13 - 03-07-2012 / SvB
+ADDED    new multilevel functions 2l.pan(), 2lonly.norm(), 2lonly.pmm() (contributed by Alexander Robitzsch)
+ADDED    new quadratic imputation function: quadratic() (contributed by Gerko Vink)
+ADDED    pmm2(), five times faster than pmm() 
+ADDED    new argument data.init in mice() for initialization (suggested by Alexander Robitzsch)
+ADDED    mice() now accepts pmm as method for (ordered) factors
+ADDED    warning and a note to 2l.norm() that advises to use type=2 for the predictors 
+FIXED    bug that chrashed plot.mids() if there was only one incomplete variable (thanks Dennis Prangle)
+FIXED    bug in sample() in .pmm.match() when donor=1 (thanks Alexander Robitzsch)
+FIXED    bug in sample() in mice.impute.sample() 
+FIXED    fixed '?data' bug in check.method()
+REMOVED	 wp.twin(). Now available from the AGD package
+
 V2.12 - 25-03-2012 / SvB
 UPDATE   version for launch of Flexible Imputation of Missing Data (FIMD)
 ADDED    code fimd1.r-fim9.r to inst/doc for calculating solutions in FIMD  

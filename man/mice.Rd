@@ -18,12 +18,14 @@ mice(data, m = 5,
     seed = NA,
     imputationMethod = NULL,
     defaultImputationMethod = NULL,
+    data.init = NULL,
     ...
 )
 }
 
 \arguments{
-    \item{data}{A data frame or a matrix containing the incomplete data. Missing values are coded as \code{NA}.}
+    \item{data}{A data frame or a matrix containing the incomplete data. 
+    Missing values are coded as \code{NA}.}
     \item{m}{Number of multiple imputations. The default is \code{m=5}.}
     \item{method}{Can be either a single string,
     or a vector of strings with length \code{ncol(data)},
@@ -90,6 +92,12 @@ information will be appended to the value of the function. If
    
    \item{imputationMethod}{Same as \code{method} argument. Included for backwards compatibility.}
    \item{defaultImputationMethod}{Same as \code{defaultMethod} argument. Included for backwards compatibility.}
+   \item{data.init}{A data frame of the same size and type as \code{data}, without
+   missing data, used to initialize imputations before the start of the iterative process. 
+   The default \code{NULL} implies that starting imputation are created by a simple random 
+   draw from the data. Note that specification of \code{data.init} will start the 
+   \code{m} Gibbs sampling streams from the same imputations.}
+   
    \item{...}{Named arguments that are passed down to the elementary imputation
      functions.} 
 }
@@ -123,12 +131,19 @@ the list component \code{pad}.
 Built-in elementary imputation methods are:
 
 \describe{
-  \item{\code{pmm}}{Predictive mean matching (numeric)}   
+  \item{\code{pmm}}{Predictive mean matching (any)}   
   \item{\code{norm}}{Bayesian linear regression (numeric)}
   \item{\code{norm.nob}}{Linear regression ignoring model error (numeric)}
+  \item{\code{norm.boot}}{Linear regression using bootstrap (numeric)}
+  \item{\code{norm.predict}}{Linear regression, predicted values (numeric)}
   \item{\code{mean}}{Unconditional mean imputation (numeric)}
   \item{\code{2l.norm}}{Two-level normal imputation (numeric)}
-  \item{\code{logreg}}{Logistic regression (factor, 2 levels)}        
+  \item{\code{2l.pan}}{Two-level normal imputation using pan (numeric)}
+  \item{\code{2lonly.norm}}{Imputation at level-2 by Bayesian linear regression (numeric)}
+  \item{\code{2lonly.pmm}}{Imputation at level-2 by Predictive mean matching (any)}
+  \item{\code{quadratic}}{Imputation of quadratic terms (numeric)}
+  \item{\code{logreg}}{Logistic regression (factor, 2 levels)}
+  \item{\code{logreg.boot}}{Logistic regression with bootstrap}
   \item{\code{polyreg}}{Polytomous logistic regression (factor, >= 2
       levels)}
   \item{\code{polr}}{Proportional odds model (ordered, >=2 levels)}
@@ -241,9 +256,10 @@ be synchronized.
     predictors.}
 }
 
-\author{Stef van Buuren (stef.vanbuuren@tno.nl), Karin Groothuis-Oudshoorn (c.g.m.oudshoorn@utwente.nl) (2000-2010) 
-    with contributions of Roel de Jong, Jason Turner, John Fox, Frank E. Harrell, and Peter Malewski.}     
-
+\author{Stef van Buuren \email{stef.vanbuuren@tno.nl}, 
+    Karin Groothuis-Oudshoorn \email{c.g.m.oudshoorn@utwente.nl}, 2000-2010, 
+    with contributions of Alexander Robitzsch, Gerko Vink, 
+    Roel de Jong, Jason Turner, John Fox, Frank E. Harrell, and Peter Malewski.}
 
 \references{
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011).
