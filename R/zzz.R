@@ -7,8 +7,8 @@
 #
 # System functions for the MICE library
 
-#------------------------------.onLoad-------------------------------
-.onLoad <- function(...){
+#------------------------------.onAttach-------------------------------
+.onAttach <- function(...){
   d <- packageDescription("mice")
   packageStartupMessage(paste(d$Package,d$Version,d$Date))
   return()

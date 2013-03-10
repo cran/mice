@@ -60,7 +60,7 @@ mice.impute.2l.pan <- function(y, ry, x, type, intercept=TRUE, paniter = 500 ,
 	y1 <- matrix( as.numeric(y) , ncol=1 )
 	y1[ ! ry , 1 ] <- NA
 	# specify predictors
-	pred <-  x[ , type != -2 ] 
+	pred <-  x[ , type != -2 , drop = FALSE] ## fixed SvB 1feb2013
 	# columns fixed effects
 	xcol <- seq( 1 , ncol(pred) )
 	type1 <- type[ type != -2 ]

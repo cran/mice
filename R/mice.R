@@ -1,8 +1,7 @@
-#
-# MICE V2.13 (july2012)
+# MICE V2.14 (mar2013)
 #
 #    R package MICE: Multivariate Imputation by Chained Equations
-#    Copyright (c) 1999-2012 TNO, Leiden
+#    Copyright (c) 1999-2013 TNO, Leiden
 #	
 #	 This file is part of the R package MICE.
 #
@@ -487,7 +486,8 @@ padModel <- function(data, method, predictorMatrix, visitSequence, post,
 
     # zero is default in corresponding.column.dummy for no dummy variable
    for(j in 1:nvar) {
-     if(is.factor(data[,j]) && any(predictorMatrix[,j]==1)) {
+       # if(is.factor(data[,j]) && any(predictorMatrix[,j]==1)) {
+       if(is.factor(data[,j]) && any(predictorMatrix[,j]!=0)) {   ## SvB 11mar2013 account other roles for multilevel data
        categories[j,1]<-TRUE
        ## data[,j]<-C(data[,j],treatment) #assign contrast-attribute, choice treatment, to factor
        data[,j]<-C(data[,j],contr.treatment) #assign contrast-attribute, choice treatment, to factor   SvB 14/12/08
@@ -585,17 +585,16 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag, ...)
           
           if(printFlag & theMethod!="dummy") cat(" ", vname)
           if(theMethod!="" & (!is.passive(theMethod)) & theMethod!="dummy"){  # for a true imputation method
-            if (substring(theMethod, 1, 2) != "2l") {	# RJ: for an non-multilevel imputation method 
-              x <- p$data[, p$predictorMatrix[j, ] == 
-                          1, drop = FALSE]
+            if (substring(tolower(theMethod), 1, 2) != "2l") {	# RJ: for an non-multilevel imputation method 
+              x <- p$data[, p$predictorMatrix[j, ] == 1, drop = FALSE]
               y <- p$data[, j]
               ry <- r[, j]
               nam <- vname
+              if (k == 1) check.df(x, y, ry, ...)  # added 31/10/2012, throw warning for n(obs) < p case
               f <- paste("mice.impute", theMethod, sep = ".")
               keep <- remove.lindep(x, y, ry, ...)
               x <- x[, keep, drop = FALSE]
-              imp[[j]][, i] <- do.call(f, args = list(y, 
-                                            ry, x, ...))
+              imp[[j]][, i] <- do.call(f, args = list(y, ry, x, ...))
             }
             else { # for a multilevel imputation method
               predictors <- p$predictorMatrix[j, ] != 0
@@ -604,6 +603,7 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag, ...)
               ry <- r[, j]
               type <- p$predictorMatrix[j, predictors]
               nam <- vname
+              if (k == 1) check.df(x, y, ry, ...)  # added 31/10/2012, throw warning for n(obs) < p case
               f <- paste("mice.impute", theMethod, sep = ".")
               keep <- remove.lindep(x, y, ry, ...)
               x <- x[, keep, drop = FALSE]
@@ -656,6 +656,13 @@ sampler <- function(p, data, m, imp, r, visitSequence, fromto, printFlag, ...)
     return(list(iteration=maxit, imp=imp, chainMean = chainMean, chainVar = chainVar))
 }
 
+
+check.df <- function(x, y, ry, ...) {
+    # if needed, writes the df warning message to the log 
+    df <- sum(ry) - ncol(x)
+    mess <- paste("df set to 1. # observed cases:",sum(ry)," # predictors:",ncol(x))
+    if (df < 1) updateLog(out=mess, frame=3)
+}
 
 remove.lindep <- function(x, y, ry, eps = 0.0001, 
     maxcor = 0.99, allow.na=FALSE, ...) {
@@ -860,7 +867,8 @@ mice.impute.norm.boot <- function(y, ry, x, ridge=0.00001, ...)
   coef <- t(yobs %*% xobs %*% v)
   residuals <- yobs - xobs %*% coef
 #  sigma.star <- sqrt(sum((residuals)^2)/rgamma(1, sum(ry) - ncol(x)))
-  sigma.star <- sqrt(sum((residuals)^2)/rchisq(1, sum(ry) - ncol(x)))  # SvB 01/02/2011
+  df <- max(sum(ry) - ncol(x), 1)  # SvB 31/10/2012
+  sigma.star <- sqrt(sum((residuals)^2)/rchisq(1, df))  # SvB 01/02/2011
   beta.star <- coef + (t(chol((v + t(v))/2)) %*% rnorm(ncol(x))) * sigma.star
   parm <- list(coef, beta.star, sigma.star)      # SvB 10/2/2010
   names(parm) <- c("coef","beta", "sigma")       # SvB 10/2/2010
@@ -869,74 +877,41 @@ mice.impute.norm.boot <- function(y, ry, x, ridge=0.00001, ...)
 
 
 
-
 ###-----------------------------MICE.IMPUTE.PMM-------------------------
 
 mice.impute.pmm <- function (y, ry, x, ...)
-# Imputation of y by predictive mean matching, based on
-# Rubin (p. 168, formulas a and b).
-# The procedure is as follows:
-# 1. Draw beta and sigma from the proper posterior
-# 2. Compute predicted values for yobs and ymis
-# 3. For each ymis, find the three observations with closest predicted value, 
-#    sample one randomly, and take its observed y as the imputation.
-# NOTE: The matching is on yhat, NOT on y, which deviates from formula b.
-# ry=TRUE if y observed, ry=FALSE if y missing
-#
-# Authors: S. van Buuren and K. Groothuis-Oudshoorn
+    # Imputation of y by predictive mean matching, based on
+    # Rubin (p. 168, formulas a and b).
+    # The procedure is as follows:
+    # 1. Draw beta and sigma from the proper posterior
+    # 2. Compute predicted values for yobs and ymis
+    # 3. For each ymis, find the three observations with closest predicted value, 
+    #    sample one randomly, and take its observed y as the imputation.
+    # NOTE: The matching is on yhat, NOT on y, which deviates from formula b.
+    # ry=TRUE if y observed, ry=FALSE if y missing
+    #
+    # Authors: S. van Buuren and K. Groothuis-Oudshoorn
 # Version 10/2/2010: yhatobs is calculated using the estimated 
 #                    rather than the drawn regression weights
 #                    this creates between imputation variability 
 #                    for the one-predictor case
 # Version 06/12/2010 A random draw is made from the closest THREE donors.
 # Version 25/04/2012 Extended to work with factors
+# version 31/10/2012 Using faster pmm2
 {
     x <- cbind(1, as.matrix(x))
     ynum <- y
     if (is.factor(y)) ynum <- as.integer(y)  ## added 25/04/2012
-    parm <- .norm.draw(ynum, ry, x, ...)
-    yhatobs <- x[ry,] %*% parm$coef
-    yhatmis <- x[!ry,] %*% parm$beta
-    return(apply(as.array(yhatmis), 1, .pmm.match, yhat = yhatobs,
-        y = y[ry], ...))
+    parm <- .norm.draw(y, ry, x, ...)
+    yhatobs <- x[ry, ] %*% parm$coef
+    yhatmis <- x[!ry, ] %*% parm$beta
+    return(apply(as.array(yhatmis), 1, .pmm.match, yhat = yhatobs, 
+                 y = y[ry], ...))
 }
 
-
-#-------------------------.PMM.MATCH---------------------------------
-.pmm.match <- function(z, yhat=yhat, y=y, donors=3, ...)
-{
-    # Auxilary function for mice.impute.pmm.
-    # z    = target predictive value (scalar)
-    # yhat = array of fitted values, to be matched against z
-    # y    = array of donor data values, same length as yobs.
-    ### Finds the three cases for which abs(yhat-z) is minimal,
-    ### and makes a random draw from these.
-    d <- abs(yhat-z)
-    f <- d > 0
-    a1 <- ifelse(any(f), min(d[f]), 1)
-    d <- d + runif( length(d) , 0 , a1 / 10^10 )
-    if (donors == 1) return(y[which.min(d)])   ## bug fix 24jun2012
-    idx <- rank(d) <= donors
-    m <- sample(y[idx], 1)
-    return(m)
-}
-
-###-----------------------------MICE.IMPUTE.PMM2------------------------
-### A faster version of mice.impute.pmm()
-mice.impute.pmm2 <-
-    function (y, ry, x, ...) 
-    {
-        x <- cbind(1, as.matrix(x))
-        parm <- .norm.draw(y, ry, x, ...)
-        yhatobs <- x[ry, ] %*% parm$coef
-        yhatmis <- x[!ry, ] %*% parm$beta
-        return(apply(as.array(yhatmis), 1, .pmm2.match, yhat = yhatobs, 
-                     y = y[ry], ...))
-    }
-
-#-------------------------.PMM2.MATCH--------------------------------
-# This is a faster version of .pmm.match
-.pmm2.match <- function (z, yhat = yhat, y = y, donors = 3, ...) 
+#-------------------------.PMM.MATCH--------------------------------
+# faster .pmm.match2() from version 2.12 renamed to default .pmm.match() 
+.pmm.match <- function (z, yhat = yhat, y = y, donors = 3, ...) 
 {
     d <- abs(yhat - z)
     f <- d > 0
@@ -947,6 +922,17 @@ mice.impute.pmm2 <-
     m <- sample(y[d <= ds[donors]], 1)
     return(m)
 }
+
+
+###-----------------------------MICE.IMPUTE.PMM2------------------------
+### A faster version of mice.impute.pmm()
+mice.impute.pmm2 <-
+    function (y, ry, x, ...) 
+    {
+        mess <- "Method 'pmm2' is replaced by method 'pmm'" 
+        stop(mess)
+    }
+
 
 
 
@@ -1229,7 +1215,7 @@ mice.impute.passive <- function(data, func)
 
 #-------------------MICE.IMPUTE.2L.NORM----------------------------
 
-mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE, ...)
+mice.impute.2L.norm <- function(y, ry, x, type, intercept = TRUE, ...)
 {
   rwishart <- function(df, p = nrow(SqrtSigma), SqrtSigma = diag(p)) {
     ## rwishart, written by Bill Venables
@@ -1321,6 +1307,27 @@ mice.impute.2L.norm <- function(y, ry, x, type, intercept=TRUE, ...)
 
 mice.impute.2l.norm <- mice.impute.2L.norm   # for backward compatibility
 
+
+#------------------------MICE.IMPUTE.2lonly.mean---------------------------------
+
+mice.impute.2lonly.mean <- function(y, ry, x, type, ...){
+    ## Gerko Vink, Stef van Buuren mar2013
+    ## class mean imputation of second level variables
+    if(all(ry)) stop("No missing data found")
+    yobs <- y[ry]
+    class <- x[, type == -2]
+    classobs <- class[ry]
+    classmis <- class[!ry]
+    
+    # deal with empty classes (will be NaN)
+    empty.classes <- class[!class %in% classobs]
+    classobs <- c(classobs, empty.classes)
+    yobs <- c(yobs, rep(NA, length(empty.classes)))
+    
+    # return the means per class
+    ymean <- aggregate(yobs, list(classobs), mean, na.rm = TRUE)
+    return(apply(as.matrix(classmis), 1, function(z, y) y[z == y[ , 1], 2], y = ymean, ...))
+}
 
 
 
@@ -2237,7 +2244,7 @@ glm.mids <- function(formula, family = gaussian, data, ...)
 #
     for(i in 1:data$m) {
         data.i <- complete(data, i)
-        analyses[[i]] <- glm(formula, family = gaussian, data = data.i, ...)
+        analyses[[i]] <- glm(formula, family, data = data.i, ...)  ## SvB 22jan13
     }
 #
 # return the complete data analyses as a list of length nimp
@@ -2377,7 +2384,7 @@ pool <- function (object, method = "smallsample")
   r <- (1 + 1/m) * diag(b/ubar)                             # (3.1.7)
   lambda <- (1 + 1/m) * diag(b/t)
   dfcom <- df.residual(object)
-  df <- mice.df(m, lambda, dfcom)
+  df <- mice.df(m, lambda, dfcom, method)
   fmi <- (r + 2/(df+3))/(r + 1)                             # fraction of missing information
 
 ###
@@ -2425,7 +2432,7 @@ expandvcov <- function(q, u) {
 
 #------------------------------mice.df--------------------------------
 
-mice.df <- function(m, lambda, dfcom)
+mice.df <- function(m, lambda, dfcom, method)
 {
   if (is.null(dfcom)) {
     dfcom <- 999999
@@ -2435,6 +2442,7 @@ mice.df <- function(m, lambda, dfcom)
   dfold <- (m - 1) / lambda^2
   dfobs <- (dfcom+1) / (dfcom+3) * dfcom * (1-lambda)
   df <- dfold * dfobs / (dfold + dfobs)
+  if (method != "smallsample") df <- dfold  ## Rubin 1987, 3.1.6, Van Buuren 2012, 2.30, added 31/10/2012
   return(df)
 }
 

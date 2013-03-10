@@ -13,6 +13,18 @@ Question or suggestions about MICE can be send to
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+V2.14 - 11-03-2013 / SvB
+ADDED    mice.impute.2l.mean() for imputing class means at level 2
+ADDED    sampler(): new checks of degrees of freedom per variable at iteration 1
+ADDED    function check.df() to throw a warning about low degrees of freedom
+FIXED    tolower() added in "2l" test in sampler()
+FIXED    conversion of factors that have other roles (multilevel) in padModel()
+FIXED    family argument in call to glm() in glm.mids() (thanks Nicholas Horton)
+FIXED    .norm.draw(): evading NaN imputed values by setting df in rchisq() to a minimum of 1
+FIXED    bug in mice.df() that prevented the classic Rubin df calculation (thanks Jean-Batiste Pingaul)
+FIXED    bug fixed in mice.impute.2l.norm() (thanks Robert Long)
+CHANGED  faster .pmm.match2() from version 2.12 renamed to default .pmm.match() 
+
 V2.13 - 03-07-2012 / SvB
 ADDED    new multilevel functions 2l.pan(), 2lonly.norm(), 2lonly.pmm() (contributed by Alexander Robitzsch)
 ADDED    new quadratic imputation function: quadratic() (contributed by Gerko Vink)

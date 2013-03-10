@@ -139,6 +139,7 @@ Built-in elementary imputation methods are:
   \item{\code{mean}}{Unconditional mean imputation (numeric)}
   \item{\code{2l.norm}}{Two-level normal imputation (numeric)}
   \item{\code{2l.pan}}{Two-level normal imputation using pan (numeric)}
+  \item{\code{2lonly.mean}}{Imputation at level-2 of the class mean (numeric)}
   \item{\code{2lonly.norm}}{Imputation at level-2 by Bayesian linear regression (numeric)}
   \item{\code{2lonly.pmm}}{Imputation at level-2 by Predictive mean matching (any)}
   \item{\code{quadratic}}{Imputation of quadratic terms (numeric)}

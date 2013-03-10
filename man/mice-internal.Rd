@@ -8,6 +8,7 @@
 \alias{sampler}
 \alias{squeeze}
 \alias{augment}
+\alias{check.df}
 \alias{remove.lindep}
 \alias{find.collinear}
 \alias{updateLog}
@@ -38,11 +39,12 @@ sampler(p, data, m, imp, r, visitSequence, fromto, printFlag,...)
 squeeze(x, bounds = c(min(x[r]), max(x[r])), r = rep(TRUE, 
  length(x)), ...)
 augment(y, ry, x, maxcat=50, ...)
+check.df(x, y, ry, ...)
 remove.lindep(x, y, ry, eps = 0.0001, maxcor = 0.99, allow.na=FALSE,...) 
 find.collinear(x, threshold=0.999, ...)
 updateLog(out=NULL, meth=NULL, frame=2)
 expandvcov(q, u)
-mice.df(m, lambda, dfcom)
+mice.df(m, lambda, dfcom, method)
 df.residual.mira(object, ...)
 df.residual.lme(object, ...)
 df.residual.mer(object, ...)
