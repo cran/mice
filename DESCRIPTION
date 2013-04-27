@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 2.15
+Version: 2.16
 Title: Multivariate Imputation by Chained Equations
-Date: 2013-04-02
+Date: 2013-04-27
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"), email
         = "stef.vanbuuren@tno.nl"), person("Karin",
         "Groothuis-Oudshoorn", role = "aut", email =
@@ -10,13 +10,14 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"), email
         role = "ctb", email = "a.robitzsch@bifie.at"),
         person("Gerko","Vink", role = "ctb", email = "g.vink@uu.nl"),
         person("Lisa","Doove", role = "ctb", email =
-        "lisa.doove@ppw.kuleuven.be"))
+        "lisa.doove@ppw.kuleuven.be"), person("Shahab","Jolani", role =
+        "ctb", email = "s.jolani@uu.nl"))
 Author: Stef van Buuren and Karin Groothuis-Oudshoorn, with
-        contributions from Alexander Robitzsch, Gerko Vink and Lisa
-        Doove
+        contributions from Alexander Robitzsch, Gerko Vink, Shahab
+        Jolani and Lisa Doove
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
-Depends: R (>= 2.10.0), MASS, methods, lattice
-Imports: nnet, rpart
+Depends: R (>= 2.10.0), methods, lattice, MASS, nnet
+Imports: rpart
 Suggests: AGD, gamlss, lme4, mitools, nlme, pan, survival, Zelig
 Description: Multiple imputation using Fully Conditional Specification
         (FCS) implemented by the MICE algorithm. Each variable has its
@@ -52,10 +53,10 @@ Collate: 'as.r' 'auxiliary.r' 'boys.r' 'cbind.r' 'cc.r' 'complete.r'
         'pool.scalar.r' 'popmis.r' 'pops.r' 'potthoffroy.r' 'print.r'
         'quickpred.r' 'rbind.r' 'rm.whitespace.r' 'selfreport.r'
         'squeeze.r' 'summary.r' 'supports.transparent.r' 'tbc.r'
-        'walking.r' 'windspeed.r' 'with.r' 'zzz.r' 'namespace.r'
-        'mice.theme.r' 'xyplot.r' 'stripplot.r' 'bwplot.r'
-        'densityplot.r' 'cci.r' 'ccn.r' 'mice.impute.cart.r'
-Packaged: 2013-04-02 20:06:02 UTC; stefvanbuuren
+        'walking.r' 'windspeed.r' 'with.r' 'zzz.r' 'mice.theme.r'
+        'xyplot.r' 'stripplot.r' 'bwplot.r' 'densityplot.r' 'cci.r'
+        'ccn.r' 'mice.impute.cart.r' 'mice.impute.ri.r'
+Packaged: 2013-04-26 13:10:42 UTC; stefvanbuuren
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-04-03 01:18:14
+Date/Publication: 2013-04-27 08:51:05
