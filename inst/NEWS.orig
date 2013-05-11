@@ -13,12 +13,7 @@ Question or suggestions about MICE can be send to
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
-V2.17    10-05-2013 SvB
-ADDED    new form argument to mice() to specify imputation models using forms (contributed Ross Boylan)
-FIXED    with.mids(), is.mids(), is.mira() and is.mipo() exported
-FIXED    eliminated errors in the documentation of pool.scalar()
-FIXED    error in mice.impute.ri() (thanks Shahab Jolani)
-
+<<<<<<< HEAD
 V2.16    27-04-2013 SvB
 ADDED    random indicator imputation by mice.impute.ri() for nonignorable models (thanks Shahab Jolani)
 ADDED    workhorse functions .norm.draw() and .pmm.match() are exported
@@ -27,7 +22,10 @@ FIXED    bug that crashed R when the class variable was incomplete (thanks Rober
 FIXED    bug in 2l.pan and 2l.norm by convert a class factor to integer (thanks Robert Long)
 FIXED    warning eliminated caused by character variables (thanks Robert Long)
 
+V2.15 - 02-04-1013 SvB
+=======
 V2.15 - 02-04-2013 SvB
+>>>>>>> cb2bf7c3f2688c99309361160f110749ca797a78
 CHANGED  complete reorganization of documentation and source files
 ADDED    source published on GitHub.com
 ADDED    new imputation method mice.impute.cart() (thanks Lisa Doove)
