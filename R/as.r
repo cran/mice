@@ -31,23 +31,22 @@
 #'# original rownumbers are automatically copied from .id
 #'@keywords mids
 #'@export
-as.mids <- function(data, .imp = 1, .id = 2 ){
-    ini <- mice(data[ data[, .imp] == 0, -c(.imp, .id)], maxit = 0)
-    names  <- ls(ini$imp)
-    if (!is.null(.id)){
-        rownames(ini$data) <- data[data[, .imp] == 0, .id]
+as.mids <- function(data, .imp=1, .id=2 ){
+  ini <- mice(data[data[, .imp] == 0, -c(.imp, .id)], maxit=0)
+  names  <- names(ini$imp)
+  if (!is.null(.id)){
+    rownames(ini$data) <- data[data[, .imp] == 0, .id]
+  }
+  for (i in 1:length(names)){
+    for(m in 1:(max(as.numeric(data[, .imp])) - 1)){
+      if(!is.null(ini$imp[[i]])){
+        indic <- data[, .imp] == m & is.na(data[data[, .imp]==0, names[i]])
+        ini$imp[[names[i]]][m] <- data[indic, names[i]]
+      }
     }
-    for (i in 1:length(names)){
-        for(m in 1:(max(as.numeric(data[, .imp])) - 1)){
-            if(!is.null(ini$imp[[i]])){
-                indic <- data[, .imp] == m & is.na(data[data[, .imp] == 0, names[i]])
-                ini$imp[[names[i]]][m] <- data[indic, names[i]]
-            }
-        }
-    }
-    return(ini)
+  }
+  return(ini)
 }
-
 
 
 #' Create a \code{mira} object from repeated analyses
