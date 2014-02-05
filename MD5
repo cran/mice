@@ -1,4 +1,4 @@
-9355954561ef2490ff3aec068a929d57 *DESCRIPTION
+7ff07bce0ac09438c5c40151edbe3ff1 *DESCRIPTION
 2f2c7f683da227620dafffb0edd54acc *NAMESPACE
 7170c01fd15cf22b6157a9c0160ce7f7 *R/RcppExports.r
 4e0930fabd7e779e5694a9fc3872d8c1 *R/as.r
@@ -51,7 +51,7 @@ ea377d8f282c231304ed85b3f03f1ad6 *R/mice.impute.rf.r
 55434562adc001424d7abce2e1ea2930 *R/mice.impute.ri.r
 e1206e9c04916a5373d893a04178b944 *R/mice.impute.sample.r
 76e5008766cb0b5686fccc84b8bf0b87 *R/mice.mids.r
-cde2b74afe7f0df596b80320373a6540 *R/mice.r
+30620d5ff5ed2e10170ac5316bf71bc8 *R/mice.r
 ca9da1b9953f458bba484dd5df9f385a *R/mice.theme.r
 d1b5286b1c3c99ae157146d48f5aebd5 *R/mids.r
 8c8c94e18365bbb2b64bd36a9f32fa96 *R/mids2mplus.r
@@ -107,7 +107,7 @@ f09e7f7193938ecd0f45266a2dedf423 *data/potthoffroy.rda
 a942e0b754907b68feb07e57efcb1075 *data/walking.rda
 69a7eb68f00c3c2bc427c3d8dc13f987 *data/windspeed.rda
 7511bc317537985243882020cd6a393f *inst/CITATION
-06c852e9864ee6d925a7b4016d7977fb *inst/NEWS
+5ef2e2942043322468cd211238f90522 *inst/NEWS
 e14983a5b6d2063eac7c63271b7cbe26 *inst/doc/JSScode.R
 8abdd44e314b08b1af9aa783c2dbb1b5 *inst/doc/fimd1.r
 7e977c0ad9fc5fa2f9046bfbef9e6d3a *inst/doc/fimd2.r
@@ -152,7 +152,7 @@ e721d1c9ce3a70a59767cc931e5270ca *man/ifdo.Rd
 dfc67f70bab3fcda347b6498d5113335 *man/md.pairs.Rd
 2958b5e26f04a1daecdf42861b6aac95 *man/md.pattern.Rd
 abdc9d975d16134afd842fc6dd1a1df0 *man/mdc.Rd
-ce21db50d59f04e030ee81b854a68e27 *man/mice.Rd
+d176fde7a5571d163821aa438bf616c1 *man/mice.Rd
 62a0b2434516c2c395bf8f23f78918a9 *man/mice.impute.2l.norm.Rd
 af2b442cd95abac2be39fd7702464e0d *man/mice.impute.2l.pan.Rd
 99294972c07eb3108fdaadbde06cdef7 *man/mice.impute.2lonly.mean.Rd
@@ -212,4 +212,4 @@ a4ffc9537ab36d48f92f129ce1bfab81 *man/walking.Rd
 b3f86c20b81b51f5162874977d38784d *src/Makevars
 73505498722ad4b07b0ddb3067e92523 *src/Makevars.win
 7b49dc3a2b9b53715fda9c5eab0e6960 *src/RcppExports.cpp
-6969d735e6c48736102b5c445342d147 *src/match.cpp
+8ee45711feb80fcb1d1d72e2b3fb0e73 *src/match.cpp
