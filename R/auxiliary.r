@@ -2,8 +2,8 @@
 #'
 #'Sorry, the \code{ifdo()} function is not yet implemented. 
 #'@aliases ifdo
-#'@param cond
-#'@param action
+#'@param cond a condition
+#'@param action the action to do
 #'@return Currently returns an error message.
 #'@author Stef van Buuren, 2012
 #'@keywords internal
@@ -74,4 +74,19 @@ extractBS <- function(fit) {
   return(bs)
 }
 
+
+## used by mice.impute.midastouch
+bootfunc.plain <- function(n){
+  random <- sample(n,replace = TRUE)
+  weights <- as.numeric(table(factor(random,levels = c(1:n))))
+  return(weights)
+}
+
+minmax <- function(x,domin=TRUE,domax=TRUE){
+  maxx <- sqrt(.Machine$double.xmax)
+  minx <- sqrt(.Machine$double.eps)
+  if(domin){      x <- pmin(x,maxx)   }
+  if(domax){      x <- pmax(x,minx)   }
+  return(x)
+}
 
