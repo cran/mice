@@ -4,13 +4,13 @@
 \alias{xyplot.mads}
 \title{Scatterplot of amputed and non-amputed data against weighted sum scores}
 \usage{
-\method{xyplot}{mads}(x, yvar = NULL, which.pat = NULL,
-  standardized = TRUE, layout = NULL, colors = c("#fc8d62", "#8da0cb"))
+\method{xyplot}{mads}(x, data, which.pat = NULL, standardized = TRUE,
+  layout = NULL, colors = mdc(1:2), ...)
 }
 \arguments{
 \item{x}{A \code{mads} object, typically created by \code{\link{ampute}}.}
 
-\item{yvar}{A string or vector of variable names that needs to be plotted. As 
+\item{data}{A string or vector of variable names that needs to be plotted. As 
 a default, all variables will be plotted.}
 
 \item{which.pat}{A scalar or vector indicating which patterns need to be plotted. 
@@ -25,8 +25,10 @@ that the scatterplots of six variables need to be placed on 3 rows and 2 columns
 There are several defaults for different #variables. Note that for more than 
 9 variables, multiple plots will be created automatically.}
 
-\item{colors}{A vector of two RGB values defining the colors of the amputed and 
-non-amputed data respectively. RGB values can be obtained with \code{\link{hcl}}.}
+\item{colors}{A vector of two RGB values defining the colors of the non-amputed and 
+amputed data respectively. RGB values can be obtained with \code{\link{hcl}}.}
+
+\item{\dots}{Not used, but for consistency with generic}
 }
 \value{
 A list containing the scatterplots. Note that a new pattern 
@@ -37,18 +39,17 @@ Plotting method to investigate relation between amputed data and the weighted su
 scores. Based on \code{\link{lattice}}. \code{xyplot} produces scatterplots. 
 The function plots the variables against the weighted sum scores. The function
 automatically separates the amputed and non-amputed data to see the relation between
-the amputatoin and the weighted sum scores.
+the amputation and the weighted sum scores.
 }
 \note{
 The \code{mads} object contains all the information you need to 
 make any desired plots. Check \code{\link{mads-class}} or the vignette \emph{Multivariate 
 Amputation using Ampute} to understand the contents of class object \code{mads}.
 }
-\author{
-Rianne Schouten, 2016
-}
 \seealso{
 \code{\link{ampute}}, \code{\link{bwplot}}, \code{\link{Lattice}} for 
 an overview of the package, \code{\link{mads-class}}
 }
-
+\author{
+Rianne Schouten, 2016
+}

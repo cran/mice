@@ -15,7 +15,7 @@ mice.impute.passive(data, func)
 The result of applying \code{formula}
 }
 \description{
-Derive a new variable based on the imputed data
+Calculate new variable during imputation
 }
 \details{
 Passive imputation is a special internal imputation function.  Using this
@@ -24,11 +24,8 @@ sampling algorithm, a function on the imputed data.  This is useful, for
 example, to compute a cubic version of a variable, a transformation like
 \code{Q = W/H^2} based on two variables, or a mean variable like
 \code{(x_1+x_2+x_3)/3}. The so derived variables might be used in other
-places in the imputation model.  The function allows to dynamically derive
+places in the imputation model. The function allows to dynamically derive
 virtually any function of the imputed data at virtually any time.
-}
-\author{
-Stef van Buuren, Karin Groothuis-Oudshoorn, 2000
 }
 \references{
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
@@ -39,5 +36,7 @@ Statistical Software}, \bold{45}(3), 1-67.
 \seealso{
 \code{\link{mice}}
 }
+\author{
+Stef van Buuren, Karin Groothuis-Oudshoorn, 2000
+}
 \keyword{datagen}
-

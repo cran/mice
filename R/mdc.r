@@ -39,7 +39,7 @@
 #'\code{\link[mice:xyplot]{xyplot.mids}}, \code{\link[lattice:xyplot]{xyplot}},
 #'\code{\link[lattice:trellis.par.set]{trellis.par.set}}
 #'@references Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
-#'Visualization with R}, Springer.  \url{http://lmdvr.r-forge.r-project.org/}
+#'Visualization with R}, Springer.
 #'@keywords hplot
 #'@examples
 #'
@@ -65,7 +65,7 @@ mdc <- function(r = "observed", s = "symbol",
             cli <- hcl(0, 100, 40)
             clc <- "black"
         }
-    } else if (transparent == FALSE) {
+    } else if (!transparent) {
         cso <- hcl(240, 100, 40)
         csi <- hcl(0, 100, 40)
         csc <- "black"

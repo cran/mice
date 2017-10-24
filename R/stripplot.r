@@ -113,22 +113,19 @@
 #'
 #'@author Stef van Buuren
 #'@seealso \code{\link{mice}}, \code{\link{xyplot}}, \code{\link{densityplot}},
-#'\code{\link{bwplot}}, \code{\link{Lattice}} for an overview of the
+#'\code{\link{bwplot}}, \code{\link{lattice}} for an overview of the
 #'package, as well as \code{\link[lattice:stripplot]{stripplot}},
 #'\code{\link[lattice:panel.stripplot]{panel.stripplot}},
 #'\code{\link[lattice:print.trellis]{print.trellis}},
 #'\code{\link[lattice:trellis.par.set]{trellis.par.set}}
 #'@references Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
-#'Visualization with R}, Springer.  \url{http://lmdvr.r-forge.r-project.org/}
+#'Visualization with R}, Springer.
 #'
 #'van Buuren S and Groothuis-Oudshoorn K (2011). \code{mice}: Multivariate
 #'Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
 #'Software}, \bold{45}(3), 1-67. \url{http://www.jstatsoft.org/v45/i03/}
 #'@keywords hplot
-#'@importFrom lattice stripplot
 #'@examples
-#'require(lattice)
-#'
 #'imp <- mice(boys, maxit=1)
 #'
 #'### stripplot, all numerical variables
@@ -214,14 +211,14 @@ stripplot.mids <- function(x,
                  horizontal = horizontal)
     
     ## create formula if not given (in call$data !)
-    vnames <- names(cd)[-(1:2)]
-    allfactors <- unlist(lapply(cd,is.factor))[-(1:2)]
+    vnames <- names(cd)[-seq_len(2)]
+    allfactors <- unlist(lapply(cd,is.factor))[-seq_len(2)]
     if (missing(data)) {
         vnames <- vnames[!allfactors]
-        formula <- as.formula(paste(paste(vnames,collapse="+",sep=""),"~.imp",sep=""))
+        formula <- as.formula(paste0(paste0(vnames,collapse="+"),"~.imp"))
     } else {
         ## pad abbreviated formula
-        abbrev <- length(grep("~", call$data))==0
+        abbrev <- ! any(grepl("~", call$data))
         if (abbrev) {
             if (length(call$data)>1) stop("Cannot pad extended formula.")
             else formula <- as.formula(paste(call$data,"~.imp",sep=""))
@@ -240,7 +237,7 @@ stripplot.mids <- function(x,
     
     ## calculate selection vector gp
     nona <- is.null(call$na.groups)
-    if (!is.null(call$groups) & nona) gp <- call$groups
+    if (!is.null(call$groups) && nona) gp <- call$groups
     else {
         if (nona) {
             na.df <- r[, ynames, drop=FALSE]
@@ -251,7 +248,7 @@ stripplot.mids <- function(x,
     }
     
     ## change axis defaults of extended formula interface
-    if (is.null(call$xlab) & !is.na(match(".imp",xnames))) {
+    if (is.null(call$xlab) && !is.na(match(".imp",xnames))) {
         dots$xlab <- ""
         if (length(xnames)==1) dots$xlab <- "Imputation number"
     }

@@ -114,21 +114,19 @@
 #'
 #'@author Stef van Buuren
 #'@seealso \code{\link{mice}}, \code{\link{xyplot}}, \code{\link{densityplot}},
-#'\code{\link{stripplot}}, \code{\link{Lattice}} for an overview of the
+#'\code{\link{stripplot}}, \code{\link{lattice}} for an overview of the
 #'package, as well as \code{\link[lattice:bwplot]{bwplot}},
 #'\code{\link[lattice:panel.bwplot]{panel.bwplot}},
 #'\code{\link[lattice:print.trellis]{print.trellis}},
 #'\code{\link[lattice:trellis.par.set]{trellis.par.set}}
 #'@references Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
-#'Visualization with R}, Springer.  \url{http://lmdvr.r-forge.r-project.org/}
+#'Visualization with R}, Springer.
 #'
 #'van Buuren S and Groothuis-Oudshoorn K (2011). \code{mice}: Multivariate
 #'Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
 #'Software}, \bold{45}(3), 1-67. \url{http://www.jstatsoft.org/v45/i03/}
 #'@keywords hplot
-#'@importFrom lattice bwplot
 #'@examples
-#'require(lattice)
 #'
 #'imp <- mice(boys, maxit=1)
 #'
@@ -189,8 +187,8 @@ bwplot.mids <- function(x,
                  as.table = as.table)
     
     ## create formula if not given (in call$data !)
-    vnames <- names(cd)[-(1:2)]
-    allfactors <- unlist(lapply(cd,is.factor))[-(1:2)]
+    vnames <- names(cd)[-seq_len(2)]
+    allfactors <- unlist(lapply(cd,is.factor))[-seq_len(2)]
     if (missing(data)) {
         vnames <- vnames[!allfactors]
         formula <- as.formula(paste(paste(vnames,collapse="+",sep=""),"~.imp",sep=""))
@@ -220,13 +218,13 @@ bwplot.mids <- function(x,
     if (!is.null(call$groups) & nona) gp <- call$groups
     else {
         if (nona) {
-            for (i in 1:length(ynames)) {
+            for (i in seq_along(ynames)) {
                 yvar <- ynames[i]
                 select <- cd$.imp!=0 & !r[,yvar]
                 cd[select, yvar] <- NA
             }
         } else {
-            for (i in 1:length(ynames)) {
+            for (i in seq_along(ynames)) {
                 yvar <- ynames[i]
                 select <- cd$.imp!=0 & !nagp
                 cd[select, yvar] <- NA
@@ -245,7 +243,7 @@ bwplot.mids <- function(x,
     }
     
     ## change axis defaults of extended formula interface
-    if (is.null(call$xlab) & !is.na(match(".imp",xnames))) {
+    if (is.null(call$xlab) && !is.na(match(".imp",xnames))) {
         dots$xlab <- ""
         if (length(xnames)==1) dots$xlab <- "Imputation number"
     }

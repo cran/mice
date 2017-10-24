@@ -5,14 +5,13 @@
 #'Box-and-whisker plot of amputed and non-amputed data
 #'
 #'Plotting method to investigate the result of function \code{\link{ampute}}. 
-#'Based on \code{\link{lattice}}. \code{bwplot} produces box-and-whisker plots of 
 #'the relation between the data variables and the amputed data. The function does 
 #'not show which data is amputed. It does show how the amputed values are related 
 #'to the variable values. 
 #'
 #'@param x A \code{mads} (\code{\link{mads-class}}) object, typically created by 
 #'\code{\link{ampute}}.
-#'@param yvar A string or vector of variable names that needs to be plotted. As 
+#'@param data A string or vector of variable names that needs to be plotted. As 
 #'a default, all variables will be plotted. 
 #'@param which.pat A scalar or vector indicating which patterns need to be plotted. 
 #'As a default, all patterns are plotted. 
@@ -26,6 +25,7 @@
 #'boxplots of six variables need to be placed on 3 rows and 2 columns. Default
 #'is 1 row and an amount of columns equal to #variables. Note that for more than 
 #'6 variables, multiple plots will be created automatically.
+#'@param \dots Not used, but for consistency with generic
 #'@return A list containing the box-and-whisker plots. Note that a new pattern 
 #'will always be shown in a new plot. 
 #'@note The \code{mads} object contains all the information you need to 
@@ -35,11 +35,13 @@
 #'@seealso \code{\link{ampute}}, \code{\link{bwplot}}, \code{\link{Lattice}} for 
 #'an overview of the package, \code{\link{mads-class}}
 #'@export
-bwplot.mads <- function(x, yvar = NULL, which.pat = NULL, standardized = TRUE,
-                        descriptives = TRUE, layout = NULL) {
+bwplot.mads <- function(x, data, which.pat = NULL, standardized = TRUE,
+                        descriptives = TRUE, layout = NULL, ...) {
   if (!is.mads(x)) {
     stop("Object is not of class mads")
   }
+  if (missing(data)) data <- NULL
+  yvar <- data
   if (is.null(yvar)) {
     varlist <- colnames(x$amp)
   } else {
@@ -47,12 +49,11 @@ bwplot.mads <- function(x, yvar = NULL, which.pat = NULL, standardized = TRUE,
   }
   if (is.null(which.pat)) {
     pat <- nrow(x$patterns)
-    which.pat <- c(1:pat)
+    which.pat <- seq_len(pat)
   } else {
     pat <- length(which.pat)
   }
-  formula <- as.formula(paste(paste(varlist, collapse = "+", sep = ""), 
-                              "~ factor(.amp)", sep = ""))
+  formula <- as.formula(paste0(paste0(varlist, collapse = "+"), "~ factor(.amp)"))
   data <- NULL
   if (standardized) {
     dat <- data.frame(scale(x$data))
@@ -66,7 +67,7 @@ bwplot.mads <- function(x, yvar = NULL, which.pat = NULL, standardized = TRUE,
       layout <- c(length(varlist), 1)
     }
   }
-  for (i in 1:pat){
+  for (i in seq_len(pat)){
     can <- which(x$cand == which.pat[i])
     mis <- matrix(NA, nrow = length(can), ncol = 2)
     nc <- which(x$patterns[which.pat[i], ] == 0)
@@ -77,46 +78,45 @@ bwplot.mads <- function(x, yvar = NULL, which.pat = NULL, standardized = TRUE,
       mis[is.na(x$amp[can, nc]), 1] <- "Amp"
       mis[is.na(mis[, 1]), 1] <- "Non-Amp"
     }
-    mis[, 2] <- rep(which.pat[i], length(can))
+    mis[, 2] <- rep.int(which.pat[i], length(can))
     data <- rbind(data, cbind(mis, dat[can, ]))
   }
   colnames(data) <- c(".amp", ".pat", varlist)
   p <- list()
   vec1 <- c()
   vec3 <- c()
-  for (i in 1:length(which.pat)) {
-    vec1[((i*2)-1):(i*2)] <- rep(paste(which.pat[i]), 2)
+  for (i in seq_along(which.pat)) {
+    vec1[((i*2)-1):(i*2)] <- rep.int(paste(which.pat[i]), 2)
   }
-  for (j in 1:length(varlist)) {
-    vec3[j] <- paste("", varlist[j])
-  }
+
+  vec3 <- paste("", varlist)
   var <- length(varlist)
   if (descriptives) {
     desc <- array(NA, dim = c(2 * length(which.pat), 4, var),
                   dimnames = list(Pattern = vec1, 
                                   Descriptives = c("Amp", "Mean", "Var", "N"), 
                                   Variable = vec3))
-    desc[, 1, ] <- rep(rep(c(1, 0), length(which.pat)), var)
-    for (i in 1:length(which.pat)) {
+    desc[, 1, ] <- rep.int(rep.int(c(1, 0), length(which.pat)), var)
+    for (i in seq_along(which.pat)) {
       wp <- which.pat[i]
       desc[(i*2) - 1, 2, ] <- 
-        round(sapply(varlist, function(x)
-          mean(data[data$.pat == wp & data$.amp == "Amp", x])), 5)
+        round(vapply(varlist, function(x)
+          mean(data[data$.pat == wp & data$.amp == "Amp", x]), numeric(1)), 5)
       desc[(i*2), 2, ] <- 
-        round(sapply(varlist, function(x)
-          mean(data[data$.pat == wp & data$.amp == "Non-Amp", x])), 5)
+        round(vapply(varlist, function(x)
+          mean(data[data$.pat == wp & data$.amp == "Non-Amp", x]), numeric(1)), 5)
       desc[(i*2) - 1, 3, ] <- 
-        round(sapply(varlist, function(x)
-          var(data[data$.pat == wp & data$.amp == "Amp", x])), 5)
+        round(vapply(varlist, function(x)
+          var(data[data$.pat == wp & data$.amp == "Amp", x]), numeric(1)), 5)
       desc[(i*2), 3, ] <- 
-        round(sapply(varlist, function(x)
-          var(data[data$.pat == wp & data$.amp == "Non-Amp", x])), 5)
+        round(vapply(varlist, function(x)
+          var(data[data$.pat == wp & data$.amp == "Non-Amp", x]), numeric(1)), 5)
       desc[(i*2) - 1, 4, ] <- 
-        sapply(varlist, function(x)
-          length(data[data$.pat == wp & data$.amp == "Amp", x]))
+        vapply(varlist, function(x)
+          length(data[data$.pat == wp & data$.amp == "Amp", x]), numeric(1))
       desc[(i*2), 4, ] <- 
-        sapply(varlist, function(x)
-          length(data[data$.pat == wp & data$.amp == "Non-Amp", x]))
+        vapply(varlist, function(x)
+          length(data[data$.pat == wp & data$.amp == "Non-Amp", x]), numeric(1))
     }
     p[["Descriptives"]] <- desc
   }
@@ -131,7 +131,7 @@ bwplot.mads <- function(x, yvar = NULL, which.pat = NULL, standardized = TRUE,
                 plot.line = list(col = "black"), 
                 strip.background = list(col = "grey95"))
 
-  for (i in 1:pat) {
+  for (i in seq_len(pat)) {
     p[[paste("Boxplot pattern", which.pat[i])]] <- 
       bwplot(x = formula, data = data[data$.pat == which.pat[i], ],
              multiple = TRUE, outer = TRUE, layout = layout, 

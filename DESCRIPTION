@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 2.30
+Version: 2.46.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2017-02-18
+Date: 2017-10-23
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -20,34 +20,37 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     person("Philipp","Gaffert", role = "ctb",
     email = "philipp.gaffert@gfk.com"),
     person("Florian","Meinfelder", role = "ctb",
-    email = "florian.meinfelder@uni-bamberg.de"))
+    email = "florian.meinfelder@uni-bamberg.de"),
+    person("Bernie","Gray", role = "ctb",
+    email = "bfgray3@gmail.com"))
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
-Depends: methods, R (>= 2.10.0)
-Imports: lattice, grDevices, graphics, MASS, nnet, rpart, splines,
-        stats, survival, utils, Rcpp
+Depends: methods, R (>= 2.10.0), lattice
+Imports: grDevices, graphics, MASS, nnet, rpart, splines, stats,
+        survival, utils, Rcpp
 Suggests: AGD, CALIBERrfimpute, gamlss, lme4, mitools, nlme, pan,
-        randomForest, Zelig, BSDA, knitr, rmarkdown
+        randomForest, Zelig, BSDA, knitr, rmarkdown, testthat
 LinkingTo: Rcpp
 Description: Multiple imputation using Fully Conditional Specification (FCS)
-    implemented by the MICE algorithm as described in Van Buuren and 
-    Groothuis-Oudshoorn (2011) <doi:10.18637/jss.v045.i03>. Each variable has 
-    its own imputation model. Built-in imputation models are provided for 
-    continuous data (predictive mean matching, normal), binary data (logistic 
-    regression), unordered categorical data (polytomous logistic regression) 
-    and ordered categorical data (proportional odds). MICE can also impute 
-    continuous two-level data (normal model, pan, second-level variables). 
-    Passive imputation can be used to maintain consistency between variables. 
-    Various diagnostic plots are available to inspect the quality of the 
+    implemented by the MICE algorithm as described in Van Buuren and
+    Groothuis-Oudshoorn (2011) <doi:10.18637/jss.v045.i03>. Each variable has
+    its own imputation model. Built-in imputation models are provided for
+    continuous data (predictive mean matching, normal), binary data (logistic
+    regression), unordered categorical data (polytomous logistic regression)
+    and ordered categorical data (proportional odds). MICE can also impute
+    continuous two-level data (normal model, pan, second-level variables).
+    Passive imputation can be used to maintain consistency between variables.
+    Various diagnostic plots are available to inspect the quality of the
     imputations.
 License: GPL-2 | GPL-3
 LazyLoad: yes
 LazyData: yes
 VignetteBuilder: knitr
-URL: http://www.stefvanbuuren.nl , http://www.multiple-imputation.com
+URL: http://stefvanbuuren.github.io/mice/ , http://www.stefvanbuuren.nl
+        , http://www.multiple-imputation.com
 BugReports: https://github.com/stefvanbuuren/mice/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 NeedsCompilation: yes
-Packaged: 2017-02-18 20:42:30 UTC; buurensv
+Packaged: 2017-10-23 20:52:53 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Alexander Robitzsch [ctb],
@@ -56,6 +59,7 @@ Author: Stef van Buuren [aut, cre],
   Shahab Jolani [ctb],
   Rianne Schouten [ctb],
   Philipp Gaffert [ctb],
-  Florian Meinfelder [ctb]
+  Florian Meinfelder [ctb],
+  Bernie Gray [ctb]
 Repository: CRAN
-Date/Publication: 2017-02-18 22:39:19
+Date/Publication: 2017-10-24 07:29:23 UTC

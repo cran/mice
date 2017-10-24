@@ -11,6 +11,61 @@ Questions and suggestions about MICE can be directed to
 
 CHANGELOG MICE
 ~~~~~~~~~~~~~~
+V2.46.0  23oct2017 SvB
+UPDATE   Switch to 3-digit versioning
+
+V2.46    22oct2017 SvB
+FIXED    Allow for capitals in imputation methods
+
+V2.45    21oct2017 SvB
+UPDATE   Reorganized vignettes to land on GitHUB pages
+
+V2.44    18oct2017 SvB
+UPDATE   Code changes for robustness, style and efficiency (Bernie Gray)
+
+V2.43    20jul2017 SvB
+UPDATE   Updates to ampute function and vignettes (Rianne Schouten)
+
+V2.42    11jul2017 SvB
+UPDATE   Rename mice.impute.2l.sys to mice.impute.2l.lmer
+
+V2.41    10jul2017 SvB
+ADDED    New feature: `where`argument to mice
+ADDED    New `wy` argument to imputation functions
+ADDED    New mice.impute.2l.sys(), author Shahab Jolani
+UPDATE   Many simplifications and code enhancements
+FIXED    Broken cbind() function
+FIXED    Bug that made the pad element disappear from mids object
+
+V2.40    07jul2017 SvB
+FIXED    Integration with lattice package
+
+V2.39    27jun2017 SvB
+UPDATE   Colors in xyplot.mads
+
+V2.38    22may2017 SvB
+ADDED    Support for factors in mice.impute.2lonly.pmm()
+
+V2.37    22may2017 SvB
+UPDATE   More robust version of as.mids()
+
+V2.36    15may2017 SvB
+UPDATE   Substantial update of ampute() by Rianne Schouten
+
+V2.35    03may2017 SvB
+FIXED    Fix timestamp problem by rebuilding vignette using R 3.4.0.
+
+V2.34    24apr2017 SvB
+UPDATE   Update to roxygen 6.0.1
+
+V2.33    11apr2017 SvB
+CHANGED  Stylistic changes to mice function (thanks Ben Ogorek)
+CHANGED  calls to cbind.mids() replaced by calls to cbind()
+
+V2.31    23feb2017 SvB
+ADDED    link to miceVignettes on github (thanks Gerko Vink)
+ADDED    package documentation
+
 V2.30    04feb2017 SvB
 ADDED    README for GitHub
 ADDED    new ampute functions and vignette (thanks Rianne Schouten)

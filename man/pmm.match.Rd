@@ -2,7 +2,7 @@
 % Please edit documentation in R/mice.impute.pmm.r
 \name{.pmm.match}
 \alias{.pmm.match}
-\title{Finds an imputed value from matches in the predictive metric}
+\title{Finds an imputed value from matches in the predictive metric (deprecated)}
 \usage{
 .pmm.match(z, yhat = yhat, y = y, donors = 5, ...)
 }
@@ -32,13 +32,10 @@ samples one of the donors, and returns the observed value of the
 match.
 }
 \details{
-Not used after \code{mice 2.21}. The \code{mice.impute.pmm()} function 
-now calls the much faster \code{C} function \code{matcher} instead of 
-\code{.pmm.match()}. Use \code{mice(..., version = "2.21")} to call
-\code{.pmm.match()}
-}
-\author{
-Stef van Buuren
+This function is included for backward compatibility. It was 
+used up to \code{mice 2.21}. The current \code{mice.impute.pmm()} 
+function calls the faster \code{C} function \code{matcher} instead of 
+\code{.pmm.match()}.
 }
 \references{
 Schenker N \& Taylor JMG (1996) Partially parametric techniques 
@@ -47,4 +44,6 @@ for multiple imputation. \emph{Computational Statistics and Data Analysis}, 22, 
 Little RJA (1988) Missing-data adjustments in large surveys (with discussion). 
 \emph{Journal of Business Economics and Statistics}, 6, 287-301.
 }
-
+\author{
+Stef van Buuren
+}

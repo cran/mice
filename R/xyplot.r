@@ -104,22 +104,19 @@
 #'
 #'@author Stef van Buuren
 #'@seealso \code{\link{mice}}, \code{\link{stripplot}}, \code{\link{densityplot}},
-#'\code{\link{bwplot}}, \code{\link{Lattice}} for an overview of the
+#'\code{\link{bwplot}}, \code{\link{lattice}} for an overview of the
 #'package, as well as \code{\link[lattice:xyplot]{xyplot}},
 #'\code{\link[lattice:panel.xyplot]{panel.xyplot}},
 #'\code{\link[lattice:print.trellis]{print.trellis}},
 #'\code{\link[lattice:trellis.par.set]{trellis.par.set}}
 #'@references Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
-#'Visualization with R}, Springer.  \url{http://lmdvr.r-forge.r-project.org/}
+#'Visualization with R}, Springer.
 #'
 #'van Buuren S and Groothuis-Oudshoorn K (2011). \code{mice}: Multivariate
 #'Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
 #'Software}, \bold{45}(3), 1-67. \url{http://www.jstatsoft.org/v45/i03/}
 #'@keywords hplot
-#'@importFrom lattice xyplot
 #'@examples
-#'require(lattice)
-#'
 #'imp <- mice(boys, maxit=1)
 #'
 #'### xyplot: scatterplot by imputation number
@@ -185,13 +182,13 @@ xyplot.mids <- function(x,
     
     ## calculate selection vector gp
     nona <- is.null(call$na.groups)
-    if (!is.null(call$groups) & nona) gp <- call$groups
+    if (!is.null(call$groups) && nona) gp <- call$groups
     else {
         if (nona) {
             na.df <- r[, ynames, drop=FALSE]
-            gp <- unlist(lapply(na.df, rep, x$m+1))
+            gp <- unlist(lapply(na.df, rep.int, x$m+1))
         } else {
-            gp <- rep(nagp, length(ynames)*(x$m+1))
+            gp <- rep.int(nagp, length(ynames)*(x$m+1))
         }
     }
     

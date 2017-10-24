@@ -65,17 +65,16 @@ mdc(1:6)
 mdc(c('obs','mis'), 'lin')
 
 }
-\author{
-Stef van Buuren, sept 2012.
-}
 \references{
 Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
-Visualization with R}, Springer.  \url{http://lmdvr.r-forge.r-project.org/}
+Visualization with R}, Springer.
 }
 \seealso{
 \code{\link{hcl}}, \code{\link{rgb}},
 \code{\link[mice:xyplot]{xyplot.mids}}, \code{\link[lattice:xyplot]{xyplot}},
 \code{\link[lattice:trellis.par.set]{trellis.par.set}}
 }
+\author{
+Stef van Buuren, sept 2012.
+}
 \keyword{hplot}
-
