@@ -72,7 +72,6 @@ norm.draw <- function(y, ry, x, rank.adjust = TRUE, ...)
 .norm.draw <- function (y, ry, x, rank.adjust = TRUE, ...){
   p <- estimice(x[ry, , drop = FALSE], y[ry], ...)
   sigma.star <- sqrt(sum((p$r)^2)/rchisq(1, p$df))
-  #beta.star <- p$c + (t(chol(sym(p$v), pivot = TRUE)) %*% rnorm(ncol(x))) * sigma.star
   beta.star <- p$c + (t(chol(sym(p$v))) %*% rnorm(ncol(x))) * sigma.star
   parm <- list(p$c, beta.star, sigma.star, p$ls.meth)
   names(parm) <- c("coef", "beta", "sigma", "estimation")
@@ -126,7 +125,7 @@ estimice <- function(x, y, ls.meth = "qr", ridge = 1e-05, ...){
       v <- solve(xtx + diag(pen)) #add ridge penalty to allow inverse of v
       mess <- "* A ridge penalty had to be used to calculate the inverse crossproduct of the predictor matrix. Please remove duplicate variables or unique respondent names/numbers from the imputation model. It may be advisable to check the fraction of missing information (fmi) to evaluate the validity of the imputation model"
       updateLog(out = mess, frame = 6)
-      if (get("printFlag", parent.frame(4)))
+      if (get("printFlag", parent.frame(search.parents("printFlag"))))
         cat("*") #indicator of added ridge penalty in the printed iteration history
     }
     return(list(c=t(c), r=t(r), v=v, df=df, ls.meth=ls.meth))
@@ -153,9 +152,17 @@ estimice <- function(x, y, ls.meth = "qr", ridge = 1e-05, ...){
       v <- solve(xtx + diag(pen)) #add ridge penalty to allow inverse of v
       mess <- "* A ridge penalty had to be used to calculate the inverse crossproduct of the predictor matrix. Please remove duplicate variables or unique respondent names/numbers from the imputation model. It may be advisable to check the fraction of missing information (fmi) to evaluate the validity of the imputation model"
       updateLog(out = mess, frame = 6)
-      if (get("printFlag", parent.frame(4)))
+      if (get("printFlag", parent.frame(search.parents("printFlag"))))
         cat("*") #indicator of added ridge penalty in the printed iteration history
     }
     return(list(c=c, r=r, v=v, df=df, ls.meth=ls.meth))
   }
+}
+
+search.parents <- function(name, start = 4){
+  while(inherits(try(get("printFlag", parent.frame(start)), silent = TRUE), 
+                 "try-error")){
+    start = start + 1
+  }
+  start
 }

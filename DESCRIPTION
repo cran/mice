@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.0.0
+Version: 3.1.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2018-05-24
+Date: 2018-08-19
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -25,8 +25,8 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "bfgray3@gmail.com"))
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: methods, R (>= 2.10.0), lattice
-Imports: broom, dplyr, grDevices, graphics, MASS, mitml, nnet, Rcpp,
-        rlang, rpart, splines, stats, survival, utils
+Imports: broom, dplyr, grDevices, graphics, MASS, mitml, nnet,
+        parallel, Rcpp, rlang, rpart, splines, stats, survival, utils
 Suggests: AGD, CALIBERrfimpute, DPpackage, gamlss, lme4, mitools, nlme,
         pan, randomForest, Zelig, BSDA, knitr, rmarkdown, testthat,
         HSAUR3, micemd, miceadds, tidyr
@@ -45,13 +45,12 @@ Description: Multiple imputation using Fully Conditional Specification (FCS)
 License: GPL-2 | GPL-3
 LazyLoad: yes
 LazyData: yes
-VignetteBuilder: knitr
 URL: http://stefvanbuuren.github.io/mice/ , http://www.stefvanbuuren.nl
         , http://www.multiple-imputation.com
 BugReports: https://github.com/stefvanbuuren/mice/issues
 RoxygenNote: 6.0.1
 NeedsCompilation: yes
-Packaged: 2018-05-24 08:17:16 UTC; buurensv
+Packaged: 2018-06-19 19:58:37 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Alexander Robitzsch [ctb],
@@ -63,4 +62,4 @@ Author: Stef van Buuren [aut, cre],
   Florian Meinfelder [ctb],
   Bernie Gray [ctb]
 Repository: CRAN
-Date/Publication: 2018-05-25 22:43:49 UTC
+Date/Publication: 2018-06-20 05:27:54 UTC

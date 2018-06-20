@@ -54,7 +54,7 @@ samples, variability of the imputed data is therefore underestimated.
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
 Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 Statistical Software}, \bold{45}(3), 1-67.
-\url{http://www.jstatsoft.org/v45/i03/}
+\url{https://www.jstatsoft.org/v45/i03/}
 
 Brand, J.P.L. (1999). Development, Implementation and Evaluation of Multiple
 Imputation Strategies for the Statistical Analysis of Incomplete Data Sets.
@@ -80,6 +80,6 @@ Other univariate imputation functions: \code{\link{mice.impute.cart}},
   \code{\link{mice.impute.ri}}
 }
 \author{
-Stef van Buuren, Karin Groothuis-Oudshoorn, 2000
+Gerko Vink, Stef van Buuren, Karin Groothuis-Oudshoorn, 2018
 }
 \keyword{datagen}

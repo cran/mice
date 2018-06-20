@@ -5,7 +5,7 @@
 #'Display missing-data patterns.
 #'
 #'This function is useful for investigating any structure of missing
-#'observation in the data. In specific case, the missing data pattern could be
+#'observations in the data. In specific case, the missing data pattern could be
 #'(nearly) monotone. Monotonicity can be used to simplify the imputation model.
 #'See Schafer (1997) for details. Also, the missing pattern could suggest which
 #'variables could potentially be useful for imputation of missing entries.
@@ -25,7 +25,7 @@
 #'
 #'Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}: Multivariate
 #'Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
-#'Software}, \bold{45}(3), 1-67. \url{http://www.jstatsoft.org/v45/i03/}
+#'Software}, \bold{45}(3), 1-67. \url{https://www.jstatsoft.org/v45/i03/}
 #'@keywords univar
 #'@examples
 #'
@@ -60,15 +60,21 @@ md.pattern <- function(x, plot = TRUE){
     mpat <- t(as.matrix(mpat, byrow = TRUE))
     rownames(mpat) <- table(pat)
   } else {
+    if(is.null(dim(mpat))){
+      mpat <- t(as.matrix(mpat))
+    }
     rownames(mpat) <- table(pat)
   }
   r <- cbind(abs(mpat - 1), rowSums(mpat))
   r <- rbind(r, c(nmis[order(nmis)], sum(nmis)))
   if (plot){ #add plot
     plot.new()
-    if (all(!is.na(x))){
+    if (is.null(dim(sortR[!duplicated(sortR), ]))){
       R <- t(as.matrix(r[1:nrow(r)-1, 1:ncol(r)-1]))
     } else {
+      if(is.null(dim(R))){
+        R <- t(as.matrix(R))
+      }
       R <- r[1:nrow(r)-1, 1:ncol(r)-1]
     }
     par(mar=rep(0, 4))

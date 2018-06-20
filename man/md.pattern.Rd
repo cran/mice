@@ -24,7 +24,7 @@ Display missing-data patterns.
 }
 \details{
 This function is useful for investigating any structure of missing
-observation in the data. In specific case, the missing data pattern could be
+observations in the data. In specific case, the missing data pattern could be
 (nearly) monotone. Monotonicity can be used to simplify the imputation model.
 See Schafer (1997) for details. Also, the missing pattern could suggest which
 variables could potentially be useful for imputation of missing entries.
@@ -49,7 +49,7 @@ London: Chapman&Hall.
 
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}: Multivariate
 Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
-Software}, \bold{45}(3), 1-67. \url{http://www.jstatsoft.org/v45/i03/}
+Software}, \bold{45}(3), 1-67. \url{https://www.jstatsoft.org/v45/i03/}
 }
 \author{
 Gerko Vink, 2018, based on an earlier version of the same function by
