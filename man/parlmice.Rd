@@ -4,8 +4,8 @@
 \alias{parlmice}
 \title{Wrapper function that runs MICE in parallel}
 \usage{
-parlmice(data, m = 5, n.core = NULL, n.imp.core = NULL,
-  cluster.seed = NA, seed = NA, cl.type = "PSOCK", ...)
+parlmice(data, m = 5, seed = NA, cluster.seed = NA, n.core = NULL,
+  n.imp.core = NULL, cl.type = "PSOCK", ...)
 }
 \arguments{
 \item{data}{A data frame or matrix containing the incomplete data. Similar to 
@@ -13,18 +13,18 @@ the first argument of \code{\link{mice}}.}
 
 \item{m}{The number of desired imputated datasets. By default $m=5$ as with \code{mice}}
 
-\item{n.core}{A scalar indicating the number of cores that should be used.}
-
-\item{n.imp.core}{A scalar indicating the number of imputations per core.}
+\item{seed}{A scalar to be used as the seed value for the mice algorithm within 
+each parallel stream. Please note that the imputations will be the same for all 
+streams and, hence, this should be used if and only if \code{n.core = 1} and 
+if it is desired to obtain the same output as under \code{mice}.}
 
 \item{cluster.seed}{A scalar to be used as the seed value. It is recommended to put the 
 seed value here and not outside this function, as otherwise the parallel processes
 will be performed with separate, random seeds.}
 
-\item{seed}{A scalar to be used as the seed value for the mice algorithm within 
-each parallel stream. Please note that the imputations will be the same for all 
-streams and, hence, this should be used if and only if \code{n.core = 1} and 
-if it is desired to obtain the same output as under \code{mice}.}
+\item{n.core}{A scalar indicating the number of cores that should be used.}
+
+\item{n.imp.core}{A scalar indicating the number of imputations per core.}
 
 \item{cl.type}{The cluster type. Default value is \code{"PSOCK"}. Posix machines (linux, Mac)
 generally benefit from much faster cluster computation if \code{type} is set to \code{type = "FORK"}.}
@@ -63,7 +63,7 @@ We refer to the manual of \code{\link{parallel}} for an explanation on this matt
 }
 \examples{
 # 150 imputations in dataset nhanes, performed by 3 cores  
-\donttest{
+\dontrun{
 imp1 <- parlmice(data = nhanes, n.core = 3, n.imp.core = 50)
 # Making use of arguments in mice. 
 imp2 <- parlmice(data = nhanes, method = "norm.nob", m = 100)
