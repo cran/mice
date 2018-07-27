@@ -1,8 +1,8 @@
-dd18a9a8631852e677877b7e961b1e43 *DESCRIPTION
+0099c6f2ce6c6e98824eda92165403bc *DESCRIPTION
 2a53592a70210d983ef220d79f2e1275 *NAMESPACE
-4e653fadcbcedef1825145f26cd2b0c5 *NEWS.md
+b54bb86bbb22df973c2d66c24ebc7c31 *NEWS.md
 0b0e2dd64d90c9f2c4c59583d0f59e31 *R/Ampute.R
-deb45eb2bfb2a8d2a41aa034d8025fba *R/D1.R
+0bed91adf0e5aaa40209c73e3a1d8165 *R/D1.R
 182b7983c6e837bd4b1d9be6831e3642 *R/D2.R
 846e842f33c865af1704c45fd0ebe68b *R/D3.R
 0db1ab7d9c1018bda661184c067078a1 *R/Mads.R
@@ -57,7 +57,7 @@ a66d36ab5d80744e3ccfe1b477122f6e *R/mdc.R
 e2b0e5983945e09f88b4667738f56fc6 *R/mice.R
 09a4bf21ef16f24dd5c4c6d10094d634 *R/mice.impute.2l.bin.R
 bc6e89e3aa8c914b35b27d75006cd7c0 *R/mice.impute.2l.lmer.R
-4eee6f839cf63d0e7594a6777b83d6f0 *R/mice.impute.2l.norm.R
+6f9b15ae83a0a7109b84364b1706f84b *R/mice.impute.2l.norm.R
 ca3f37a9ad53125dc56d8c8c5b1739e8 *R/mice.impute.2l.pan.R
 57aa64518c677e3c9562857b615a36f4 *R/mice.impute.2lonly.mean.R
 dd84c7d73f362d09131763526ed25ac4 *R/mice.impute.2lonly.norm.R
@@ -109,7 +109,7 @@ c1f81bc8b32a3467eb47f58a3247de64 *R/predictorMatrix.R
 7026a05a8576940220b08ae16571b11e *R/quickpred.R
 914712f3aa77f3c254268dccfa02911b *R/rbind.R
 1a9b8efd4bd6e1463429e9d1e54cb80d *R/rm.whitespace.R
-e235d3767f1ac8394d62d97201f219fa *R/sampler.R
+526839469ecc89ae76f594fd34988b0f *R/sampler.R
 04a9014216b4b0d492fb7ae3530f6c59 *R/selfreport.R
 32072143f5f0780137d5f9d56c6bb74c *R/squeeze.R
 8ef3374a61027339f953f1d1235442f6 *R/stripplot.R
@@ -292,8 +292,9 @@ b3f86c20b81b51f5162874977d38784d *src/Makevars
 2600faaaa79b957259714446a909a132 *src/RcppExports.cpp
 88d0e11d19f58d7504e1ac6ddf845ceb *src/match.cpp
 904497a5e128718077a01d78f3691302 *tests/testthat.R
-1b4771b6c88124eae884f8336d73a77a *tests/testthat/test-D1.R
-b4bf7f7a96c8882cd046470f5043f436 *tests/testthat/test-D3.R
+e9b0f42447141619aa5055e9b68a85cb *tests/testthat/Rplots.pdf
+f5ea8e446101f9ed0b9cdf0586ac24e2 *tests/testthat/test-D1.R
+9da7f02b36744f60c607f2d45f17f5bf *tests/testthat/test-D3.R
 6b7e4cbfd17cceb0e189f0d14941dfa9 *tests/testthat/test-ampute.R
 cced1c0a7df1fcde5a7b7008e66eb411 *tests/testthat/test-anova.R
 0bbe84083339e37767e43c9752eed80f *tests/testthat/test-as.mids.R
@@ -312,7 +313,7 @@ da4d503794f466201b140dabe1d8934b *tests/testthat/test-md.pattern.R
 fdf631b5a491d39e8831260e427db7de *tests/testthat/test-mice.R
 4453fbac37c34ddfe82d559b9cb70493 *tests/testthat/test-mice.impute.2l.bin.R
 044700d11a6e5e439919804265e9cb6c *tests/testthat/test-mice.impute.2l.lmer.R
-9134a86501c854c997a81b92984c3188 *tests/testthat/test-mice.impute.2l.norm.R
+ca30016911794d94173743240f4786de *tests/testthat/test-mice.impute.2l.norm.R
 5d9fef3640668d181217c584dd0af83a *tests/testthat/test-mice.impute.2lonly.mean.R
 ba32ac10b7d1b5b77879e2c0a0baf733 *tests/testthat/test-mice.impute.jomoImpute.R
 8b6c1519c7ba9747cc9905d925ea5e9d *tests/testthat/test-mice.impute.norm.R
@@ -321,7 +322,7 @@ c9e37d1ec4e10563b6433c56b217a986 *tests/testthat/test-mice.impute.panImpute.R
 ca833848f5fdb811c41e45a84e9140c6 *tests/testthat/test-mice.impute.polr.R
 509bc21a2b419d2a919f49146a86f434 *tests/testthat/test-mira.R
 8910bdb1e80aa69bd4466a3d79f6e23a *tests/testthat/test-parlmice.R
-ea2eb4d4b8a5e3142902940fc59c5496 *tests/testthat/test-pool.R
+1189ffec413d32bc11f212ca6b0b7784 *tests/testthat/test-pool.R
 b458d1064160f59b272ff8fae803b3d9 *tests/testthat/test-rbind.R
 5845885f931d382587d1a42a2476d85f *tests/testthat/test-remove.lindep.R
 40fd8f9ae4994fb2066570cb35dcf8ab *tests/testthat/test-update.design.R
