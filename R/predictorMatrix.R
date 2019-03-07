@@ -20,7 +20,7 @@ make.predictorMatrix <- function(data, blocks = make.blocks(data)) {
   predictorMatrix <- matrix(1, nrow = length(blocks), ncol = ncol(data))
   dimnames(predictorMatrix) <- list(names(blocks), colnames(data))
   for (i in row.names(predictorMatrix)) 
-    predictorMatrix[i, grep(i, colnames(predictorMatrix))] <- 0
+    predictorMatrix[i, colnames(predictorMatrix) %in% i] <- 0
   predictorMatrix
 }
 
@@ -47,7 +47,7 @@ check.predictorMatrix <- function(predictorMatrix,
         stop("Missing row/column names in predictorMatrix", call. = FALSE)
     }
     for (i in row.names(predictorMatrix))
-      predictorMatrix[i, grep(i, colnames(predictorMatrix))] <- 0
+      predictorMatrix[i, grep(i, colnames(predictorMatrix), fixed = TRUE)] <- 0
     return(predictorMatrix)
   }
   

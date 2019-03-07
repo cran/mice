@@ -3,6 +3,42 @@ title: "News"
 output: github_document
 ---
 
+# mice 3.3.6 
+
+* Add a hex sticker to the mice package. Designed by Jaden M. Walters.
+* Specify the R3.5.0 random generator in order to pass CRAN tests
+
+# mice 3.3.5 
+
+* Remove test-fix.coef.R from tests
+* Adds a rotate.names argument to md.pattern() (#154, #160)
+
+# mice 3.3.4 
+
+* Fix to solve the name-matching problem (#156, #149, #147)
+
+# mice 3.3.3
+
+* Fix that removes the pre-check for existence of `mice.impute.xxx()` so that `mice::mice()` works as expected (#55)
+
+# mice 3.3.2
+
+* Solves a bug that crashed `mids2spss()`, thanks Edgar Schoreit (#149)
+
+# mice 3.3.1
+
+* Solves a problem in the routing logic (#149) causing that passive 
+imputation was not done when no predictors were specified. No passive
+imputation correctly will ignore any the specification of 
+`predictorMatrix`.
+* Implements an alternative solution for #93 and #96. Instead of skipping 
+imputation of variables without predictors, `mice 3.3.1` will impute 
+those variables using the intercept only
+* Adds a routine contributed by Simon Grund that checks for deprecated 
+arguments #137
+* Improves the `nelsonaalen()` function for data where variables 
+`time` or `status` have already been defined (#140), thanks matthieu-faron
+
 # mice 3.3.0
 
 * Solves bug in passive imputation (#130). *Warning: This bug may 

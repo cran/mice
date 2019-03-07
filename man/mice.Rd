@@ -4,11 +4,10 @@
 \name{mice}
 \alias{mice}
 \alias{mice-package}
-\alias{mice}
 \title{\pkg{mice}: Multivariate Imputation by Chained Equations}
 \usage{
-mice(data, m = 5, method = NULL, predictorMatrix, where = NULL, blocks,
-  visitSequence = NULL, formulas, blots = NULL, post = NULL,
+mice(data, m = 5, method = NULL, predictorMatrix, where = NULL,
+  blocks, visitSequence = NULL, formulas, blots = NULL, post = NULL,
   defaultMethod = c("pmm", "logreg", "polyreg", "polr"), maxit = 5,
   printFlag = TRUE, seed = NA, data.init = NULL, ...)
 }
@@ -289,7 +288,7 @@ We suggest going through these vignettes in the following order
 Boca Raton, FL.: Chapman & Hall/CRC Press.
 The book 
 \href{https://stefvanbuuren.name/fimd/}{\emph{Flexible Imputation of Missing Data. Second Edition.}}
-contains a lot of \href{http://www.stefvanbuuren.nl/mi/FIMD.html}{example code}.
+contains a lot of \href{https://github.com/stefvanbuuren/fimdbook/tree/master/R}{example code}.
 }
 
 \section{Methodology}{
