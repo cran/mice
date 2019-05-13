@@ -1,6 +1,6 @@
-5366913206e8ebccabd66fc604c262e1 *DESCRIPTION
+5a2d98077cfd06e5b7f724f01160e8cd *DESCRIPTION
 2a53592a70210d983ef220d79f2e1275 *NAMESPACE
-ef6475f2c1310180959852aaaddec062 *NEWS.md
+0e62ad000a15dbec3728bdff75aad050 *NEWS.md
 0b0e2dd64d90c9f2c4c59583d0f59e31 *R/Ampute.R
 0bed91adf0e5aaa40209c73e3a1d8165 *R/D1.R
 182b7983c6e837bd4b1d9be6831e3642 *R/D2.R
@@ -12,7 +12,7 @@ aee9669d4de272e1aede6eba85be426c *R/ampute.default.R
 54063ea45a019fac8b6227624daff355 *R/ampute.discrete.R
 769e84f882e137e329bb9342e9b26740 *R/ampute.mcar.R
 f901204c39c451a7714fff6fc5ad3e13 *R/anova.R
-42f634fa95271e863e64a8bb471b5241 *R/as.R
+bf501bda0903b5cf7d77c67508c08c9b *R/as.R
 0436b23a9113260431d8000062b42a96 *R/auxiliary.R
 d9cfdea05bde0e1ec5418347a85d3894 *R/barnard.rubin.R
 d8a646c459086958554c3ef0b4d06489 *R/blocks.R
@@ -87,7 +87,7 @@ e651eb77fe0aa8251954582b426ad323 *R/mice.impute.ri.R
 82ed9e0d19cf9e80672412e9b9f6f3ce *R/mids.R
 e747f5d20fd8e36dfb6d7fac7ded032c *R/mids2mplus.R
 bcf4de642ee119aff7b79bde8f7adf2b *R/mids2spss.R
-5c19ab56c482bc7a7d00911e465212a1 *R/mipo.R
+0ef7112d45fa2b92d75961188e266e76 *R/mipo.R
 44b0e6ee44a7346ff3bf4791ad2ac5f3 *R/mira.R
 f651765138adcab541c9d8c1b2d06622 *R/ncc.R
 4bd6921128aef6ecc104b63d3d12ceef *R/nelsonaalen.R
@@ -110,7 +110,7 @@ dc64e568e7aaa9738b2a822caf8dd5a3 *R/predictorMatrix.R
 7026a05a8576940220b08ae16571b11e *R/quickpred.R
 914712f3aa77f3c254268dccfa02911b *R/rbind.R
 1a9b8efd4bd6e1463429e9d1e54cb80d *R/rm.whitespace.R
-c58e1c35fce37e747238d6f6c04174dd *R/sampler.R
+b0cf738d7eaa30293717d80082b5e449 *R/sampler.R
 04a9014216b4b0d492fb7ae3530f6c59 *R/selfreport.R
 32072143f5f0780137d5f9d56c6bb74c *R/squeeze.R
 8ef3374a61027339f953f1d1235442f6 *R/stripplot.R
@@ -165,7 +165,7 @@ fd2d1a168363d4607a60c633f141ab5e *man/ampute.default.freq.Rd
 3f672c7a10eb95c35dc720ef504db30c *man/ampute.mcar.Rd
 07d2ac3ce84367c0837254a693bba900 *man/anova.Rd
 ac963cb5e09643e64bf69e4dd363aa55 *man/appendbreak.Rd
-dae59f51fc839cbfbbf556ee74a9997c *man/as.mids.Rd
+457e6b84a0b6be887a72df960c864a7d *man/as.mids.Rd
 3464c8cf6f994d07ac63ac6aa5ff6765 *man/as.mira.Rd
 cb92f23e5b96e8a962be5f658c6a3049 *man/as.mitml.result.Rd
 ec3d00337331ff6e58be6055bd6c28f9 *man/boys.Rd
@@ -309,7 +309,7 @@ be11971a3b848d702d6e5732c0049442 *tests/testthat/test-loggedEvents.R
 e7670f784bdadfd47370ea7f6ac924b3 *tests/testthat/test-make.predictorMatrix.R
 da4d503794f466201b140dabe1d8934b *tests/testthat/test-md.pattern.R
 922df6c2fe84211dc3453856a1d94931 *tests/testthat/test-mice-initialize.R
-fdf631b5a491d39e8831260e427db7de *tests/testthat/test-mice.R
+47e3af705f2860e6ba22dcf970728f25 *tests/testthat/test-mice.R
 4453fbac37c34ddfe82d559b9cb70493 *tests/testthat/test-mice.impute.2l.bin.R
 044700d11a6e5e439919804265e9cb6c *tests/testthat/test-mice.impute.2l.lmer.R
 ca30016911794d94173743240f4786de *tests/testthat/test-mice.impute.2l.norm.R
