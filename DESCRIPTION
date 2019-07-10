@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.5.0
+Version: 3.6.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2019-05-13
+Date: 2019-07-09
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -27,9 +27,9 @@ Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: methods, R (>= 2.10.0), lattice
 Imports: broom, dplyr, grDevices, graphics, MASS, mitml, nnet,
         parallel, Rcpp, rlang, rpart, splines, stats, survival, utils
-Suggests: AGD, CALIBERrfimpute, DPpackage, gamlss, lme4, mitools, nlme,
-        pan, randomForest, Zelig, BSDA, knitr, rmarkdown, testthat,
-        HSAUR3, micemd, miceadds, tidyr
+Suggests: AGD, CALIBERrfimpute, gamlss, lme4, mitools, nlme, pan,
+        randomForest, Zelig, BSDA, knitr, rmarkdown, testthat, HSAUR3,
+        micemd, miceadds, tidyr
 LinkingTo: Rcpp
 Description: Multiple imputation using Fully Conditional Specification (FCS)
     implemented by the MICE algorithm as described in Van Buuren and
@@ -52,7 +52,7 @@ URL: http://stefvanbuuren.github.io/mice/ ,
 BugReports: https://github.com/stefvanbuuren/mice/issues
 RoxygenNote: 6.1.1
 NeedsCompilation: yes
-Packaged: 2019-05-13 20:40:26 UTC; buurensv
+Packaged: 2019-07-09 20:30:44 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Alexander Robitzsch [ctb],
@@ -64,4 +64,4 @@ Author: Stef van Buuren [aut, cre],
   Florian Meinfelder [ctb],
   Bernie Gray [ctb]
 Repository: CRAN
-Date/Publication: 2019-05-13 21:20:20 UTC
+Date/Publication: 2019-07-10 08:00:03 UTC
