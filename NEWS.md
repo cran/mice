@@ -3,6 +3,22 @@ title: "News"
 output: github_document
 ---
 
+# mice 3.7.0
+
+* Solves a bug that made `polr()` always fail (#206)
+* Aborts if one or more columns are a `data.frame` (#208)
+* Update `mira-class` documentation (#207)
+* Remove links to deprecated package `CALIBERrfimpute`
+* Adds check on partial missing level-2 data to `2lonly.norm` and `2lonly.pmm`
+* Change calculation of `a2` to elementwise division by a matrix of observations
+* Extend documentation for `2lonly.norm` and `2lonly.pmm`
+* Repair return value from `2lonly.pmm`
+* Imputation method `2lonly.mean` now also works with factors
+* Replace deprecated `imputationMethod` argument in examples by `method`
+* More informative error message when stopped after pre-processing (#194)
+* Updated URL's in DESCRIPTION
+* Fix string matching in `check.predictorMatrix()` (#191)
+
 # mice 3.6.0
 
 * Copy `toenail` data from orphaned `DPpackage` package

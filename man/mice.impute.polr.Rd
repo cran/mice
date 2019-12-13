@@ -4,8 +4,17 @@
 \alias{mice.impute.polr}
 \title{Imputation of ordered data by polytomous regression}
 \usage{
-mice.impute.polr(y, ry, x, wy = NULL, nnet.maxit = 100,
-  nnet.trace = FALSE, nnet.MaxNWts = 1500, ...)
+mice.impute.polr(
+  y,
+  ry,
+  x,
+  wy = NULL,
+  nnet.maxit = 100,
+  nnet.trace = FALSE,
+  nnet.MaxNWts = 1500,
+  polr.to.loggedEvents = FALSE,
+  ...
+)
 }
 \arguments{
 \item{y}{Vector to be imputed}
@@ -26,6 +35,10 @@ indicates locations in \code{y} for which imputations are created.}
 \item{nnet.trace}{Tuning parameter for \code{nnet()}.}
 
 \item{nnet.MaxNWts}{Tuning parameter for \code{nnet()}.}
+
+\item{polr.to.loggedEvents}{A logical indicating whether each fallback 
+to the \code{multinom()} function should be written to \code{loggedEvents}.
+The default is \code{FALSE}.}
 
 \item{...}{Other named arguments.}
 }
@@ -52,8 +65,18 @@ In order to avoid bias due to perfect prediction, the algorithm augment the
 data according to the method of White, Daniel and Royston (2010).
 
 The call to \code{polr} might fail, usually because the data are very sparse.
-In that case, \code{multinom} is tried as a fallback, and a record is written
+In that case, \code{multinom} is tried as a fallback. 
+If the local flag \code{polr.to.loggedEvents} is set to TRUE, 
+a record is written
 to the \code{loggedEvents} component of the \code{\link{mids}} object.
+Use \code{mice(data, polr.to.loggedEvents = TRUE)} to set the flag.
+}
+\note{
+In December 2019 Simon White alerted that the 
+\code{polr} could always fail silently. I can confirm this behaviour for 
+versions \code{mice 3.0.0 - mice 3.6.6}, so any method requests
+for \code{polr} in these versions were in fact handled by \code{multinom}.
+See \url{https://github.com/stefvanbuuren/mice/issues/206} for details.
 }
 \references{
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}: Multivariate
@@ -75,21 +98,22 @@ S-Plus (4th ed)}. Springer, Berlin.
 \code{\link{mice}}, \code{\link[nnet]{multinom}},
 \code{\link[MASS]{polr}}
 
-Other univariate imputation functions: \code{\link{mice.impute.cart}},
-  \code{\link{mice.impute.lda}},
-  \code{\link{mice.impute.logreg.boot}},
-  \code{\link{mice.impute.logreg}},
-  \code{\link{mice.impute.mean}},
-  \code{\link{mice.impute.midastouch}},
-  \code{\link{mice.impute.norm.boot}},
-  \code{\link{mice.impute.norm.nob}},
-  \code{\link{mice.impute.norm.predict}},
-  \code{\link{mice.impute.norm}},
-  \code{\link{mice.impute.pmm}},
-  \code{\link{mice.impute.polyreg}},
-  \code{\link{mice.impute.quadratic}},
-  \code{\link{mice.impute.rf}},
-  \code{\link{mice.impute.ri}}
+Other univariate imputation functions: 
+\code{\link{mice.impute.cart}()},
+\code{\link{mice.impute.lda}()},
+\code{\link{mice.impute.logreg.boot}()},
+\code{\link{mice.impute.logreg}()},
+\code{\link{mice.impute.mean}()},
+\code{\link{mice.impute.midastouch}()},
+\code{\link{mice.impute.norm.boot}()},
+\code{\link{mice.impute.norm.nob}()},
+\code{\link{mice.impute.norm.predict}()},
+\code{\link{mice.impute.norm}()},
+\code{\link{mice.impute.pmm}()},
+\code{\link{mice.impute.polyreg}()},
+\code{\link{mice.impute.quadratic}()},
+\code{\link{mice.impute.rf}()},
+\code{\link{mice.impute.ri}()}
 }
 \author{
 Stef van Buuren, Karin Groothuis-Oudshoorn, 2000-2010

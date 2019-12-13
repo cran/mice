@@ -5,8 +5,16 @@
 \alias{2l.pan}
 \title{Imputation by a two-level normal model using \code{pan}}
 \usage{
-mice.impute.2l.pan(y, ry, x, type, intercept = TRUE, paniter = 500,
-  groupcenter.slope = FALSE, ...)
+mice.impute.2l.pan(
+  y,
+  ry,
+  x,
+  type,
+  intercept = TRUE,
+  paniter = 500,
+  groupcenter.slope = FALSE,
+  ...
+)
 }
 \arguments{
 \item{y}{Incomplete data vector of length \code{n}}
@@ -88,7 +96,7 @@ predM <- imp0$predictorMatrix
 impM <- imp0$method
 
 #...
-# specify predictor matrix and imputationMethod
+# specify predictor matrix and method
 predM1 <- predM
 predM1["y","group"] <- -2
 predM1["y","x"] <- 1        # fixed x effects imputation
@@ -97,7 +105,7 @@ impM1["y"] <- "2l.pan"
 
 # multilevel imputation
 imp1 <- mice( as.matrix( dfr ) , m = 1 , predictorMatrix = predM1 , 
-           imputationMethod = impM1 , maxit=1 )
+           method = impM1 , maxit=1 )
 # multilevel analysis
 library(lme4)
 mod <- lmer( y ~ ( 1 + x | group) + x , data = complete(imp1) )
@@ -126,9 +134,10 @@ Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
 Software}, \bold{45}(3), 1-67. \url{https://www.jstatsoft.org/v45/i03/}
 }
 \seealso{
-Other univariate-2l: \code{\link{mice.impute.2l.bin}},
-  \code{\link{mice.impute.2l.lmer}},
-  \code{\link{mice.impute.2l.norm}}
+Other univariate-2l: 
+\code{\link{mice.impute.2l.bin}()},
+\code{\link{mice.impute.2l.lmer}()},
+\code{\link{mice.impute.2l.norm}()}
 }
 \author{
 Alexander Robitzsch (IPN - Leibniz Institute for Science and 
