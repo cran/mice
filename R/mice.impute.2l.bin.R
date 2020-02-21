@@ -24,8 +24,8 @@
 #'@examples
 #'library(tidyr)
 #'library(dplyr)
-#'data("toenail", package = "HSAUR3")
-#'data <- tidyr::complete(toenail, patientID, visit) %>% 
+#'data("toenail2")
+#'data <- tidyr::complete(toenail2, patientID, visit) %>% 
 #'  tidyr::fill(treatment) %>% 
 #'  dplyr::select(-time) %>%
 #'  dplyr::mutate(patientID = as.integer(patientID))
@@ -38,9 +38,9 @@
 #'@export
 mice.impute.2l.bin <- function(y, ry, x, type, 
                                wy = NULL, intercept = TRUE, ...) {
-  if (!requireNamespace("lme4", quietly = TRUE))
-    stop("Please install package 'lme4'", call. = FALSE)
-  
+  install.on.demand("MASS", ...)
+  install.on.demand("lme4", ...)
+
   if (is.null(wy)) wy <- !ry
   if (intercept) {
     x <- cbind(1, as.matrix(x))

@@ -5,7 +5,7 @@ fit1 <- with(data = imp, expr = lm(hyp ~ age + chl))
 fit0 <- with(data = imp, expr = lm(hyp ~ 1))
 empty <- with(data = imp, expr = lm(hyp ~ 0))
 
-stat1 <- pool.compare(fit1, fit0, method = "likelihood")
+# stat1 <- pool.compare(fit1, fit0, method = "likelihood")
 
 z1 <- D3(fit1, fit0)
 z2 <- mitml::testModels(as.mitml.result(fit1), as.mitml.result(fit0), method = "D3")
@@ -25,13 +25,13 @@ fml <- ReadDis + SES ~ ReadAchiev + (1|ID)
 set.seed(26262)
 imp <- mitml::panImpute(studentratings, formula=fml, n.burn=1000, n.iter=100, m=5,
                  silent = TRUE)
-implist <- mitmlComplete(imp, print=1:5)
+implist <- mitml::mitmlComplete(imp, print=1:5)
 fit0 <- with(implist, lmer(ReadAchiev ~ (1|ID), REML=FALSE))
 fit1 <- with(implist, lmer(ReadAchiev ~ ReadDis + SES + (1|ID), REML=FALSE))
 
 # likelihood test
 z3 <- D3(fit1, fit0)
-z4 <- testModels(fit1, fit0, method = "D3")
+z4 <- mitml::testModels(fit1, fit0, method = "D3")
 
 # This test fails.
 # FIXME

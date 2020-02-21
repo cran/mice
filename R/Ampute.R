@@ -174,9 +174,8 @@
 #'
 #'@examples 
 #'# Simulate data set with \code{mvrnorm} from package \code{\pkg{MASS}}.
-#'require(MASS)
 #'sigma <- matrix(data = c(1, 0.2, 0.2, 0.2, 1, 0.2, 0.2, 0.2, 1), nrow = 3)
-#'complete.data <- mvrnorm(n = 100, mu = c(5, 5, 5), Sigma = sigma)
+#'complete.data <- MASS::mvrnorm(n = 100, mu = c(5, 5, 5), Sigma = sigma)
 #'# Perform quick amputation
 #'result1 <- ampute(data = complete.data)
 #'# Change default matrices as desired
@@ -220,7 +219,8 @@ ampute <- function(data, prop = 0.5, patterns = NULL, freq = NULL,
           length_unique <- function(x) {
             return(length(unique(x)) == 1)
           }
-          if (!(nrow(candidates) > 1 && any(apply(candidates, 2, length_unique)))) { 
+          # shangzhi-hong, Feb 2020, #216
+          if (nrow(candidates) > 1 && !(any(apply(candidates, 2, length_unique)))) {
             candidates <- scale(candidates)
           }
         }

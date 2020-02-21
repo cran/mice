@@ -66,6 +66,8 @@ mice.impute.polr <- function(y, ry, x, wy = NULL, nnet.maxit = 100,
                              nnet.trace = FALSE, nnet.MaxNWts = 1500, 
                              polr.to.loggedEvents = FALSE, ...)
 {
+  install.on.demand("MASS", ...)
+  install.on.demand("nnet", ...)
   if (is.null(wy)) wy <- !ry
   
   # augment data to evade issues with perfect prediction
@@ -79,17 +81,19 @@ mice.impute.polr <- function(y, ry, x, wy = NULL, nnet.maxit = 100,
   xy <- cbind.data.frame(y = y, x = x)
   
   ## polr may fail on sparse data. We revert to multinom in such cases.
-  fit <- try(suppressWarnings(polr(formula(xy), 
-                                   data = xy[ry, , drop = FALSE], 
-                                   weights = w[ry], control = list(...))), silent = TRUE)
+  fit <- try(suppressWarnings(MASS::polr(formula(xy), 
+                                         data = xy[ry, , drop = FALSE], 
+                                         weights = w[ry], 
+                                         control = list(...))), 
+             silent = TRUE)
   if (inherits(fit, "try-error"))
   {
     if (polr.to.loggedEvents) 
       updateLog(out = "polr falls back to multinom", frame = 6)
-    fit <- multinom(formula(xy), data = xy[ry, , drop = FALSE], 
-                    weights = w[ry], 
-                    maxit = nnet.maxit, trace = nnet.trace, 
-                    MaxNWts = nnet.MaxNWts, ...)
+    fit <- nnet::multinom(formula(xy), data = xy[ry, , drop = FALSE], 
+                          weights = w[ry], 
+                          maxit = nnet.maxit, trace = nnet.trace, 
+                          MaxNWts = nnet.MaxNWts, ...)
   }
   post <- predict(fit, xy[wy, , drop = FALSE], type = "probs")
   if (sum(wy) == 1) 
