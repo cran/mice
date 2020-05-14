@@ -23,7 +23,7 @@
 #' @details
 #' This function imputes data that are thought to be Missing Not at 
 #' Random (MNAR) by the NARFCS method. The NARFCS procedure 
-#' (Tompsett et al, 2018) generalises the so-called 
+#' (Leacy, 2016; Tompsett et al, 2018) generalises the so-called 
 #' \eqn{\delta}-adjustment sensitivity analysis method of Van Buuren, 
 #' Boshuizen & Knook (1999) to the case with multiple incomplete
 #' variables within the FCS framework. In practical terms, the 
@@ -91,6 +91,10 @@
 #' 
 #' @author Margarita Moreno-Betancur, Stef van Buuren, Ian R. White, 2020.
 #' @references 
+#' Leacy, F.P. (2016). \emph{Multiple imputation under missing not at 
+#' random assumptions via fully conditional specification}. 
+#' Dissertation, University of Cambridge, UK.
+#' 
 #' Tompsett, D. M., Leacy, F., Moreno-Betancur, M., Heron, J., & 
 #' White, I. R. (2018). On the use of the not-at-random fully 
 #' conditional specification (NARFCS) procedure in practice. 

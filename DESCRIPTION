@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.8.0
+Version: 3.9.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2020-02-12
+Date: 2020-05-14
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -31,7 +31,7 @@ Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: R (>= 2.10.0)
 Imports: broom, dplyr, graphics, lattice, methods, stats, tidyr, utils
 Suggests: knitr, lme4, MASS, mitml, miceadds, nnet, pan, randomForest,
-        rmarkdown, rpart, survival, testthat
+        rmarkdown, rpart, survival, testthat, lmtest
 LinkingTo: Rcpp
 Description: Multiple imputation using Fully Conditional Specification (FCS)
     implemented by the MICE algorithm as described in Van Buuren and
@@ -52,9 +52,9 @@ URL: https://github.com/stefvanbuuren/mice,
         https://stefvanbuuren.name/mice/,
         https://stefvanbuuren.name/fimd/
 BugReports: https://github.com/stefvanbuuren/mice/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 NeedsCompilation: yes
-Packaged: 2020-02-21 13:57:45 UTC; buurensv
+Packaged: 2020-05-14 14:39:16 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -68,4 +68,4 @@ Author: Stef van Buuren [aut, cre],
   Florian Meinfelder [ctb],
   Bernie Gray [ctb]
 Repository: CRAN
-Date/Publication: 2020-02-21 18:20:02 UTC
+Date/Publication: 2020-05-14 15:20:03 UTC

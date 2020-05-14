@@ -3,6 +3,19 @@ title: "News"
 output: github_document
 ---
 
+# mice 3.9.0
+
+## Major changes
+
+* The `D3()` function in `mice` gave incorrect results. This version solves a problem in the calculation of the `D3`-statistic. See #226 and #228 for more details. The documentation explains why results from `mice::D3()` and `mitml::testModels()` may differ.
+* The `pool()` function is now more forgiving when there is no `glance()` function (#233)
+* It is possible to bypass `remove.lindep()` by setting `eps = 0` (#225)
+
+## Minor changes
+
+* Adds reference to Leacy's thesis
+* Adds an example to the `plot.mids()` documentation
+
 # mice 3.8.0
 
 ## Major changes 
