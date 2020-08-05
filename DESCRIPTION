@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.10.0.1
+Version: 3.11.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2020-07-13
+Date: 2020-08-02
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -31,8 +31,8 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "vincent.arel-bundock@umontreal.ca"))
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: R (>= 2.10.0)
-Imports: broom, dplyr, generics, graphics, lattice, methods, stats,
-        tidyr, utils, Rcpp
+Imports: broom, dplyr, generics, graphics, lattice, methods, Rcpp,
+        stats, tidyr, utils
 Suggests: broom.mixed, knitr, lme4, MASS, mitml, miceadds, nnet, pan,
         randomForest, rmarkdown, rpart, survival, testthat, lmtest
 LinkingTo: Rcpp
@@ -57,7 +57,7 @@ URL: https://github.com/stefvanbuuren/mice,
 BugReports: https://github.com/stefvanbuuren/mice/issues
 RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2020-08-02 08:27:42 UTC; ripley
+Packaged: 2020-08-03 12:44:35 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -72,4 +72,4 @@ Author: Stef van Buuren [aut, cre],
   Bernie Gray [ctb],
   Vincent Arel-Bundock [ctb]
 Repository: CRAN
-Date/Publication: 2020-08-02 09:32:43 UTC
+Date/Publication: 2020-08-05 16:50:02 UTC
