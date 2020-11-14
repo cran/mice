@@ -3,6 +3,59 @@ title: "News"
 output: github_document
 ---
 
+# mice 3.12.0
+
+### Much faster predictive mean matching
+
+* The new `matchindex` C function makes predictive mean matching **50 to 600 times faster**. 
+The speed of `pmm` is now on par with normal imputation (`mice.impute.norm()`)
+and with the `miceFast` package, without compromising on the statistical quality of 
+the imputations. Thanks to Polkas <https://github.com/Polkas/miceFast/issues/10> and 
+suggestions by Alexander Robitzsch. See #236 for more details.
+
+### New `ignore` argument to `mice`
+
+* New `ignore` argument to `mice()`. This argument is a logical vector 
+of `nrow(data)` elements indicating which rows are ignored when creating 
+the imputation model. We may use the `ignore` argument to split the data 
+into a training set (on which the imputation model is built) and a test 
+set (that does not influence the imputation model estimates). The argument
+is based on the suggestion in 
+<https://github.com/amices/mice/issues/32#issuecomment-355600365>. See #32 for 
+more background and techniques. Crafted by Patrick Rockenschaub
+
+### New `filter()` function for `mids` objects
+
+* New `filter()` method that subsets a `mids` object (multiply-imputed data set).
+The method accepts a logical vector of length `nrow(data)`, or an expression
+to construct such a vector from the incomplete data. (#269). 
+Crafted by Patrick Rockenschaub.
+
+### Changes affecting reproducibility
+
+* **Breaking change:** The `matcher` algorithm in `pmm` has changed to `matchindex`
+for speed improvements. If you want the old behavior, specify `mice(..., use.matcher = TRUE)`.
+
+### Minor changes
+
+* Corrected installation problem related to `cpp11` package (#286)
+* Simplifies `with.mids()` by calling `eval_tidy()` on a quosure. Does not yet solve #265.
+* Improve documentation for `pool()` and `pool.scalar()` (#142, #106, #190 and others)
+* Makes `tidy.mipo` more flexible (#276)
+* Solves a problem if `nelsonaalen()` gets a `tibble` (#272)
+* Add explanation to how `NA`s can appear in the imputed data (#267)
+* Add warning to `quickpred()` documentation (#268)
+* Styles all sources files with styler
+* Improves consistency in code and documentation
+* Moves internally defined functions to global namespace
+* Solves bug in internal `sum.scores()`
+* Adds deprecated messages to `lm.mids()`, `glm.mids()`, `pool.compare()`
+* Removes `.pmm.match()` and `expandcov()`
+* Strips out all `return()` calls placed just before end-of-function
+* Remove all trailing spaces
+* Repairs a bug in the routine for finding the `printFlag` value (#258)
+* Update URL's after transfer to organisation `amices`
+
 # mice 3.11.0
 
 ## Major changes
