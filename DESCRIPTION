@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.12.0
+Version: 3.13.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2020-11-09
+Date: 2021-01-26
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -35,8 +35,9 @@ Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: R (>= 2.10.0)
 Imports: broom, dplyr, generics, graphics, lattice, methods, Rcpp,
         rlang, stats, tidyr, utils
-Suggests: broom.mixed, knitr, lme4, MASS, mitml, miceadds, nnet, pan,
-        randomForest, rmarkdown, rpart, survival, testthat, lmtest
+Suggests: broom.mixed, haven, knitr, lme4, MASS, metafor, mitml,
+        miceadds, nnet, pan, randomForest, rmarkdown, rpart, survival,
+        testthat, lmtest
 Description: Multiple imputation using Fully Conditional Specification (FCS)
     implemented by the MICE algorithm as described in Van Buuren and
     Groothuis-Oudshoorn (2011) <doi:10.18637/jss.v045.i03>. Each variable has
@@ -59,7 +60,7 @@ RoxygenNote: 7.1.1
 LinkingTo: cpp11, Rcpp
 SystemRequirements: C++11
 NeedsCompilation: yes
-Packaged: 2020-11-09 19:39:29 UTC; buurensv
+Packaged: 2021-01-27 09:52:17 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -75,4 +76,4 @@ Author: Stef van Buuren [aut, cre],
   Bernie Gray [ctb],
   Vincent Arel-Bundock [ctb]
 Repository: CRAN
-Date/Publication: 2020-11-14 15:00:02 UTC
+Date/Publication: 2021-01-27 10:40:12 UTC
