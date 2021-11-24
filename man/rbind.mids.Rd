@@ -33,7 +33,7 @@ If \code{y} is not a \code{mids} object, the columns of \code{x$data}
 and \code{y} should match. The \code{where} matrix for \code{y} is set
 to \code{FALSE}, signaling that any missing values
 in \code{y} were not imputed. The \code{ignore} vector for \code{y} is
-set to \code{FALSE}, elements of \code{y} will therefore influence 
+set to \code{FALSE}, elements of \code{y} will therefore influence
 the parameters of the imputation model in future iterations.
 }
 \note{
@@ -79,7 +79,7 @@ nrow(complete(rbind(imp1, complete(imp5))))
 van Buuren S and Groothuis-Oudshoorn K (2011). \code{mice}:
 Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 Statistical Software}, \bold{45}(3), 1-67.
-\url{https://www.jstatsoft.org/v45/i03/}
+\doi{10.18637/jss.v045.i03}
 }
 \seealso{
 \code{\link{cbind.mids}}, \code{\link{ibind}}, \code{\link[=mids-class]{mids}}

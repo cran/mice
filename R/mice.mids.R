@@ -29,7 +29,7 @@
 #' @references Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
 #' Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 #' Statistical Software}, \bold{45}(3), 1-67.
-#' \url{https://www.jstatsoft.org/v45/i03/}
+#' \doi{10.18637/jss.v045.i03}
 #' @keywords iteration
 #' @examples
 #' imp1 <- mice(nhanes, maxit = 1, seed = 123)
@@ -47,6 +47,10 @@ mice.mids <- function(obj, newdata = NULL, maxit = 1, printFlag = TRUE, ...) {
     stop("Object should be of type mids.")
   }
 
+  # Temporarily set random generator state from previous imputation
+  withr::local_preserve_seed()
+  assign(".Random.seed", obj$lastSeedValue, envir = globalenv())
+
   # obj contains training data, newdata contains test data
   # overwrite obj with combined obj + imp.newdata
   if (!is.null(newdata)) {
@@ -54,13 +58,15 @@ mice.mids <- function(obj, newdata = NULL, maxit = 1, printFlag = TRUE, ...) {
     if (!is.null(obj$ignore)) ignore <- obj$ignore
 
     newdata <- check.newdata(newdata, obj$data)
-    imp.newdata <- mice(newdata, m = obj$m, maxit = 0,
-                        remove.collinear = FALSE,
-                        remove.constant = FALSE)
+    imp.newdata <- mice(newdata,
+      m = obj$m, maxit = 0,
+      remove.collinear = FALSE,
+      remove.constant = FALSE
+    )
     obj <- withCallingHandlers(
       rbind.mids(obj, imp.newdata),
       warning = function(w) {
-        if(grepl("iterations differ", w$message)){
+        if (grepl("iterations differ", w$message)) {
           # Catch warnings concerning iterations, these differ by design
           invokeRestart("muffleWarning")
         }
@@ -94,8 +100,6 @@ mice.mids <- function(obj, newdata = NULL, maxit = 1, printFlag = TRUE, ...) {
   if (is.null(where)) where <- is.na(obj$data)
   blocks <- obj$blocks
   if (is.null(blocks)) blocks <- make.blocks(obj$data)
-
-  assign(".Random.seed", obj$lastSeedValue, pos = 1)
 
   ## OK. Iterate.
   sumIt <- obj$iteration + maxit
@@ -156,7 +160,8 @@ mice.mids <- function(obj, newdata = NULL, maxit = 1, printFlag = TRUE, ...) {
     ignore = obj$ignore,
     seed = obj$seed,
     iteration = sumIt,
-    lastSeedValue = .Random.seed,
+    lastSeedValue = get(".Random.seed", envir = globalenv(), mode = "integer",
+                        inherits = FALSE),
     chainMean = chainMean,
     chainVar = chainVar,
     loggedEvents = loggedEvents,

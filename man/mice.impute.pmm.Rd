@@ -111,13 +111,14 @@ hist(yimp, xlab = "Imputed missing tv")
 # Impute all tv data
 yimp <- mice.impute.pmm(y, ry, x, wy = rep(TRUE, length(y)))
 length(yimp)
-hist(yimp, xlab = 'Imputed missing and observed tv')
+hist(yimp, xlab = "Imputed missing and observed tv")
 plot(jitter(y), jitter(yimp),
-    main = 'Predictive mean matching on age, height and weight',
-    xlab = 'Observed tv (n = 224)',
-    ylab = 'Imputed tv (n = 224)')
+  main = "Predictive mean matching on age, height and weight",
+  xlab = "Observed tv (n = 224)",
+  ylab = "Imputed tv (n = 224)"
+)
 abline(0, 1)
-cor(y, yimp, use = 'pair')
+cor(y, yimp, use = "pair")
 }
 \references{
 Little, R.J.A. (1988), Missing data adjustments in large surveys
@@ -132,11 +133,15 @@ Chapman & Hall/CRC. Boca Raton, FL.
 
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}: Multivariate
 Imputation by Chained Equations in \code{R}. \emph{Journal of Statistical
-Software}, \bold{45}(3), 1-67. \url{https://www.jstatsoft.org/v45/i03/}
+Software}, \bold{45}(3), 1-67. \doi{10.18637/jss.v045.i03}
 }
 \seealso{
 Other univariate imputation functions: 
 \code{\link{mice.impute.cart}()},
+\code{\link{mice.impute.lasso.logreg}()},
+\code{\link{mice.impute.lasso.norm}()},
+\code{\link{mice.impute.lasso.select.logreg}()},
+\code{\link{mice.impute.lasso.select.norm}()},
 \code{\link{mice.impute.lda}()},
 \code{\link{mice.impute.logreg.boot}()},
 \code{\link{mice.impute.logreg}()},

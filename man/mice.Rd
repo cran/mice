@@ -89,7 +89,12 @@ The default \code{visitSequence = "roman"} visits the blocks (left to right)
 in the order in which they appear in \code{blocks}.
 One may also use one of the following keywords: \code{"arabic"}
 (right to left), \code{"monotone"} (ordered low to high proportion
-of missing data) and \code{"revmonotone"} (reverse of monotone).}
+of missing data) and \code{"revmonotone"} (reverse of monotone).
+\emph{Special case}: If you specify both \code{visitSequence = "monotone"} and
+\code{maxit = 1}, then the procedure will edit the \code{predictorMatrix}
+to conform to the monotone pattern. Realize that convergence in one
+iteration is only guaranteed if the missing data pattern is actually
+monotone. The procedure does not check this.}
 
 \item{formulas}{A named list of formula's, or expressions that
 can be converted into formula's by \code{as.formula}. List elements
@@ -108,7 +113,8 @@ called for block \code{blockname}.}
 expressions as strings. Each string is parsed and
 executed within the \code{sampler()} function to post-process
 imputed values during the iterations.
-The default is a vector of empty strings, indicating no post-processing.}
+The default is a vector of empty strings, indicating no post-processing.
+Multivariate (block) imputation methods ignore the \code{post} parameter.}
 
 \item{defaultMethod}{A vector of length 4 containing the default
 imputation methods for 1) numeric data, 2) factor data with 2 levels, 3)
@@ -126,7 +132,9 @@ Use \code{print=FALSE} for silent computation.}
 
 \item{seed}{An integer that is used as argument by the \code{set.seed()} for
 offsetting the random number generator. Default is to leave the random number
-generator alone.}
+generator alone. Versions later than 3.13.11 reset the random generator to the
+state before calling \code{mice()}. This effectively isolates the \code{mice}
+random generator from the calling environment.}
 
 \item{data.init}{A data frame of the same size and type as \code{data},
 without missing data, used to initialize imputations before the start of the
@@ -192,30 +200,34 @@ variable.
 Built-in univariate imputation methods are:
 
 \tabular{lll}{
-\code{pmm}          \tab any     \tab Predictive mean matching\cr
-\code{midastouch}   \tab any     \tab Weighted predictive mean matching\cr
-\code{sample}       \tab any     \tab Random sample from observed values\cr
-\code{cart}         \tab any     \tab Classification and regression trees\cr
-\code{rf}           \tab any     \tab Random forest imputations\cr
-\code{mean}         \tab numeric \tab Unconditional mean imputation\cr
-\code{norm}         \tab numeric \tab Bayesian linear regression\cr
-\code{norm.nob}     \tab numeric \tab Linear regression ignoring model error\cr
-\code{norm.boot}    \tab numeric \tab Linear regression using bootstrap\cr
-\code{norm.predict} \tab numeric \tab Linear regression, predicted values\cr
-\code{quadratic}    \tab numeric \tab Imputation of quadratic terms\cr
-\code{ri}           \tab numeric \tab Random indicator for nonignorable data\cr
-\code{logreg}       \tab binary  \tab Logistic regression\cr
-\code{logreg.boot}  \tab binary  \tab Logistic regression with bootstrap\cr
-\code{polr}         \tab ordered \tab Proportional odds model\cr
-\code{polyreg}      \tab unordered\tab Polytomous logistic regression\cr
-\code{lda}          \tab unordered\tab Linear discriminant analysis\cr
-\code{2l.norm}      \tab numeric  \tab Level-1 normal heteroscedastic\cr
-\code{2l.lmer}      \tab numeric  \tab Level-1 normal homoscedastic, lmer\cr
-\code{2l.pan}       \tab numeric  \tab Level-1 normal homoscedastic, pan\cr
-\code{2l.bin}       \tab binary   \tab Level-1 logistic, glmer\cr
-\code{2lonly.mean}  \tab numeric  \tab Level-2 class mean\cr
-\code{2lonly.norm}  \tab numeric  \tab Level-2 class normal\cr
-\code{2lonly.pmm}   \tab any      \tab Level-2 class predictive mean matching
+\code{pmm}               \tab any     \tab Predictive mean matching\cr
+\code{midastouch}        \tab any     \tab Weighted predictive mean matching\cr
+\code{sample}            \tab any     \tab Random sample from observed values\cr
+\code{cart}              \tab any     \tab Classification and regression trees\cr
+\code{rf}                \tab any     \tab Random forest imputations\cr
+\code{mean}              \tab numeric \tab Unconditional mean imputation\cr
+\code{norm}              \tab numeric \tab Bayesian linear regression\cr
+\code{norm.nob}          \tab numeric \tab Linear regression ignoring model error\cr
+\code{norm.boot}         \tab numeric \tab Linear regression using bootstrap\cr
+\code{norm.predict}      \tab numeric \tab Linear regression, predicted values\cr
+\code{lasso.norm}        \tab numeric \tab Lasso linear regression\cr
+\code{lasso.select.norm} \tab numeric \tab Lasso select + linear regression\cr
+\code{quadratic}         \tab numeric \tab Imputation of quadratic terms\cr
+\code{ri}                \tab numeric \tab Random indicator for nonignorable data\cr
+\code{logreg}            \tab binary  \tab Logistic regression\cr
+\code{logreg.boot}       \tab binary  \tab Logistic regression with bootstrap\cr
+\code{lasso.logreg}      \tab binary  \tab Lasso logistic regression\cr
+\code{lasso.select.logreg}\tab binary  \tab Lasso select + logistic regression\cr
+\code{polr}              \tab ordered \tab Proportional odds model\cr
+\code{polyreg}           \tab unordered\tab Polytomous logistic regression\cr
+\code{lda}               \tab unordered\tab Linear discriminant analysis\cr
+\code{2l.norm}           \tab numeric  \tab Level-1 normal heteroscedastic\cr
+\code{2l.lmer}           \tab numeric  \tab Level-1 normal homoscedastic, lmer\cr
+\code{2l.pan}            \tab numeric  \tab Level-1 normal homoscedastic, pan\cr
+\code{2l.bin}            \tab binary   \tab Level-1 logistic, glmer\cr
+\code{2lonly.mean}       \tab numeric  \tab Level-2 class mean\cr
+\code{2lonly.norm}       \tab numeric  \tab Level-2 class normal\cr
+\code{2lonly.pmm}        \tab any      \tab Level-2 class predictive mean matching
 }
 
 These corresponding functions are coded in the \code{mice} library under
@@ -331,7 +343,7 @@ contains a lot of \href{https://github.com/stefvanbuuren/fimdbook/tree/master/R}
 \section{Methodology}{
 
 
-The \pkg{mice} software was published in the \href{https://www.jstatsoft.org/article/view/v045i03}{Journal of Statistical Software} (Van Buuren and Groothuis-Oudshoorn, 2011).
+The \pkg{mice} software was published in the {Journal of Statistical Software} (Van Buuren and Groothuis-Oudshoorn, 2011). \doi{10.18637/jss.v045.i03}
 The first application of the method
 concerned missing blood pressure data (Van Buuren et. al., 1999).
 The term \emph{Fully Conditional Specification} was introduced in 2006 to describe a general class of methods that specify imputations model for multivariate data as a set of conditional distributions (Van Buuren et. al., 2006). Further details on mixes of variables and applications can be found in the book
@@ -370,9 +382,9 @@ van Buuren, S., Brand, J.P.L., Groothuis-Oudshoorn C.G.M., Rubin, D.B. (2006)
 Fully conditional specification in multivariate imputation.  \emph{Journal of
 Statistical Computation and Simulation}, \bold{76}, 12, 1049--1064.
 
-van Buuren, S., Groothuis-Oudshoorn, K. (2011). \href{https://www.jstatsoft.org/v45/i03/}{\code{mice}:
+van Buuren, S., Groothuis-Oudshoorn, K. (2011). {\code{mice}:
 Multivariate Imputation by Chained Equations in \code{R}}. \emph{Journal of
-Statistical Software}, \bold{45}(3), 1--67.
+Statistical Software}, \bold{45}(3), 1--67. \doi{10.18637/jss.v045.i03}
 
 Van Buuren, S. (2018).
 \href{https://stefvanbuuren.name/fimd/}{\emph{Flexible Imputation of Missing Data. Second Edition.}}
@@ -381,7 +393,7 @@ Chapman & Hall/CRC. Boca Raton, FL.
 Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
 Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 Statistical Software}, \bold{45}(3), 1-67.
-\url{https://www.jstatsoft.org/v45/i03/}
+\doi{10.18637/jss.v045.i03}
 
 Van Buuren, S. (2018).
 \href{https://stefvanbuuren.name/fimd/sec-FCS.html#sec:MICE}{\emph{Flexible Imputation of Missing Data. Second Edition.}}

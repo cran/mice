@@ -189,8 +189,10 @@ test_that("`ignore` throws appropriate errors and warnings", {
     "not a logical"
   )
   expect_warning(
-    mice(nhanes, maxit = 1, m = 1, print = FALSE, seed = 1,
-         ignore = c(rep(FALSE, 9), rep(TRUE, nrow(nhanes)-9))),
+    mice(nhanes,
+      maxit = 1, m = 1, print = FALSE, seed = 1,
+      ignore = c(rep(FALSE, 9), rep(TRUE, nrow(nhanes) - 9))
+    ),
     "Fewer than 10 rows"
   )
 })
@@ -199,7 +201,7 @@ test_that("`ignore` throws appropriate errors and warnings", {
 # Check that the ignore argument is taken into account when
 # calculating the results
 # # all FALSE
-imp1 <- mice(nhanes, 
+imp1 <- mice(nhanes,
   maxit = 1, m = 1, print = FALSE, seed = 1,
   ignore = rep(FALSE, nrow(nhanes))
 )
@@ -209,7 +211,7 @@ imp2 <- mice(nhanes, maxit = 1, m = 1, print = FALSE, seed = 1)
 
 # # alternate
 alternate <- rep(c(TRUE, FALSE), nrow(nhanes))[1:nrow(nhanes)]
-imp3 <- mice(nhanes, 
+imp3 <- mice(nhanes,
   maxit = 0, m = 1, print = FALSE, seed = 1,
   ignore = alternate
 )
@@ -224,19 +226,19 @@ test_that("`ignore` changes the imputation results", {
 # univariate sampler in mice
 artificial <- data.frame(
   age = c(1, 1),
-  bmi = c(NA, 40.0), 
+  bmi = c(NA, 40.0),
   hyp = c(1, 1),
-  chl = c(200, 200), 
+  chl = c(200, 200),
   row.names = paste0("a", 1:2)
 )
 
 imp1 <- mice(
-  rbind(nhanes, artificial), 
+  rbind(nhanes, artificial),
   maxit = 1, m = 1, print = FALSE, seed = 1, donors = 1L, matchtype = 0
 )
 
 imp2 <- mice(
-  rbind(nhanes, artificial), 
+  rbind(nhanes, artificial),
   maxit = 1, m = 1, print = FALSE, seed = 1, donors = 1L, matchtype = 0,
   ignore = c(rep(FALSE, nrow(nhanes)), rep(TRUE, nrow(artificial)))
 )
@@ -245,3 +247,21 @@ test_that("`ignore` works with pmm", {
   expect_equal(complete(imp1)["a1", "bmi"], 40.0)
   expect_failure(expect_equal(complete(imp2)["a1", "bmi"], 40.0))
 })
+
+context("mice: local random stream")
+
+set.seed(1)
+a <- runif(10)
+
+set.seed(1)
+b1 <- runif(6)
+
+imp <- mice(nhanes, maxit = 0, seed = 82, print = FALSE)
+imp2 <- mice.mids(imp, maxit = 1, print = FALSE)
+
+b2 <- runif(4)
+
+test_that("mice and mice.mids use a local random stream", {
+  expect_equal(a, c(b1, b2))
+})
+
