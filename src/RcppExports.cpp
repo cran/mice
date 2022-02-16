@@ -5,9 +5,14 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // matcher
 IntegerVector matcher(NumericVector obs, NumericVector mis, int k);
-RcppExport SEXP _mice_matcher(SEXP obsSEXP, SEXP misSEXP, SEXP kSEXP) {
+RcppExport SEXP _mice313_matcher(SEXP obsSEXP, SEXP misSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +25,7 @@ END_RCPP
 }
 // matchindex
 IntegerVector matchindex(NumericVector d, NumericVector t, int k);
-RcppExport SEXP _mice_matchindex(SEXP dSEXP, SEXP tSEXP, SEXP kSEXP) {
+RcppExport SEXP _mice313_matchindex(SEXP dSEXP, SEXP tSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -33,12 +38,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mice_matcher", (DL_FUNC) &_mice_matcher, 3},
-    {"_mice_matchindex", (DL_FUNC) &_mice_matchindex, 3},
+    {"_mice313_matcher", (DL_FUNC) &_mice313_matcher, 3},
+    {"_mice313_matchindex", (DL_FUNC) &_mice313_matchindex, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_mice(DllInfo *dll) {
+RcppExport void R_init_mice313(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

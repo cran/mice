@@ -1,4 +1,4 @@
-Package: mice
+Package: mice313
 Type: Package
 Version: 3.13.0
 Title: Multivariate Imputation by Chained Equations
@@ -56,7 +56,7 @@ LazyData: yes
 URL: https://github.com/amices/mice, https://amices.org/mice/,
         https://stefvanbuuren.name/fimd/
 BugReports: https://github.com/amices/mice/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 LinkingTo: cpp11, Rcpp
 SystemRequirements: C++11
 NeedsCompilation: yes

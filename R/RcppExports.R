@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 matcher <- function(obs, mis, k) {
-    .Call(`_mice_matcher`, obs, mis, k)
+    .Call(`_mice313_matcher`, obs, mis, k)
 }
 
 #' Find index of matched donor units
@@ -86,6 +86,6 @@ matcher <- function(obs, mis, k) {
 #' @author Stef van Buuren, Nasinski Maciej, Alexander Robitzsch
 #' @export
 matchindex <- function(d, t, k = 5L) {
-    .Call(`_mice_matchindex`, d, t, k)
+    .Call(`_mice313_matchindex`, d, t, k)
 }
 
