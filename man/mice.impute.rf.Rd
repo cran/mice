@@ -72,7 +72,7 @@ plot(imp)
 \references{
 Doove, L.L., van Buuren, S., Dusseldorp, E. (2014), Recursive partitioning
 for missing data imputation in the presence of interaction Effects.
-Computational Statistics \& Data Analysis, 72, 92-104.
+Computational Statistics & Data Analysis, 72, 92-104.
 
 Shah, A.D., Bartlett, J.W., Carpenter, J., Nicholas, O., Hemingway, H. (2014),
 Comparison of random forest and parametric imputation models for
@@ -100,6 +100,7 @@ Other univariate imputation functions:
 \code{\link{mice.impute.mean}()},
 \code{\link{mice.impute.midastouch}()},
 \code{\link{mice.impute.mnar.logreg}()},
+\code{\link{mice.impute.mpmm}()},
 \code{\link{mice.impute.norm.boot}()},
 \code{\link{mice.impute.norm.nob}()},
 \code{\link{mice.impute.norm.predict}()},

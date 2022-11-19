@@ -21,8 +21,8 @@ model is fitted. The \code{ry} generally distinguishes the observed
 \item{wy}{Logical vector of length \code{length(y)}. A \code{TRUE} value
 indicates locations in \code{y} for which imputations are created.}
 
-\item{quad.outcome}{The name of the outcome in the quadratic analysis as a 
-character string. For example, if the substantive model of interest is 
+\item{quad.outcome}{The name of the outcome in the quadratic analysis as a
+character string. For example, if the substantive model of interest is
 \code{y ~ x + xx}, then \code{"y"} would be the \code{quad.outcome}}
 
 \item{...}{Other named arguments.}
@@ -114,6 +114,7 @@ Other univariate imputation functions:
 \code{\link{mice.impute.mean}()},
 \code{\link{mice.impute.midastouch}()},
 \code{\link{mice.impute.mnar.logreg}()},
+\code{\link{mice.impute.mpmm}()},
 \code{\link{mice.impute.norm.boot}()},
 \code{\link{mice.impute.norm.nob}()},
 \code{\link{mice.impute.norm.predict}()},

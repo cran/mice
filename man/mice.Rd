@@ -65,7 +65,11 @@ or \code{mice.impute.panImpute()}, do not honour the \code{ignore} argument.}
 as \code{data} indicating where in the data the imputations should be
 created. The default, \code{where = is.na(data)}, specifies that the
 missing data should be imputed. The \code{where} argument may be used to
-overimpute observed data, or to skip imputations for selected missing values.}
+overimpute observed data, or to skip imputations for selected missing values.
+Note: Imputation methods that generate imptutations outside of
+\code{mice}, like \code{mice.impute.panImpute()} may depend on a complete
+predictor space. In that case, a custom \code{where} matrix can not be
+specified.}
 
 \item{blocks}{List of vectors with variable names per block. List elements
 may be named to identify blocks. Variables within a block are
@@ -132,9 +136,7 @@ Use \code{print=FALSE} for silent computation.}
 
 \item{seed}{An integer that is used as argument by the \code{set.seed()} for
 offsetting the random number generator. Default is to leave the random number
-generator alone. Versions later than 3.13.11 reset the random generator to the
-state before calling \code{mice()}. This effectively isolates the \code{mice}
-random generator from the calling environment.}
+generator alone.}
 
 \item{data.init}{A data frame of the same size and type as \code{data},
 without missing data, used to initialize imputations before the start of the
@@ -372,6 +374,28 @@ complete(imp)
 
 # imputation on mixed data with a different method per column
 mice(nhanes2, meth = c("sample", "pmm", "logreg", "norm"))
+
+\dontrun{
+# example where we fit the imputation model on the train data
+# and apply the model to impute the test data
+set.seed(123)
+ignore <- sample(c(TRUE, FALSE), size = 25, replace = TRUE, prob = c(0.3, 0.7))
+
+# scenario 1: train and test in the same dataset
+imp <- mice(nhanes2, m = 2, ignore = ignore, print = FALSE, seed = 22112)
+imp.test1 <- filter(imp, ignore)
+imp.test1$data
+complete(imp.test1, 1)
+complete(imp.test1, 2)
+
+# scenario 2: train and test in separate datasets
+traindata <- nhanes2[!ignore, ]
+testdata <- nhanes2[ignore, ]
+imp.train <- mice(traindata, m = 2, print = FALSE, seed = 22112)
+imp.test2 <- mice.mids(imp.train, newdata = testdata)
+complete(imp.test2, 1)
+complete(imp.test2, 2)
+}
 }
 \references{
 van Buuren, S., Boshuizen, H.C., Knook, D.L. (1999) Multiple

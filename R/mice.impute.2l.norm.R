@@ -132,7 +132,7 @@ force.chol <- function(x, warn = TRUE) {
     XT <- x + diag(x = lambda, nrow = nrow(x))
     XT <- (XT + t(XT)) / 2
     s <- try(expr = chol(XT), silent = TRUE)
-    if (class(s) != "try-error") {
+    if (!inherits(s, "try-error")) {
       break
     }
     z <- z + 1
