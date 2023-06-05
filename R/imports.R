@@ -2,11 +2,15 @@
 #' @importFrom broom    glance tidy
 #' @importFrom dplyr    %>% bind_cols bind_rows filter group_by lead
 #'                      mutate n pull row_number select summarize
+#' @importFrom glmnet   cv.glmnet
 #' @importFrom graphics abline axis box par plot plot.new plot.window
 #'                      points rect text
 #' @importFrom lattice  bwplot densityplot stripplot xyplot
+#' @importFrom mitml    jomoImpute mitmlComplete panImpute testModels
+#' @importFrom nnet     multinom
 #' @importFrom Rcpp     evalCpp
 #' @importFrom rlang    .data syms
+#' @importFrom rpart    rpart rpart.control
 #' @importFrom stats    C aggregate as.formula binomial coef
 #'                      complete.cases confint
 #'                      contr.treatment cor df.residual fitted

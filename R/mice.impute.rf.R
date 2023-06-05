@@ -38,7 +38,7 @@
 #' Shah, A.D., Bartlett, J.W., Carpenter, J., Nicholas, O., Hemingway, H. (2014),
 #' Comparison of random forest and parametric imputation models for
 #' imputing missing data using MICE: A CALIBER study. American Journal
-#' of Epidemiology, doi: 10.1093/aje/kwt312.
+#' of Epidemiology, \doi{10.1093/aje/kwt312}.
 #'
 #' Van Buuren, S. (2018).
 #' \href{https://stefvanbuuren.name/fimd/sec-cart.html}{\emph{Flexible Imputation of Missing Data. Second Edition.}}
@@ -49,10 +49,10 @@
 #' @family univariate imputation functions
 #' @keywords datagen
 #' @examples
-#' library("lattice")
-#'
+#' \dontrun{
 #' imp <- mice(nhanes2, meth = "rf", ntree = 3)
 #' plot(imp)
+#' }
 #' @export
 mice.impute.rf <- function(y, ry, x, wy = NULL, ntree = 10,
                            rfPackage = c("ranger", "randomForest"), ...) {

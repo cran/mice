@@ -64,10 +64,10 @@ so mice 2.22 changed the default number of trees from \code{ntree = 100} to
 \code{ntree = 10}.
 }
 \examples{
-library("lattice")
-
+\dontrun{
 imp <- mice(nhanes2, meth = "rf", ntree = 3)
 plot(imp)
+}
 }
 \references{
 Doove, L.L., van Buuren, S., Dusseldorp, E. (2014), Recursive partitioning
@@ -77,7 +77,7 @@ Computational Statistics & Data Analysis, 72, 92-104.
 Shah, A.D., Bartlett, J.W., Carpenter, J., Nicholas, O., Hemingway, H. (2014),
 Comparison of random forest and parametric imputation models for
 imputing missing data using MICE: A CALIBER study. American Journal
-of Epidemiology, doi: 10.1093/aje/kwt312.
+of Epidemiology, \doi{10.1093/aje/kwt312}.
 
 Van Buuren, S. (2018).
 \href{https://stefvanbuuren.name/fimd/sec-cart.html}{\emph{Flexible Imputation of Missing Data. Second Edition.}}
