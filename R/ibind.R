@@ -62,17 +62,20 @@ ibind <- function(x, y) {
   if (!identical(x$blots, y$blots)) {
     stop("Differences detected between `x$blots` and `y$blots`")
   }
+  if (!identical(x$ignore, y$ignore)) {
+    stop("Differences detected between `x$ignore` and `y$ignore`")
+  }
   visitSequence <- x$visitSequence
   imp <- vector("list", ncol(x$data))
   names(imp) <- names(x$data)
-  for (j in visitSequence) {
+  for (j in names(imp)) {
     imp[[j]] <- cbind(x$imp[[j]], y$imp[[j]])
   }
 
   m <- (x$m + y$m)
   iteration <- max(x$iteration, y$iteration)
 
-  chainMean <- chainVar <- initialize.chain(x$blocks, iteration, m)
+  chainMean <- chainVar <- initialize.chain(names(x$data), iteration, m)
   for (j in seq_len(x$m)) {
     chainMean[, seq_len(x$iteration), j] <- x$chainMean[, , j]
     chainVar[, seq_len(x$iteration), j] <- x$chainVar[, , j]
@@ -82,24 +85,26 @@ ibind <- function(x, y) {
     chainVar[, seq_len(y$iteration), j + x$m] <- y$chainVar[, , j]
   }
 
-  midsobj <- list(
-    data = x$data, imp = imp, m = m,
-    where = x$where, blocks = x$blocks,
-    call = call, nmis = x$nmis,
+  midsobj <- mids(
+    data = x$data,
+    imp = imp,
+    m = m,
+    where = x$where,
+    blocks = x$blocks,
+    call = call,
+    nmis = x$nmis,
     method = x$method,
     predictorMatrix = x$predictorMatrix,
     visitSequence = visitSequence,
-    formulas = x$formulas, post = x$post,
+    formulas = x$formulas,
+    post = x$post,
     blots = x$blots,
+    ignore = x$ignore,
     seed = x$seed,
     iteration = iteration,
     lastSeedValue = x$lastSeedValue,
     chainMean = chainMean,
     chainVar = chainVar,
-    loggedEvents = x$loggedEvents,
-    version = packageVersion("mice"),
-    date = Sys.Date()
-  )
-  oldClass(midsobj) <- "mids"
-  midsobj
+    loggedEvents = x$loggedEvents)
+  return(midsobj)
 }

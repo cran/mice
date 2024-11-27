@@ -94,7 +94,7 @@ cells. Default is TRUE.}
 return object will contain everything except for the amputed data set.}
 }
 \value{
-Returns an S3 object of class \code{\link{mads-class}} (multivariate
+Returns an S3 object of class \code{\link{mads}} (multivariate
 amputed data set)
 }
 \description{
@@ -139,8 +139,6 @@ The first of these specifications is the missing mechanism. There are three poss
 mechanisms: the missingness depends completely on chance (MCAR), the missingness
 depends on the values of the observed variables (i.e. the variables that remain
 complete) (MAR) or on the values of the variables that will be made incomplete (MNAR).
-For a discussion on how missingness mechanisms are related to the observed data,
-we refer to \doi{10.1177/0049124118799376}{Schouten and Vink, 2018}.
 
 When the user specifies the missingness mechanism to be \code{"MCAR"}, the candidates
 have an equal probability of becoming incomplete. For a \code{"MAR"} or \code{"MNAR"} mechanism,
@@ -181,11 +179,9 @@ the odds values are of importance, but the relative distance between the values.
 The continuous distributions of probabilities are based on the logistic distribution function.
 The user can specify the type of missingness, which, again, may differ between patterns.
 
-For an example and more explanation about how the arguments interact with each other,
-we refer to the vignette
-\href{https://rianneschouten.github.io/mice_ampute/vignette/ampute.html}{Generate missing values with ampute}
-The amputation methodology is published in
-\doi{10.1080/00949655.2018.1491577}{Schouten, Lugtig and Vink, 2018}.
+For an example and more explanation about how the arguments interact with
+each other, we refer to the vignette:
+\href{https://rianneschouten.github.io/mice_ampute/vignette/ampute.html}{Generate missing values with ampute}.
 }
 \examples{
 # start with a complete data set
@@ -216,27 +212,30 @@ evaluation of multiple imputation strategies for the statistical analysis of
 incomplete data sets.} pp. 110-113. Dissertation. Rotterdam: Erasmus University.
 
 Schouten, R.M., Lugtig, P and Vink, G. (2018)
-{Generating missing values for simulation purposes: A multivariate amputation procedure.}.
+Generating missing values for simulation purposes: A multivariate
+amputation procedure.
 \emph{Journal of Statistical Computation and Simulation}, 88(15): 1909-1930.
 \doi{10.1080/00949655.2018.1491577}
 
-Schouten, R.M. and Vink, G. (2018){The Dance of the Mechanisms: How Observed Information Influences the Validity of Missingness Assumptions}.
+Schouten, R.M. and Vink, G. (2018) The Dance of the Mechanisms: How Observed
+Information Influences the Validity of Missingness Assumptions.
 \emph{Sociological Methods and Research}, 50(3): 1243-1258.
 \doi{10.1177/0049124118799376}
 
 Van Buuren, S., Brand, J.P.L., Groothuis-Oudshoorn, C.G.M., Rubin, D.B. (2006)
-{Fully conditional specification in multivariate imputation.}
+Fully conditional specification in multivariate imputation.
 \emph{Journal of Statistical Computation and Simulation}, 76(12): 1049-1064.
 \doi{10.1080/10629360600810434}
 
-Van Buuren, S. (2018) \href{https://stefvanbuuren.name/fimd/sec-FCS.html#sec:MICE}{\emph{Flexible Imputation of Missing Data. Second Edition.}}
+Van Buuren, S. (2018).
+\emph{Flexible Imputation of Missing Data. Second Edition.}
 Chapman & Hall/CRC. Boca Raton, FL.
 
 Vink, G. (2016) Towards a standardized evaluation of multiple imputation routines.
 }
 \seealso{
-\code{\link{mads-class}}, \code{\link{bwplot}}, \code{\link{xyplot}},
-\code{\link{mice}}
+\code{\link{mads}}, \code{\link{bwplot.mads}},
+\code{\link{xyplot.mads}}
 }
 \author{
 Rianne Schouten [aut, cre], Gerko Vink [aut], Peter Lugtig [ctb], 2016

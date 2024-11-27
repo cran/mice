@@ -98,9 +98,8 @@ complete(imp)
 mice(nhanes2, method = c("sample", "midastouch", "logreg", "norm"))
 }
 \references{
-Gaffert, P., Meinfelder, F., Bosch V. (2015) Towards an MI-proper
-Predictive Mean Matching, Discussion Paper.
-\url{https://www.uni-bamberg.de/fileadmin/uni/fakultaeten/sowi_lehrstuehle/statistik/Personen/Dateien_Florian/properPMM.pdf}
+Gaffert, P., Meinfelder, F., Bosch V. (2018) Towards an MI-proper
+Predictive Mean Matching, JSM 2018. Discussion Paper.
 
 Little, R.J.A. (1988), Missing data adjustments in large
 surveys (with discussion), Journal of Business Economics and
@@ -133,15 +132,15 @@ Other univariate imputation functions:
 \code{\link{mice.impute.lasso.select.logreg}()},
 \code{\link{mice.impute.lasso.select.norm}()},
 \code{\link{mice.impute.lda}()},
-\code{\link{mice.impute.logreg.boot}()},
 \code{\link{mice.impute.logreg}()},
+\code{\link{mice.impute.logreg.boot}()},
 \code{\link{mice.impute.mean}()},
 \code{\link{mice.impute.mnar.logreg}()},
 \code{\link{mice.impute.mpmm}()},
+\code{\link{mice.impute.norm}()},
 \code{\link{mice.impute.norm.boot}()},
 \code{\link{mice.impute.norm.nob}()},
 \code{\link{mice.impute.norm.predict}()},
-\code{\link{mice.impute.norm}()},
 \code{\link{mice.impute.pmm}()},
 \code{\link{mice.impute.polr}()},
 \code{\link{mice.impute.polyreg}()},

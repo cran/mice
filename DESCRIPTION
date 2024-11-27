@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.16.0
+Version: 3.17.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2023-05-24
+Date: 2024-11-26
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -40,13 +40,15 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     person("Caspar", "van Lissa", role = "ctb", 
     email = "c.j.vanlissa@uu.nl"),
     person("Hanne", "Oberman", role = "ctb",
-    email = "h.i.oberman@uu.nl"))
+    email = "h.i.oberman@uu.nl"),
+    person("Stephen", "Wade", role = "ctb",
+    email = "stephematician@gmail.com"))
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: R (>= 2.10.0)
-Imports: broom, dplyr, generics, glmnet, graphics, grDevices, lattice,
-        methods, mitml, nnet, Rcpp, rpart, rlang, stats, tidyr, utils
-Suggests: broom.mixed, future, furrr, haven, knitr, lme4, MASS,
-        miceadds, pan, parallelly, purrr, ranger, randomForest,
+Imports: broom, dplyr, glmnet, graphics, grDevices, lattice, mitml,
+        nnet, Rcpp, rpart, stats, tidyr, utils
+Suggests: broom.mixed, future, furrr, haven, knitr, literanger, lme4,
+        MASS, miceadds, pan, parallelly, purrr, ranger, randomForest,
         rmarkdown, rstan, survival, testthat
 Description: Multiple imputation using Fully Conditional Specification (FCS)
     implemented by the MICE algorithm as described in Van Buuren and
@@ -67,9 +69,9 @@ URL: https://github.com/amices/mice, https://amices.org/mice/,
 BugReports: https://github.com/amices/mice/issues
 LinkingTo: cpp11, Rcpp
 License: GPL (>= 2)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 NeedsCompilation: yes
-Packaged: 2023-06-04 21:03:06 UTC; buurensv
+Packaged: 2024-11-27 16:26:22 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -88,6 +90,7 @@ Author: Stef van Buuren [aut, cre],
   Thom Volker [ctb],
   Edoardo Costantini [ctb],
   Caspar van Lissa [ctb],
-  Hanne Oberman [ctb]
+  Hanne Oberman [ctb],
+  Stephen Wade [ctb]
 Repository: CRAN
-Date/Publication: 2023-06-05 14:40:02 UTC
+Date/Publication: 2024-11-27 18:00:02 UTC

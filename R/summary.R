@@ -11,7 +11,7 @@
 #' \code{"tidy"}.
 #' @param ... Other parameters passed down to \code{print()} and \code{summary()}
 #' @return \code{NULL}
-#' @seealso \code{\link[=mira-class]{mira}}
+#' @seealso \code{\link{mira}}
 #' @method summary mira
 #' @export
 summary.mira <- function(object,
@@ -27,40 +27,20 @@ summary.mira <- function(object,
   }
   # nobs is needed for pool.r.squared
   # not supplied by broom <= 0.5.6
+  model <- getfit(object, 1L)
   if (!"nobs" %in% colnames(v)) {
-    v$nobs <- tryCatch(length(stats::residuals(getfit(object)[[1]])),
-      error = function(e) NULL
-    )
+    v$nobs <- tryCatch(length(stats::residuals(model)),
+      error = function(e) {NULL})
   }
+  # get df.residuals
+  if (!"df.residuals" %in% colnames(v)) {
+    v$df.residual <- get.dfcom(model)
+  }
+
   if (type == "summary") {
     v <- lapply(fitlist, summary, ...)
   }
   v
-}
-
-
-#' Summary of a \code{mids} object
-#'
-#' @rdname summary
-#' @return \code{NULL}
-#' @seealso \code{\link[=mids-class]{mids}}
-#' @method summary mids
-#' @export
-summary.mids <- function(object, ...) {
-  print(object, ...)
-  invisible(object)
-}
-
-
-#' Summary of a \code{mads} object
-#'
-#' @rdname summary
-#' @return \code{NULL}
-#' @seealso \code{\link[=mads-class]{mads}}
-#' @export
-summary.mads <- function(object, ...) {
-  print(object, ...)
-  invisible(object)
 }
 
 

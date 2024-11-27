@@ -94,8 +94,8 @@ filter.mids <- function(.data, ..., .preserve = FALSE) {
   for (i in names(.data$imp)) {
     wy <- .data$where[, i]
     iy <- .data$where[, i] & include
-
-    imp[[i]] <- .data$imp[[i]][iy[wy], , drop = FALSE]
+    impi <- .data$imp[[i]][iy[wy], , drop = FALSE]
+    if (!is.null(impi)) imp[[i]] <- impi
   }
 
   # Components that need to be recalculated/reset
@@ -104,10 +104,14 @@ filter.mids <- function(.data, ..., .preserve = FALSE) {
   chainVar <- NULL
 
   # Create subset mids object
-  midsobj <- list(
-    data = data, imp = imp, m = m,
-    where = where, blocks = blocks,
-    call = call, nmis = nmis,
+  midsobj <- mids(
+    data = data,
+    imp = imp,
+    m = m,
+    where = where,
+    blocks = blocks,
+    call = call,
+    nmis = nmis,
     method = method,
     predictorMatrix = predictorMatrix,
     visitSequence = visitSequence,
@@ -120,10 +124,6 @@ filter.mids <- function(.data, ..., .preserve = FALSE) {
     lastSeedValue = lastSeedValue,
     chainMean = chainMean,
     chainVar = chainVar,
-    loggedEvents = loggedEvents,
-    version = packageVersion("mice"),
-    date = Sys.Date()
-  )
-  oldClass(midsobj) <- "mids"
-  midsobj
+    loggedEvents = loggedEvents)
+  return(midsobj)
 }

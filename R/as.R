@@ -51,23 +51,16 @@
 #' identical(complete(test3, action = "long", include = TRUE), X)
 #'
 #' # nhanes example with .id where .imp is numeric
-#' test4 <- as.mids(X2, .id = 2)
+#' test4 <- as.mids(X2, .id = 6)
 #' is.mids(test4)
 #' identical(complete(test4, action = "long", include = TRUE), X)
 #'
 #' # example without an .id variable
 #' # variable .id not preserved
-#' X3 <- X[, -2]
+#' X3 <- X[, -6]
 #' test5 <- as.mids(X3)
 #' is.mids(test5)
-#' identical(complete(test5, action = "long", include = TRUE)[, -2], X[, -2])
-#'
-#' # as() syntax has fewer options
-#' test7 <- as(X, "mids")
-#' test8 <- as(X2, "mids")
-#' test9 <- as(X2[, -2], "mids")
-#' rev <- ncol(X):1
-#' test10 <- as(X[, rev], "mids")
+#' identical(complete(test5, action = "long", include = TRUE)[, -6], X[, -6])
 #'
 #' # where argument copies also observed data into $imp element
 #' where <- matrix(TRUE, nrow = nrow(nhanes), ncol = ncol(nhanes))
@@ -108,16 +101,23 @@ as.mids <- function(long, where = NULL, .imp = ".imp", .id = ".id") {
     remove.collinear = FALSE, allow.na = TRUE
   )
 
-  # store any .id as row names
-  if (!is.na(.id)) {
-    rownames(ini$data) <- unlist(long[imps == 0, .id], use.names = FALSE)
+  # create default .id when .id using type from input data
+  # otherwise store provided .id as row names
+  if (!.id %in% names(long)) {
+    if (typeof(attr(long, "row.names")) == "integer") {
+      row.names(ini$data) <- seq_len(nrow(ini$data))
+    } else {
+      row.names(ini$data) <- as.character(seq_len(nrow(ini$data)))
+    }
+  } else {
+    row.names(ini$data) <- unlist(long[imps == 0, .id], use.names = FALSE)
   }
 
   # copy imputations from long into proper ini$imp elements
   names <- names(ini$imp)
   for (i in seq_along(names)) {
     varname <- names[i]
-    if (!is.null(ini$imp[[varname]])) {
+    if (nrow(ini$imp[[varname]])) {
       for (j in seq_len(m)) {
         idx <- imps == j & where[, varname]
         ini$imp[[varname]][j] <- long[idx, varname]
@@ -134,7 +134,7 @@ as.mids <- function(long, where = NULL, .imp = ".imp", .id = ".id") {
 #' into a \code{mira} object that can be pooled.
 #' @param fitlist A list containing $m$ fitted analysis objects
 #' @return An S3 object of class \code{mira}.
-#' @seealso \code{\link[=mira-class]{mira}}
+#' @seealso \code{\link{mira}}
 #' @author Stef van Buuren
 #' @export
 as.mira <- function(fitlist) {
@@ -149,9 +149,8 @@ as.mira <- function(fitlist) {
     stop("Argument 'fitlist' is not a list")
   }
   class(fitlist) <- "list"
-  object <- list(call = call, call1 = NULL, nmis = NULL, analyses = fitlist)
-  oldClass(object) <- c("mira", "matrix")
-  object
+  object <- mira(call = call, analyses = fitlist)
+  return(object)
 }
 
 #' Converts into a \code{mitml.result} object
@@ -176,19 +175,3 @@ as.mitml.result <- function(x) {
   class(z) <- c("mitml.result", "list")
   z
 }
-
-
-setOldClass(c("mids", "mira"))
-setAs(
-  from = "data.frame", to = "mids",
-  def = function(from) {
-    as.mids(from)
-  }
-)
-
-setAs(
-  from = "list", to = "mira",
-  def = function(from) {
-    as.mira(from)
-  }
-)

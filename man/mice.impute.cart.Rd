@@ -22,11 +22,11 @@ model is fitted. The \code{ry} generally distinguishes the observed
 indicates locations in \code{y} for which imputations are created.}
 
 \item{minbucket}{The minimum number of observations in any terminal node used.
-See \code{\link{rpart.control}} for details.}
+See \code{\link[rpart]{rpart.control}} for details.}
 
 \item{cp}{Complexity parameter. Any split that does not decrease the overall
-lack of fit by a factor of cp is not attempted. See \code{\link{rpart.control}}
-for details.}
+lack of fit by a factor of cp is not attempted. See
+\code{\link[rpart]{rpart.control}} for details.}
 
 \item{...}{Other named arguments passed down to \code{rpart()}.}
 }
@@ -76,16 +76,16 @@ Other univariate imputation functions:
 \code{\link{mice.impute.lasso.select.logreg}()},
 \code{\link{mice.impute.lasso.select.norm}()},
 \code{\link{mice.impute.lda}()},
-\code{\link{mice.impute.logreg.boot}()},
 \code{\link{mice.impute.logreg}()},
+\code{\link{mice.impute.logreg.boot}()},
 \code{\link{mice.impute.mean}()},
 \code{\link{mice.impute.midastouch}()},
 \code{\link{mice.impute.mnar.logreg}()},
 \code{\link{mice.impute.mpmm}()},
+\code{\link{mice.impute.norm}()},
 \code{\link{mice.impute.norm.boot}()},
 \code{\link{mice.impute.norm.nob}()},
 \code{\link{mice.impute.norm.predict}()},
-\code{\link{mice.impute.norm}()},
 \code{\link{mice.impute.pmm}()},
 \code{\link{mice.impute.polr}()},
 \code{\link{mice.impute.polyreg}()},

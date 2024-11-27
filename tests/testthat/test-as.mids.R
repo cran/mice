@@ -13,21 +13,22 @@ test1 <- as.mids(X)
 # nhanes example
 test2 <- as.mids(X2)
 # nhanes example, where we explicitly specify .id as column 2
-test3 <- as.mids(X, .id = 2)
+test3 <- as.mids(X, .id = 6)
 # nhanes example with .id where .imp is numeric
-test4 <- as.mids(X2, .id = 2)
+test4 <- as.mids(X2, .id = 6)
 #' # example without an .id variable
 #' # variable .id not preserved
-test5 <- as.mids(X[, -2])
+test5 <- as.mids(X[, -6])
 #' # reverse data order
 rev <- ncol(X):1
 test6 <- as.mids(X[, rev])
 
+# mice 3.17.0 dropped support for S4 methods
 # as() syntax has fewer options
-test7 <- as(X, "mids")
-test8 <- as(X2, "mids")
-test9 <- as(X2[, -2], "mids")
-test10 <- as(X[, rev], "mids")
+# test7 <- as(X, "mids")
+# test8 <- as(X2, "mids")
+# test9 <- as(X2[, -2], "mids")
+# test10 <- as(X[, rev], "mids")
 
 test_that("as.mids() produces a `mids` object", {
   expect_is(test1, "mids")
@@ -35,27 +36,27 @@ test_that("as.mids() produces a `mids` object", {
   expect_is(test3, "mids")
   expect_is(test4, "mids")
   expect_is(test5, "mids")
-  expect_is(test7, "mids")
-  expect_is(test8, "mids")
-  expect_is(test9, "mids")
-  expect_is(test10, "mids")
+#  expect_is(test7, "mids")
+#  expect_is(test8, "mids")
+#  expect_is(test9, "mids")
+#  expect_is(test10, "mids")
   expect_error(
-    as(X[-(1:10), ], "mids"),
+    as.mids(X[-(1:10), ], "mids"),
     "Unequal group sizes in imputation index `.imp`"
   )
   expect_error(
-    as(X[, -(1:2)], "mids"),
+    as.mids(X[, -(5:6)], "mids"),
     "Imputation index `.imp` not found"
   )
 })
 
 test_that("complete() reproduces the original data", {
-  expect_true(all(complete(test1, action = "long", include = TRUE) == X, na.rm = TRUE))
-  expect_true(all(complete(test2, action = "long", include = TRUE) == X, na.rm = TRUE))
-  expect_true(all(complete(test3, action = "long", include = TRUE) == X, na.rm = TRUE))
-  expect_true(all(complete(test4, action = "long", include = TRUE) == X, na.rm = TRUE))
-  expect_true(all(complete(test5, action = "long", include = TRUE)[, -2] == X[, -2], na.rm = TRUE))
-  expect_true(all(complete(test6, action = "long", include = TRUE)[, -(1:2)] == X[, rev][, -(5:6)], na.rm = TRUE))
+  expect_true(identical(complete(test1, action = "long", include = TRUE), X))
+  expect_true(identical(complete(test2, action = "long", include = TRUE), X))
+  expect_true(identical(complete(test3, action = "long", include = TRUE), X))
+  expect_true(identical(complete(test4, action = "long", include = TRUE), X))
+  expect_true(identical(complete(test5, action = "long", include = TRUE)[, -6], X[, -6]))
+  expect_true(identical(complete(test6, action = "long", include = TRUE)[, -(5:6)], X[, rev][, -(1:2)]))
 })
 
 # works with dplyr
@@ -67,3 +68,4 @@ X3 <- X %>%
 test_that("handles grouped_df", {
   expect_silent(as.mids(X3))
 })
+

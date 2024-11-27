@@ -9,7 +9,7 @@
 #' @inheritParams broom::lm_tidiers
 #' @param z Data frame with a tidied version of a coefficient matrix
 #' @param conf.int Logical indicating whether to include
-#' a confidence interval. The default is \code{FALSE}.
+#' a confidence interval.
 #' @param conf.level Confidence level of the interval, used only if
 #' \code{conf.int = TRUE}. Number between 0 and 1.
 #' @param exponentiate Flag indicating whether to exponentiate the
@@ -41,7 +41,7 @@
 #' tidied mipo object, and is normally not called directly.
 #' It adds a confidence interval, and optionally exponentiates, the result.
 #' @seealso \code{\link{pool}},
-#' \code{\link[=mids-class]{mids}}, \code{\link[=mira-class]{mira}}
+#' \code{\link{mids}}, \code{\link{mira}}
 #' @references van Buuren S and Groothuis-Oudshoorn K (2011). \code{mice}:
 #' Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 #' Statistical Software}, \bold{45}(3), 1-67.
@@ -64,32 +64,39 @@ summary.mipo <- function(object, type = c("tests", "all"),
                          conf.int = FALSE, conf.level = .95,
                          exponentiate = FALSE, ...) {
   type <- match.arg(type)
-  m <- object$m
   x <- object$pooled
+  z <- summary_mipo.workhorse(x = x, type = type,
+                              conf.int = conf.int, conf.level = conf.level,
+                              exponentiate = exponentiate, ...)
+  class(z) <- c("mipo.summary", "data.frame")
+  z
+}
+
+summary_mipo.workhorse <- function(x, type,
+                                   conf.int, conf.level,
+                                   exponentiate, ...) {
+  m <- x$m[1L]
   std.error <- sqrt(x$t)
   statistic <- x$estimate / std.error
   p.value <- 2 * (pt(abs(statistic), pmax(x$df, 0.001), lower.tail = FALSE))
 
   z <- data.frame(x,
-    std.error = std.error,
-    statistic = statistic,
-    p.value = p.value
+                  std.error = std.error,
+                  statistic = statistic,
+                  p.value = p.value
   )
-  z <- process_mipo(z, object,
-    conf.int = conf.int,
-    conf.level = conf.level,
-    exponentiate = exponentiate
-  )
+  z <- process_mipo(z, x,
+                    conf.int = conf.int,
+                    conf.level = conf.level,
+                    exponentiate = exponentiate)
 
-  parnames <- names(z)[1L:(pmatch("m", names(z)) - 1L)]
   if (type == "tests") {
     out <- c("m", "riv", "lambda", "fmi", "ubar", "b", "t", "dfcom")
     keep <- base::setdiff(names(z), out)
     z <- z[, keep]
   }
 
-  class(z) <- c("mipo.summary", "data.frame")
-  z
+  return(z)
 }
 
 #' @rdname mipo
@@ -120,23 +127,24 @@ process_mipo <- function(z, x, conf.int = FALSE, conf.level = .95,
 
   CI <- NULL
   if (conf.int) {
-    # avoid "Waiting for profiling to be done..." message
-    CI <- suppressMessages(confint(x, level = conf.level))
+    CI <- confidence(x, level = conf.level)
   }
   z$estimate <- trans(z$estimate)
 
-  # combine and sort columns in desired order
-  parnames <- names(z)[1L:(pmatch("m", names(z)) - 1L)]
+  # combine and place columns in desired order
+  parnames <- z[["term"]]
   if (!is.null(CI)) {
     z <- cbind(
-      z[, parnames, drop = FALSE],
+      term = parnames,
       z[, c("m", "estimate", "std.error", "statistic", "df", "p.value")],
       trans(unrowname(CI)),
+      conf.low = trans(unrowname(CI[, 1L])),
+      conf.high = trans(unrowname(CI[, 2L])),
       z[, c("riv", "lambda", "fmi", "ubar", "b", "t", "dfcom")]
     )
   } else {
     z <- cbind(
-      z[, parnames, drop = FALSE],
+      term = parnames,
       z[, c("m", "estimate", "std.error", "statistic", "df", "p.value")],
       z[, c("riv", "lambda", "fmi", "ubar", "b", "t", "dfcom")]
     )
@@ -144,15 +152,8 @@ process_mipo <- function(z, x, conf.int = FALSE, conf.level = .95,
   z
 }
 
-vcov.mipo <- function(object, ...) {
-  so <- diag(object$t)
-  dimnames(so) <- list(object$term, object$term)
-  so
-}
-
-confint.mipo <- function(object, parm, level = 0.95, ...) {
-  pooled <- object$pooled
-  cf <- getqbar(object)
+confidence <- function(pooled, parm, level = 0.95, ...) {
+  cf <- pooled$estimate
   df <- pooled$df
   se <- sqrt(pooled$t)
   pnames <- names(df) <- names(se) <- names(cf) <- row.names(pooled)
@@ -166,12 +167,12 @@ confint.mipo <- function(object, parm, level = 0.95, ...) {
   fac <- qt(a, df)
   pct <- fmt.perc(a, 3)
   ci <- array(NA,
-    dim = c(length(parm), 2L),
-    dimnames = list(parm, pct)
+              dim = c(length(parm), 2L),
+              dimnames = list(parm, pct)
   )
   ci[, 1] <- cf[parm] + qt(a[1], df[parm]) * se[parm]
   ci[, 2] <- cf[parm] + qt(a[2], df[parm]) * se[parm]
-  ci
+  return(ci)
 }
 
 unrowname <- function(x) {

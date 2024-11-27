@@ -1,8 +1,7 @@
-#' Stripplot of observed and imputed data
+#' Box-and-whisker plot of observed and imputed data
 #'
-#' Plotting methods for imputed data using \pkg{lattice}.
-#' \code{stripplot} produces one-dimensional
-#' scatterplots. The function
+#' Plotting methods for imputed data using \pkg{lattice}. \code{bwplot()}
+#' produces box-and-whisker plots. The function
 #' automatically separates the observed and imputed data. The
 #' functions extend the usual features of \pkg{lattice}.
 #'
@@ -26,7 +25,6 @@
 #' \code{col=mdc(1:2), pch=20, cex=1.5}. These choices can be set for the
 #' duration of the session by running \code{mice.theme()}.
 #'
-#' @aliases stripplot
 #' @param x A \code{mids} object, typically created by \code{mice()} or
 #' \code{mice.mids()}.
 #' @param data Formula that selects the data to be plotted.  This argument
@@ -49,9 +47,9 @@
 #' numerical variables. Mixing numerical and categorical data occasionally
 #' produces odds labeling of vertical axis.
 #'
-#' For convenience, in \code{stripplot()} and \code{bwplot} the formula
+#' For convenience, in \code{stripplot()} and \code{bwplot()} the formula
 #' \code{y~.imp} may be abbreviated as \code{y}. This applies only to a single
-#' \code{y}, and does not (yet) work for \code{y1+y2~.imp}.
+#' \code{y}, and does not work for \code{y1+y2~.imp}.
 #'
 #' @param na.groups An expression evaluating to a logical vector indicating
 #' which two groups are distinguished (e.g. using different colors) in the
@@ -68,7 +66,7 @@
 #' differs from \code{na.groups} because it evaluates in the completed data
 #' \code{data.frame(complete(x, "long", inc=TRUE))} (as usual), whereas
 #' \code{na.groups} evaluates in the response indicator. See
-#' \code{\link{xyplot}} for more details. When both \code{na.groups} and
+#' \code{\link[lattice]{xyplot}} for more details. When both \code{na.groups} and
 #' \code{groups} are specified, \code{na.groups} takes precedence, and
 #' \code{groups} is ignored.
 #' @param theme A named list containing the graphical parameters. The default
@@ -80,24 +78,26 @@
 #' \code{mice.theme} defines two symbol colors. The first is for the observed
 #' data, the second for the imputed data. The theme settings only exist during
 #' the call, and do not affect the trellis graphical parameters.
-#' @param jitter.data See \code{\link[lattice:panel.xyplot]{panel.xyplot}}.
-#' @param horizontal See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param as.table See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param panel See \code{\link{xyplot}}.
-#' @param default.prepanel See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param outer See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param allow.multiple See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param drop.unused.levels See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param subscripts See \code{\link[lattice:xyplot]{xyplot}}.
-#' @param subset See \code{\link[lattice:xyplot]{xyplot}}.
+#' @param mayreplicate A logical indicating whether color, line widths, and so
+#' on, may be replicated. The graphical functions attempt to choose
+#' "intelligent" graphical parameters. For example, the same color can be
+#' replicated for different element, e.g. use all reds for the imputed data.
+#' Replication may be switched off by setting the flag to \code{FALSE}, in order
+#' to allow the user to gain full control.
+#' @param as.table See \code{\link[lattice]{xyplot}}.
+#' @param outer See \code{\link[lattice]{xyplot}}.
+#' @param allow.multiple See \code{\link[lattice]{xyplot}}.
+#' @param drop.unused.levels See \code{\link[lattice]{xyplot}}.
+#' @param subscripts See \code{\link[lattice]{xyplot}}.
+#' @param subset See \code{\link[lattice]{xyplot}}.
 #' @param \dots Further arguments, usually not directly processed by the
 #' high-level functions documented here, but instead passed on to other
 #' functions.
 #' @return The high-level functions documented here, as well as other high-level
 #' Lattice functions, return an object of class \code{"trellis"}.  The
-#' \code{\link[lattice:update.trellis]{update}} method can be used to
+#' \code{\link[lattice]{update.trellis}} method can be used to
 #' subsequently update components of the object, and the
-#' \code{\link[lattice:print.trellis]{print}} method (usually called by default)
+#' \code{\link[lattice]{print.trellis}} method (usually called by default)
 #' will plot it on an appropriate plotting device.
 #' @note The first two arguments (\code{x} and \code{data}) are reversed
 #' compared to the standard Trellis syntax implemented in \pkg{lattice}. This
@@ -111,13 +111,11 @@
 #'
 #' All other arguments have identical interpretation.
 #'
+#' Generates a box-and-whisker plot for each numerical variable in a
+#' \code{mids} object. This extends the \code{\link[lattice]{bwplot}} generic.
+#'
 #' @author Stef van Buuren
-#' @seealso \code{\link{mice}}, \code{\link{xyplot}}, \code{\link{densityplot}},
-#' \code{\link{bwplot}}, \code{\link{lattice}} for an overview of the
-#' package, as well as \code{\link[lattice:xyplot]{stripplot}},
-#' \code{\link[lattice:panel.stripplot]{panel.stripplot}},
-#' \code{\link[lattice:print.trellis]{print.trellis}},
-#' \code{\link[lattice:trellis.par.get]{trellis.par.set}}
+#' @seealso \code{\link{mice}}, \code{\link[lattice]{bwplot}}
 #' @references Sarkar, Deepayan (2008) \emph{Lattice: Multivariate Data
 #' Visualization with R}, Springer.
 #'
@@ -128,77 +126,36 @@
 #' @examples
 #' imp <- mice(boys, maxit = 1)
 #'
-#' ### stripplot, all numerical variables
-#' \dontrun{
-#' stripplot(imp)
-#' }
+#' ### box-and-whisker plot per imputation of all numerical variables
+#' bwplot(imp)
 #'
-#' ### same, but with improved display
-#' \dontrun{
-#' stripplot(imp, col = c("grey", mdc(2)), pch = c(1, 20))
-#' }
+#' ### tv (testicular volume), conditional on region
+#' bwplot(imp, tv ~ .imp | reg)
 #'
-#' ### distribution per imputation of height, weight and bmi
-#' ### labeled by their own missingness
-#' \dontrun{
-#' stripplot(imp, hgt + wgt + bmi ~ .imp,
-#'   cex = c(2, 4), pch = c(1, 20), jitter = FALSE,
-#'   layout = c(3, 1)
-#' )
-#' }
-#'
-#' ### same, but labeled with the missingness of wgt (just four cases)
-#' \dontrun{
-#' stripplot(imp, hgt + wgt + bmi ~ .imp,
-#'   na = wgt, cex = c(2, 4), pch = c(1, 20), jitter = FALSE,
-#'   layout = c(3, 1)
-#' )
-#' }
-#'
-#' ### distribution of age and height, labeled by missingness in height
-#' ### most height values are missing for those around
-#' ### the age of two years
-#' ### some additional missings occur in region WEST
-#' \dontrun{
-#' stripplot(imp, age + hgt ~ .imp | reg, hgt,
-#'   col = c(grDevices::hcl(0, 0, 40, 0.2), mdc(2)), pch = c(1, 20)
-#' )
-#' }
-#'
-#' ### heavily jitted relation between two categorical variables
-#' ### labeled by missingness of gen
-#' ### aggregated over all imputed data sets
-#' \dontrun{
-#' stripplot(imp, gen ~ phb, factor = 2, cex = c(8, 1), hor = TRUE)
-#' }
-#'
-#' ### circle fun
-#' stripplot(imp, gen ~ .imp,
-#'   na = wgt, factor = 2, cex = c(8.6),
-#'   hor = FALSE, outer = TRUE, scales = "free", pch = c(1, 19)
-#' )
+#' ### same data, organized in a different way
+#' bwplot(imp, tv ~ reg | .imp, theme = list())
+#' @aliases bwplot.mids bwplot
+#' @method bwplot mids
 #' @export
-stripplot.mids <- function(x,
-                           data,
-                           na.groups = NULL,
-                           groups = NULL,
-                           as.table = TRUE,
-                           theme = mice.theme(),
-                           allow.multiple = TRUE,
-                           outer = TRUE,
-                           drop.unused.levels = lattice::lattice.getOption("drop.unused.levels"),
-                           panel = lattice::lattice.getOption("panel.stripplot"),
-                           default.prepanel = lattice::lattice.getOption("prepanel.default.stripplot"),
-                           jitter.data = TRUE,
-                           horizontal = FALSE,
-                           ...,
-                           subscripts = TRUE,
-                           subset = TRUE) {
+bwplot.mids <- function(x,
+                        data,
+                        na.groups = NULL,
+                        groups = NULL,
+                        as.table = TRUE,
+                        theme = mice.theme(),
+                        mayreplicate = TRUE,
+                        allow.multiple = TRUE,
+                        outer = TRUE,
+                        drop.unused.levels = lattice::lattice.getOption("drop.unused.levels"),
+                        ...,
+                        subscripts = TRUE,
+                        subset = TRUE) {
   call <- match.call()
   if (!is.mids(x)) stop("Argument 'x' must be a 'mids' object")
 
   ## unpack data and response indicator
   cd <- data.frame(complete(x, "long", include = TRUE))
+  cd$.imp <- as.factor(cd$.imp)
   r <- as.data.frame(is.na(x$data))
 
   ## evaluate na.group in response indicator
@@ -218,31 +175,27 @@ stripplot.mids <- function(x,
   ## evaluate further arguments before parsing
   dots <- list(...)
   args <- list(
-    panel = panel,
-    default.prepanel = default.prepanel,
     allow.multiple = allow.multiple,
     outer = outer,
     drop.unused.levels = drop.unused.levels,
     subscripts = subscripts,
-    as.table = as.table,
-    jitter.data = jitter.data,
-    horizontal = horizontal
+    as.table = as.table
   )
 
   ## create formula if not given (in call$data !)
-  vnames <- names(cd)[-seq_len(2)]
-  allfactors <- unlist(lapply(cd, is.factor))[-seq_len(2)]
+  vnames <- setdiff(names(cd), c(".id", ".imp"))
+  allfactors <- unlist(lapply(cd[vnames], is.factor))
   if (missing(data)) {
     vnames <- vnames[!allfactors]
-    formula <- as.formula(paste0(paste0(vnames, collapse = "+"), "~ as.factor(.imp)"))
+    formula <- as.formula(paste(paste(vnames, collapse = "+", sep = ""), "~.imp", sep = ""))
   } else {
     ## pad abbreviated formula
-    abbrev <- !any(grepl("~", call$data))
+    abbrev <- length(grep("~", call$data)) == 0
     if (abbrev) {
       if (length(call$data) > 1) {
         stop("Cannot pad extended formula.")
       } else {
-        formula <- as.formula(paste(call$data, "~ as.factor(.imp)", sep = ""))
+        formula <- as.formula(paste(call$data, "~.imp", sep = ""))
       }
     } else {
       formula <- data
@@ -259,17 +212,36 @@ stripplot.mids <- function(x,
   ynames <- unlist(lapply(strsplit(form$left.name, " \\+ "), rm.whitespace))
   xnames <- unlist(lapply(strsplit(form$right.name, " \\+ "), rm.whitespace))
 
-  ## calculate selection vector gp
+  ## groups is not useful in bwplot
+  ## in order to force subgroup analysis,
+  ## make the observed data in .imp>0 missing data
   nona <- is.null(call$na.groups)
-  if (!is.null(call$groups) && nona) {
+  if (!is.null(call$groups) & nona) {
     gp <- call$groups
   } else {
     if (nona) {
-      na.df <- r[, ynames, drop = FALSE]
-      gp <- unlist(lapply(na.df, rep, x$m + 1))
+      for (i in seq_along(ynames)) {
+        yvar <- ynames[i]
+        select <- cd$.imp != 0 & !r[, yvar]
+        cd[select, yvar] <- NA
+      }
     } else {
-      gp <- rep(nagp, length(ynames) * (x$m + 1))
+      for (i in seq_along(ynames)) {
+        yvar <- ynames[i]
+        select <- cd$.imp != 0 & !nagp
+        cd[select, yvar] <- NA
+      }
     }
+  }
+
+  ## replicate color 2 if .imp is part of xnames
+  mustreplicate <- !is.na(match(".imp", xnames)) & mayreplicate
+  if (mustreplicate) {
+    theme$box.dot$col <- rep(theme$box.dot$col[1:2], c(1, x$m))
+    theme$box.rectangle$col <- rep(theme$box.rectangle$col[1:2], c(1, x$m))
+    theme$box.umbrella$col <- rep(theme$box.rectangle$col[1:2], c(1, x$m))
+    theme$plot.symbol$col <- mdc(3)
+    theme$plot.symbol$pch <- 1
   }
 
   ## change axis defaults of extended formula interface
@@ -277,6 +249,7 @@ stripplot.mids <- function(x,
     dots$xlab <- ""
     if (length(xnames) == 1) dots$xlab <- "Imputation number"
   }
+
   if (is.null(call$ylab)) {
     args$ylab <- ""
     if (length(ynames) == 1) args$ylab <- ynames
@@ -291,11 +264,11 @@ stripplot.mids <- function(x,
   ## ready
   args <- c(
     x = formula, data = list(cd),
-    groups = list(gp),
+    groups = list(groups),
     args, dots, subset = call$subset
   )
 
   ## go
-  tp <- do.call("stripplot", args)
+  tp <- do.call(lattice::bwplot, args)
   update(tp, par.settings = theme)
 }
