@@ -59,8 +59,17 @@ check.method <- function(method, data, where, blocks, defaultMethod) {
     stop("Length of method differs from number of blocks", call. = FALSE)
   }
 
-  # add names to method
-  names(method) <- names(blocks)
+  # Add names to method if vector is unnamed
+  # Careful: Assuming method and blocks are in the same order
+  if (is.null(names(method))) {
+    names(method) <- names(blocks)
+  }
+
+  # Check whether all names(method) are non-empty and match names(blocks)
+  if (!all(names(method) %in% names(blocks))) {
+    stop("All elements of 'method' must be named and match blocks.",
+         call. = FALSE)
+  }
 
   # check whether the requested imputation methods are on the search path
   active.check <- !is.passive(method) & nimp > 0 & method != ""
@@ -79,18 +88,20 @@ check.method <- function(method, data, where, blocks, defaultMethod) {
     y <- data[, vname, drop = FALSE]
     mj <- method[j]
     mlist <- list(
-      m1 = c("logreg", "logreg.boot", "polyreg", "lda", "polr"),
+      m1 = c("logreg", "logreg.boot", "polyreg", "lda", "polr",
+             "lasso.logreg"),
       m2 = c(
         "norm", "norm.nob", "norm.predict", "norm.boot",
         "mean", "2l.norm", "2l.pan",
         "2lonly.norm", "2lonly.pan",
-        "quadratic", "ri"
+        "quadratic", "ri", "lasso.norm"
       ),
       m3 = c(
         "norm", "norm.nob", "norm.predict", "norm.boot",
         "mean", "2l.norm", "2l.pan",
         "2lonly.norm", "2lonly.pan",
-        "quadratic", "logreg", "logreg.boot"
+        "quadratic", "logreg", "logreg.boot",
+        "lasso.logreg", "ri", "lasso.norm"
       )
     )
     cond1 <- sapply(y, is.numeric)

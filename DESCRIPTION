@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.17.0
+Version: 3.18.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2024-11-26
+Date: 2025-05-27
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -71,7 +71,7 @@ LinkingTo: cpp11, Rcpp
 License: GPL (>= 2)
 RoxygenNote: 7.3.2
 NeedsCompilation: yes
-Packaged: 2024-11-27 16:26:22 UTC; buurensv
+Packaged: 2025-05-26 21:51:08 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -93,4 +93,4 @@ Author: Stef van Buuren [aut, cre],
   Hanne Oberman [ctb],
   Stephen Wade [ctb]
 Repository: CRAN
-Date/Publication: 2024-11-27 18:00:02 UTC
+Date/Publication: 2025-05-27 10:40:02 UTC
