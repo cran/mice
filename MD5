@@ -1,6 +1,6 @@
-21ebcc6824e6a307963e96af78fcf151 *DESCRIPTION
-50769f5736a8a99438cd80a4f56af386 *NAMESPACE
-15f64efe837669a92a80082dc04f35b7 *NEWS.md
+47239f1ab2cc1ef18fff2f54fef92190 *DESCRIPTION
+6acc0f3e53e0d487990c559a58080aeb *NAMESPACE
+2f8ad58c25fdc869cfd26076bba02b5e *NEWS.md
 07d1cdb106302142a516b21c3ae0eda0 *R/D1.R
 238926abcd6dd44a6b6d327559444abf *R/D2.R
 cee9d1331609769608fc83b93c2548e6 *R/D3.R
@@ -13,7 +13,7 @@ eff8d0ab5af981756e4bf79bd1a7b870 *R/ampute.mcar.R
 f98f24d74e4fee8565c0cc4f871f703f *R/anova.R
 02f4c3d0cfe9b5ee020824e41430732d *R/as.R
 9248589086fd42e613ed457f4029d5e4 *R/auxiliary.R
-7b64978a056a0a83068938a658809207 *R/barnard.rubin.R
+6cb9772e473e454f4eae6d8d97b3244c *R/barnard.rubin.R
 e4d1fe6be12646e2c03640b65d358670 *R/blocks.R
 45770ab348eb6ad475517eb5d61cfbaa *R/blots.R
 97035505647c98a6835d944b44c23535 *R/boys.R
@@ -121,6 +121,7 @@ b6a825e937f0700d59870eab7be5b414 *R/pool.r.squared.R
 f5040d4a553c3850c1a9cd1ca675fe3a *R/pops.R
 96bec656b5ae1a2d5980b082b09b59ef *R/post.R
 a31dfdaec938106a2c5670c193c0d148 *R/potthoffroy.R
+4aab87dc5bc27e0ab300390a03f4a438 *R/predict_mi.R
 8e88b0f3009caa148d53d916bdc73691 *R/predictorMatrix.R
 877e9bf5670d8ba892914860a1de3c1a *R/print.R
 f128b5d120b20b9c80134d113c220e53 *R/quickpred.R
@@ -130,9 +131,9 @@ f128b5d120b20b9c80134d113c220e53 *R/quickpred.R
 734bfd56d3e056ac5e92c076b8fea93d *R/selfreport.R
 1131751fe364b6bf4d1580b3d62a09b6 *R/squeeze.R
 60ecdd60b323cdedc0bdf29d35734e25 *R/stripplot.mids.R
-67db9983c70c3e993c2489bab5321597 *R/summary.R
+8c719bb5534422578f028b790b7d8ae6 *R/summary.R
 15586bbad2d6548b92dd8fa8ac062c56 *R/supports.transparent.R
-f6243d70f93af814b342e7d4a719bfb6 *R/tbc.R
+1d137f02ad03f7abccc2a6bf02ccb2c5 *R/tbc.R
 4471bfdc0eeffd41ed7cd8b3965d3ce6 *R/tidiers.R
 066f7b2ad688e676a84d897395ae9279 *R/toenail.R
 cd276d1ded1405e2eecf8fe891ac0ce0 *R/toenail2.R
@@ -145,8 +146,8 @@ cd276d1ded1405e2eecf8fe891ac0ce0 *R/toenail2.R
 f44de4f38c671b678ed0ef73e4c218d3 *R/xyplot.mads.R
 c9aafd474639380754a6ea438bb9ed53 *R/xyplot.mids.R
 3db8671b36c1c326bb3e0122e346df65 *R/zzz.R
-81076d1aa0701ce74de358c97edd4c8f *README.md
-b52aabe9a2757fc86742763db9dafc9b *build/partial.rdb
+58c3098efcd374cf3285fcb55287db75 *README.md
+76e123f5dcc8dee07678412adc0a2a84 *build/partial.rdb
 3709c798ba6427dfc28b9e8c47b165e8 *data/boys.rda
 32cb50043192073624d7a3f7215ad801 *data/brandsma.rda
 ee4bdbb28f21c4e95b7a449245eb620c *data/employee.rda
@@ -246,7 +247,7 @@ e47fcc19cc5ef77ce4d44cc3404c02cd *man/make.predictorMatrix.Rd
 f4297db3fdaa536f93a79857a5b8f2d1 *man/md.pairs.Rd
 0d5192cbf55694c88a4907696d300537 *man/md.pattern.Rd
 62182b83914591d1c828acee5fec76a1 *man/mdc.Rd
-034e1c0d0ca9f19fdb25358a3d364e80 *man/mice.Rd
+70cd5f26eceed64cf2059ea112365113 *man/mice.Rd
 e4ab40d3e94b9d0a3169f98bca47203f *man/mice.impute.2l.bin.Rd
 565d066ed17c30e48cc366c5fba94854 *man/mice.impute.2l.lmer.Rd
 21fa0a119bca29f9d756486e4547f110 *man/mice.impute.2l.norm.Rd
@@ -308,6 +309,7 @@ b309e7b7fc8dbe4bfe3d3c75cc61a6ba *man/pool.r.squared.Rd
 c8ab16475defca2cc4849ee50a38e8da *man/popmis.Rd
 ba22202989dc5b33d793b588fcd88b94 *man/pops.Rd
 c1cdcefe99d64aa5a9624f051f788e45 *man/potthoffroy.Rd
+4343c471fde4e3cfd0f899d6dbbaf5ab *man/predict_mi.Rd
 78ecefb817881498aabe50a8dfc80f4c *man/print.Rd
 57cf8fafe5e937f4fa5640a438b7db1f *man/quickpred.Rd
 792ce0c77d6a2e5ad516302a376d1cea *man/reexports.Rd
@@ -316,7 +318,7 @@ c1cdcefe99d64aa5a9624f051f788e45 *man/potthoffroy.Rd
 d1e146d905c38e932dc0cc6d4c9f2169 *man/stripplot.mids.Rd
 d656fb2ba25fb4ab364b865f8e2d0cd8 *man/summary.Rd
 17a7dc182cf3a03625a7141155c69444 *man/supports.transparent.Rd
-d8ebe298453bab147b4294180dacf1ac *man/tbc.Rd
+51acef4808edf3a6bf1278c24c68d8d8 *man/tbc.Rd
 e27a585dcaf6707586ebb4ccd027df94 *man/tidy.mipo.Rd
 673615f0a7a8aa71da39edc8abbc74a6 *man/toenail.Rd
 2421d74d8facc8dd92c85426b2d8f21d *man/toenail2.Rd
@@ -336,6 +338,7 @@ ad3ce204a6a7d6150f4cfb4ba8728193 *tests/testthat/test-D3.R
 7b44ea4d5b141e14622668f52f3f1d67 *tests/testthat/test-ampute.R
 de7acf354082e7222138e91336945b0c *tests/testthat/test-anova.R
 5ce27291d3e077736970c2b5d3e9929c *tests/testthat/test-as.mids.R
+75b61ff89b0aaccade16039a09c23d80 *tests/testthat/test-banard.rubin.R
 9847c554a7578eed81015f9d11c6820a *tests/testthat/test-blocks.R
 e01724468f11f4d450f6f8c7905a55f2 *tests/testthat/test-blots.R
 06b51edd3ec98f4d7e432cfefa7d5335 *tests/testthat/test-cbind.R
@@ -349,7 +352,7 @@ a0471f0419b0f85b535099d3b10f8562 *tests/testthat/test-make.predictorMatrix.R
 fc22d970775211e1deae6f73ad3ac1e5 *tests/testthat/test-md.pattern.R
 ac734d1227be0edf236252a312b40273 *tests/testthat/test-mice-initialize.R
 36c4b55b10b46bfe23e17a3358e5c61d *tests/testthat/test-mice.R
-ed71abde21282d5f0a5e18380be5160b *tests/testthat/test-mice.impute.2l.bin.R
+080eb1b1be2dd7a48519ac37e118fdf4 *tests/testthat/test-mice.impute.2l.bin.R
 c7e30eec51744b0fad3734d6d091a7d6 *tests/testthat/test-mice.impute.2l.lmer.R
 7cc1a1b29b571f0eb65436b22c998bbc *tests/testthat/test-mice.impute.2l.norm.R
 8901b9817a18a7d0439d0224633c130e *tests/testthat/test-mice.impute.2lonly.mean.R
@@ -370,6 +373,7 @@ ea4942aee9721a7cb676210bc26dbba5 *tests/testthat/test-mice.impute.rf.R
 9fd0d786adf7fbfaa7455abc8f73e9f1 *tests/testthat/test-pool.R
 2cd544312cdc4d4b24c46288b2e3e8e5 *tests/testthat/test-pool.r.squared.R
 f1e394e2559a0f6e27b9e25dcbec9965 *tests/testthat/test-pool.vector.R
+798ae6973baea0d1c9761414e698c7de *tests/testthat/test-predict_mi.R
 997e7866725c0afc69813e97e77a607b *tests/testthat/test-quickpred.R
 eae5083f24fa47618af6e20a62cd0c60 *tests/testthat/test-rbind.R
 02d1aa916a6fb30b81f16b62c0617df5 *tests/testthat/test-remove.lindep.R

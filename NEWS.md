@@ -1,3 +1,36 @@
+# mice 3.19.0
+
+### Major changes
+
+* Added `predict_mi()` to generate predictions from models fitted on
+  multiply imputed datasets. The function pools predictions across
+  imputations using Rubin’s rules, and can return point predictions
+  or prediction intervals at a specified confidence level.  
+
+  Typical workflow:
+  1. Fit a model separately on each completed dataset.
+  2. Call `predict_mi()` with the list of models and the corresponding
+     new data (per imputation).
+  3. Obtain either pooled predictions (`pool = TRUE`) or per-imputation
+     predictions (`pool = FALSE`).
+
+  This functionality makes it easier to evaluate predictive performance
+  on test sets while correctly accounting for imputation uncertainty. 
+  
+  Contributed: @fdvanleeuwen, @thomvolker (#720)
+
+* Adds a correction for the Barnard-Rubin degrees of freedom calculation
+  that provides stabler results for small samples and zero within-imputation 
+  variance. Contributed: @frederikfabriciusbjerre (#726)
+
+
+### Minor changes
+
+* Adds fallback for `lmer` objects in `pool()` without requiring `broom.mixed`.
+  Contributed: @anya-decarlo (#728) 
+
+* Explicitly load `toenail` data from the `mice` package to avoid `lme4` conflict. Contributed: @bbolker (#730)
+
 # mice 3.18.0
 
 ### Major changes

@@ -1,8 +1,8 @@
 Package: mice
 Type: Package
-Version: 3.18.0
+Version: 3.19.0
 Title: Multivariate Imputation by Chained Equations
-Date: 2025-05-27
+Date: 2025-12-09
 Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     email = "stef.vanbuuren@tno.nl"),
     person("Karin", "Groothuis-Oudshoorn", role = "aut",
@@ -42,7 +42,11 @@ Authors@R: c(person("Stef", "van Buuren", role = c("aut","cre"),
     person("Hanne", "Oberman", role = "ctb",
     email = "h.i.oberman@uu.nl"),
     person("Stephen", "Wade", role = "ctb",
-    email = "stephematician@gmail.com"))
+    email = "stephematician@gmail.com"),
+    person("Florian", "van Leeuwen", role = "ctb",
+    email = "f.d.vanleeuwen@uu.nl"),
+    person("Frederik", "Fabricius-Bjerre", role = "ctb",
+    email = "frederik@fabriciusbjerre.dk"))
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Depends: R (>= 2.10.0)
 Imports: broom, dplyr, glmnet, graphics, grDevices, lattice, mitml,
@@ -69,9 +73,9 @@ URL: https://github.com/amices/mice, https://amices.org/mice/,
 BugReports: https://github.com/amices/mice/issues
 LinkingTo: cpp11, Rcpp
 License: GPL (>= 2)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 NeedsCompilation: yes
-Packaged: 2025-05-26 21:51:08 UTC; buurensv
+Packaged: 2025-12-10 07:18:53 UTC; buurensv
 Author: Stef van Buuren [aut, cre],
   Karin Groothuis-Oudshoorn [aut],
   Gerko Vink [ctb],
@@ -91,6 +95,8 @@ Author: Stef van Buuren [aut, cre],
   Edoardo Costantini [ctb],
   Caspar van Lissa [ctb],
   Hanne Oberman [ctb],
-  Stephen Wade [ctb]
+  Stephen Wade [ctb],
+  Florian van Leeuwen [ctb],
+  Frederik Fabricius-Bjerre [ctb]
 Repository: CRAN
-Date/Publication: 2025-05-27 10:40:02 UTC
+Date/Publication: 2025-12-10 08:30:02 UTC
